@@ -83,20 +83,22 @@ export const Route = createFileRoute("/api/setoran")({
 					}
 				}
 
-				const [row] = await db
-					.insert(setoran)
-					.values({
-						siswaId: body.siswaId,
-						type: body.type,
-						tanggal: body.tanggal,
-						surah: body.surah,
-						ayatAwal: body.ayatAwal,
-						ayatAkhir: body.ayatAkhir,
-						status: body.status ?? "Tidak Lancar",
-						catatan: body.catatan,
-					})
-					.returning();
-				return Response.json(row, { status: 201 });
+			const [row] = await db
+				.insert(setoran)
+				.values({
+					siswaId: body.siswaId,
+					type: body.type,
+					tanggal: body.tanggal,
+					surah: body.surah,
+					ayatAwal: body.ayatAwal,
+					ayatAkhir: body.ayatAkhir,
+					juz: body.juz,
+					isMutqin: body.isMutqin ?? false,
+					status: body.status ?? "Tidak Lancar",
+					catatan: body.catatan,
+				})
+				.returning();
+			return Response.json(row, { status: 201 });
 			},
 
 			PUT: async ({ request }) => {
@@ -148,20 +150,22 @@ export const Route = createFileRoute("/api/setoran")({
 					}
 				}
 
-				const [row] = await db
-					.update(setoran)
-					.set({
-						type: body.type,
-						tanggal: body.tanggal,
-						surah: body.surah,
-						ayatAwal: body.ayatAwal,
-						ayatAkhir: body.ayatAkhir,
-						status: body.status,
-						catatan: body.catatan,
-					})
-					.where(eq(setoran.id, body.id))
-					.returning();
-				return Response.json(row);
+			const [row] = await db
+				.update(setoran)
+				.set({
+					type: body.type,
+					tanggal: body.tanggal,
+					surah: body.surah,
+					ayatAwal: body.ayatAwal,
+					ayatAkhir: body.ayatAkhir,
+					juz: body.juz,
+					isMutqin: body.isMutqin,
+					status: body.status,
+					catatan: body.catatan,
+				})
+				.where(eq(setoran.id, body.id))
+				.returning();
+			return Response.json(row);
 			},
 
 			DELETE: async ({ request }) => {

@@ -14,6 +14,8 @@ import {
 export const user = pgTable("user", {
 	id: text("id").primaryKey(),
 	name: text("name").notNull(),
+	username: text("username").notNull().unique(),
+	displayUsername: text("display_username"),
 	email: text("email").notNull().unique(),
 	emailVerified: boolean("email_verified").notNull().default(false),
 	image: text("image"),
@@ -82,6 +84,10 @@ export const siswa = pgTable("siswa", {
 	umur: integer("umur"),
 	hafalan: integer("hafalan").notNull().default(0),
 	target: integer("target").notNull().default(0),
+	mulaiHafalan: varchar("mulai_hafalan", { length: 50 }),
+	metodeProgress: varchar("metode_progress", { length: 10 })
+		.notNull()
+		.default("juz"),
 	ziyadah: integer("ziyadah").notNull().default(1),
 	murajaah: integer("murajaah").notNull().default(1),
 	terakhirIjazah: date("terakhir_ijazah"),
@@ -99,6 +105,8 @@ export const setoran = pgTable("setoran", {
 	surah: integer("surah").notNull(),
 	ayatAwal: integer("ayat_awal").notNull(),
 	ayatAkhir: integer("ayat_akhir").notNull(),
+	juz: varchar("juz", { length: 10 }),
+	isMutqin: boolean("is_mutqin").notNull().default(false),
 	status: varchar("status", { length: 20 }).notNull().default("Tidak Lancar"),
 	catatan: text("catatan"),
 	createdAt: timestamp("created_at").defaultNow().notNull(),

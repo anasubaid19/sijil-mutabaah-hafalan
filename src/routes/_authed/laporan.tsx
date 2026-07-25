@@ -15,12 +15,18 @@ import {
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { SURAH_DATA } from "@/lib/surah-data";
+import { calcProgress, getSurahName } from "@/lib/progress";
+import { StudentModal } from "@/components/student-modal";
+import { BookOpen01Icon } from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
 
 interface Siswa {
 	id: string;
 	nama: string;
 	hafalan: number;
 	target: number;
+	mulaiHafalan?: string | null;
+	metodeProgress?: string;
 }
 
 interface Setoran {
@@ -33,6 +39,7 @@ interface Setoran {
 	ayatAkhir: number;
 	status: string;
 	catatan?: string;
+	isMutqin?: boolean;
 }
 
 const STATUS_COLORS: Record<string, string> = {
@@ -43,6 +50,21 @@ const STATUS_COLORS: Record<string, string> = {
 
 const PIE_COLORS = ["#2563eb", "#f59e0b", "#ef4444"];
 
+const AVATAR_COLORS: Record<string, string[]> = {
+	a: ["#f0fdf4", "#166534"],
+	b: ["#eff6ff", "#1e40af"],
+	c: ["#fefce8", "#854d0e"],
+};
+
+function getAvatarColors(n: string): [string, string] {
+	return (
+		(AVATAR_COLORS[(n[0] || "a").toLowerCase()] as [string, string]) || [
+			"#f0fdf4",
+			"#1a5c5c",
+		]
+	);
+}
+
 export const Route = createFileRoute("/_authed/laporan")({
 	component: LaporanPage,
 });
@@ -52,17 +74,24 @@ function LaporanPage() {
 	const [setoranList, setSetoranList] = useState<Setoran[]>([]);
 	const [view, setView] = useState<"grid" | "list">("grid");
 	const [selectedSiswa, setSelectedSiswa] = useState<string | null>(null);
+	const [modalSiswa, setModalSiswa] = useState<Siswa | null>(null);
+	const [halaqahName, setHalaqahName] = useState<string>("");
 	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
 		async function load() {
 			try {
-				const [sRes, stRes] = await Promise.all([
+				const [sRes, stRes, pRes] = await Promise.all([
 					fetch("/api/siswa"),
 					fetch("/api/setoran"),
+					fetch("/api/user-profile"),
 				]);
 				if (sRes.ok) setSiswaList(await sRes.json());
 				if (stRes.ok) setSetoranList(await stRes.json());
+				if (pRes.ok) {
+					const profile = await pRes.json();
+					if (profile?.halaqah) setHalaqahName(profile.halaqah);
+				}
 			} catch {}
 			setLoading(false);
 		}
@@ -94,6 +123,46 @@ function LaporanPage() {
 
 	const weeklyTrend = getWeeklyTrend(filteredSetoran);
 
+	// Monthly insight computations
+	const uniqueJuzSet = new Set<number>();
+	monthlySetoran.forEach((r) => {
+		const surah = SURAH_DATA.find((s) => s.number === r.surah);
+		if (surah) {
+			for (let j = surah.juzStart; j <= surah.juzEnd; j++) uniqueJuzSet.add(j);
+		}
+	});
+	const juzCompleted = uniqueJuzSet.size;
+
+	const topGrade =
+		monthlySetoran.find((r) => r.status === "Lancar")?.status ||
+		monthlySetoran.find((r) => r.status === "Mulai Lancar")?.status ||
+		monthlySetoran[0]?.status ||
+		"—";
+
+	const avgProgress =
+		siswaList.length > 0
+			? Math.round(
+					siswaList.reduce((sum, s) => {
+						const recs = setoranList.filter((r) => r.siswaId === s.id);
+						return sum + calcProgress(s, recs).pct;
+					}, 0) / siswaList.length,
+				)
+			: 0;
+
+	const statusLabel =
+		avgProgress >= 80
+			? "Target Terlampaui"
+			: avgProgress >= 50
+				? "Dalam Jalur"
+				: "Perlu Perhatian";
+
+	const statusColor =
+		avgProgress >= 80
+			? "bg-emerald-400 text-emerald-900"
+			: avgProgress >= 50
+				? "bg-amber-400 text-amber-900"
+				: "bg-red-400 text-red-900";
+
 	function exportCSV() {
 		if (filteredSetoran.length === 0) {
 			toast.error("Tidak ada data untuk diekspor");
@@ -119,6 +188,10 @@ function LaporanPage() {
 		toast.success("CSV diekspor!");
 	}
 
+	function exportPDF() {
+		window.print();
+	}
+
 	if (loading) {
 		return (
 			<div className="flex items-center justify-center py-20">
@@ -128,8 +201,8 @@ function LaporanPage() {
 	}
 
 	return (
-		<div className="space-y-6 pb-20 md:pb-6">
-			<div className="flex items-center justify-between">
+		<div className="space-y-6 pb-20 md:pb-6 print:space-y-4 print:pb-0">
+			<div className="flex items-center justify-between print:hidden">
 				<div>
 					<h2 className="text-base font-semibold">
 						Laporan — Progres & Insight
@@ -167,11 +240,120 @@ function LaporanPage() {
 					>
 						Export CSV
 					</Button>
+					<Button
+						variant="outline"
+						size="sm"
+						onClick={exportPDF}
+						className="ml-2 print:hidden"
+					>
+						Rekap PDF
+					</Button>
+				</div>
+			</div>
+
+			{/* Student Cards */}
+			<div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 print:hidden">
+				{siswaList.map((s) => {
+					const recs = setoranList.filter((r) => r.siswaId === s.id);
+					const p = calcProgress(s, recs);
+					const lastRec = recs.sort((a, b) =>
+						b.tanggal.localeCompare(a.tanggal),
+					)[0];
+					const lastGrade = lastRec?.status || "—";
+					const [bg, fg] = getAvatarColors(s.nama);
+					const initials = s.nama
+						.split(" ")
+						.map((w) => w[0])
+						.join("")
+						.slice(0, 2)
+						.toUpperCase();
+					return (
+						<button
+							key={s.id}
+							onClick={() => setModalSiswa(s)}
+							className="rounded-2xl border bg-card p-4 shadow-xs transition-all hover:shadow-md text-left w-full"
+						>
+							<div className="flex items-center gap-3">
+								<div
+									className="flex size-10 items-center justify-center rounded-full text-sm font-bold shrink-0"
+									style={{ background: bg, color: fg }}
+								>
+									{initials}
+								</div>
+								<div className="min-w-0 flex-1">
+									<p className="truncate text-sm font-semibold">{s.nama}</p>
+									<p className="text-xs text-muted-foreground">
+										{recs.length} setoran
+									</p>
+								</div>
+								<span
+									className={`rounded-full px-2 py-0.5 text-[0.65rem] font-semibold shrink-0 ${
+										STATUS_COLORS[lastGrade] ?? "bg-muted text-muted-foreground"
+									}`}
+								>
+									{lastGrade}
+								</span>
+							</div>
+							<div className="mt-3">
+								<div className="flex items-center justify-between text-xs text-muted-foreground">
+									<span>Progres</span>
+									<span>{p.pct}%</span>
+								</div>
+								<div className="mt-1 h-1.5 overflow-hidden rounded-full bg-muted">
+									<div
+										className="h-full rounded-full bg-primary transition-all"
+										style={{ width: `${Math.min(p.pct, 100)}%` }}
+									/>
+								</div>
+							</div>
+						</button>
+					);
+				})}
+			</div>
+
+			{/* Monthly Insight Card */}
+			<div className="bg-gradient-to-br from-teal-700 to-teal-900 text-white rounded-2xl p-6">
+				<div className="flex items-start justify-between">
+					<div>
+						<h3 className="text-lg font-bold">
+							Evaluasi Capaian{halaqahName ? ` ${halaqahName}` : ""}
+						</h3>
+						<p className="mt-1 text-sm text-teal-200">
+							Ringkasan bulan{" "}
+							{now.toLocaleDateString("id-ID", {
+								month: "long",
+								year: "numeric",
+							})}
+						</p>
+					</div>
+					<span
+						className={`rounded-full px-3 py-1 text-xs font-bold ${statusColor}`}
+					>
+						{statusLabel}
+					</span>
+				</div>
+				<div className="mt-5 grid grid-cols-2 gap-4 sm:grid-cols-4">
+					<div>
+						<p className="text-2xl font-bold">{monthlySetoran.length}</p>
+						<p className="text-xs text-teal-200">Setoran Bulan Ini</p>
+					</div>
+					<div>
+						<p className="text-2xl font-bold">{juzCompleted}</p>
+						<p className="text-xs text-teal-200">Juz Selesai</p>
+					</div>
+					<div>
+						<p className="text-2xl font-bold">{topGrade}</p>
+						<p className="text-xs text-teal-200">Grade Tertinggi</p>
+					</div>
+					<div>
+						<p className="text-2xl font-bold">{avgProgress}%</p>
+						<p className="text-xs text-teal-200">Rata-rata Progres</p>
+					</div>
 				</div>
 			</div>
 
 			{/* Filter by Siswa */}
-			<div className="flex gap-2 overflow-x-auto pb-2">
+			<div className="flex gap-2 overflow-x-auto pb-2 print:hidden">
 				<button
 					onClick={() => setSelectedSiswa(null)}
 					className={`whitespace-nowrap rounded-xl px-4 py-2 text-sm font-semibold transition-colors ${
@@ -370,6 +552,17 @@ function LaporanPage() {
 					</p>
 				)}
 			</div>
+
+			{/* Student Modal */}
+			<StudentModal
+				open={!!modalSiswa}
+				onOpenChange={(o) => {
+					if (!o) setModalSiswa(null);
+				}}
+				siswa={modalSiswa}
+				setoranList={setoranList.filter((r) => r.siswaId === modalSiswa?.id)}
+				onExportPdf={exportPDF}
+			/>
 		</div>
 	);
 }

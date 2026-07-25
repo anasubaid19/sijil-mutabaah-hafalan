@@ -40,24 +40,26 @@ export const Route = createFileRoute("/api/siswa")({
 					return Response.json({ error: "Unauthorized" }, { status: 401 });
 
 				const body = await request.json();
-				const [row] = await db
-					.insert(siswa)
-					.values({
-						musyrifId: session.user.id,
-						nama: body.nama,
-						studentId: generateStudentId(),
-						parentPassword: body.parentPassword
-							? hashPassword(body.parentPassword)
-							: null,
-						umur: body.umur,
-						hafalan: body.hafalan ?? 0,
-						target: body.target ?? 0,
-						ziyadah: body.ziyadah ?? 1,
-						murajaah: body.murajaah ?? 1,
-						terakhirIjazah: body.terakhirIjazah,
-					})
-					.returning();
-				return Response.json(row, { status: 201 });
+			const [row] = await db
+				.insert(siswa)
+				.values({
+					musyrifId: session.user.id,
+					nama: body.nama,
+					studentId: generateStudentId(),
+					parentPassword: body.parentPassword
+						? hashPassword(body.parentPassword)
+						: null,
+					umur: body.umur,
+					hafalan: body.hafalan ?? 0,
+					target: body.target ?? 0,
+					mulaiHafalan: body.mulaiHafalan,
+					metodeProgress: body.metodeProgress ?? "juz",
+					ziyadah: body.ziyadah ?? 1,
+					murajaah: body.murajaah ?? 1,
+					terakhirIjazah: body.terakhirIjazah,
+				})
+				.returning();
+			return Response.json(row, { status: 201 });
 			},
 
 			PUT: async ({ request }) => {
@@ -84,6 +86,8 @@ export const Route = createFileRoute("/api/siswa")({
 					umur: body.umur,
 					hafalan: body.hafalan,
 					target: body.target,
+					mulaiHafalan: body.mulaiHafalan,
+					metodeProgress: body.metodeProgress,
 					ziyadah: body.ziyadah,
 					murajaah: body.murajaah,
 					terakhirIjazah: body.terakhirIjazah,

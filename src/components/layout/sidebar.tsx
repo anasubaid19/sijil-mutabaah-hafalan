@@ -53,8 +53,6 @@ export function AppSidebar() {
 				</div>
 			</SidebarHeader>
 
-			<SidebarSeparator />
-
 			<SidebarContent>
 				<SidebarGroup>
 					<SidebarGroupLabel className="text-[10px] font-semibold uppercase tracking-wider">

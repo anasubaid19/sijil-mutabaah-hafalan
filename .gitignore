@@ -42,3 +42,10 @@ graphify-out/
 # sibling projects, not part of this repo
 ui-reference/
 uikit/
+
+# dev docs, not needed for deploy
+PRD.md
+TODO.md
+CLAUDE.md
+index-original.html
+.tanstack/

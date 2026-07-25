@@ -2,6 +2,7 @@ import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { username } from "better-auth/plugins";
 import { db } from "../db";
+import { userProfile } from "../db/schema";
 
 export const auth = betterAuth({
 	trustedOrigins: (request) => {
@@ -13,6 +14,19 @@ export const auth = betterAuth({
 	database: drizzleAdapter(db, {
 		provider: "pg",
 	}),
+	databaseHooks: {
+		user: {
+			create: {
+				after: async (createdUser) => {
+					await db.insert(userProfile).values({
+						id: createdUser.id,
+						nama: createdUser.name,
+						role: "musyrif",
+					});
+				},
+			},
+		},
+	},
 	emailAndPassword: {
 		enabled: true,
 	},

@@ -1,3 +1,4 @@
+import path from "node:path";
 import tailwindcss from "@tailwindcss/vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import react from "@vitejs/plugin-react";
@@ -11,6 +12,18 @@ export default defineConfig({
 	},
 	optimizeDeps: {
 		exclude: ["@tanstack/start-server-core"],
+	},
+	environments: {
+		ssr: {
+			optimizeDeps: {
+				exclude: ["@tanstack/start-server-core"],
+			},
+		},
+		client: {
+			optimizeDeps: {
+				exclude: ["@tanstack/start-server-core"],
+			},
+		},
 	},
 	plugins: [
 		tailwindcss(),
