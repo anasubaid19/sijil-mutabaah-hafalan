@@ -94,7 +94,7 @@ function ParentDashboard() {
 			<div className="flex items-center justify-between">
 				<div className="flex items-center gap-3">
 					<img
-						src="/logo-sijil.svg"
+						src="/logo-sijil-v3.svg"
 						alt="Sijil"
 						className="size-9 rounded-xl"
 					/>

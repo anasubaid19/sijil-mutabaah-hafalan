@@ -55,7 +55,7 @@ export function AppSidebar() {
 			<SidebarHeader>
 				<div className="flex items-center gap-2.5 px-2 py-1.5">
 					<img
-						src="/logo-sijil.svg"
+						src="/logo-sijil-v3.svg"
 						alt="Sijil"
 						className="size-8 rounded-xl"
 					/>

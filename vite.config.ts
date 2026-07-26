@@ -36,7 +36,7 @@ export default defineConfig({
 		nitro(),
 		VitePWA({
 			registerType: "autoUpdate",
-			includeAssets: ["logo-sijil.svg"],
+			includeAssets: ["logo-sijil-v3.svg"],
 			manifest: {
 				name: "Sijil Mutaba'ah",
 				short_name: "Sijil",
@@ -51,7 +51,7 @@ export default defineConfig({
 				categories: ["education", "productivity"],
 				icons: [
 					{
-						src: "logo-sijil.svg",
+						src: "logo-sijil-v3.svg",
 						sizes: "any",
 						type: "image/svg+xml",
 					},

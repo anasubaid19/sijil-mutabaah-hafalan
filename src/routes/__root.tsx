@@ -18,7 +18,7 @@ export const Route = createRootRoute({
 		>
 			<html lang="id" suppressHydrationWarning>
 				<head>
-					<link rel="icon" href="/logo-sijil.svg" type="image/svg+xml" />
+					<link rel="icon" href="/logo-sijil-v3.svg" type="image/svg+xml" />
 					<meta name="theme-color" content="#4f46e5" />
 					<meta name="apple-mobile-web-app-capable" content="yes" />
 					<meta

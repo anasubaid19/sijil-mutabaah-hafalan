@@ -1,7 +1,7 @@
 const sharp = require("sharp");
 const path = require("node:path");
 
-const src = path.join(__dirname, "../public/logo-sijil.svg");
+const src = path.join(__dirname, "../public/logo-sijil-v3.svg");
 const out = path.join(__dirname, "../public");
 
 async function generate() {

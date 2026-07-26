@@ -74,7 +74,7 @@ function LoginPage() {
 			<div className="w-full max-w-md space-y-6 rounded-2xl border bg-card p-8 shadow-xs">
 				<div className="flex flex-col items-center gap-2">
 					<img
-						src="/logo-sijil.svg"
+						src="/logo-sijil-v3.svg"
 						alt="Sijil"
 						className="size-12 rounded-2xl"
 					/>
