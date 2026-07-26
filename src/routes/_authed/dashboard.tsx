@@ -8,16 +8,6 @@ import {
 import { HugeiconsIcon } from "@hugeicons/react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
-import {
-	Bar,
-	BarChart,
-	CartesianGrid,
-	Legend,
-	ResponsiveContainer,
-	Tooltip,
-	XAxis,
-	YAxis,
-} from "recharts";
 import { MushafPanel } from "@/components/mushaf-panel";
 import { Button } from "@/components/ui/button";
 import { calcProgress, getSurahName } from "@/lib/progress";
@@ -173,7 +163,7 @@ function DashboardPage() {
 			.filter(
 				(s) =>
 					!todayPresensiMap.has(s.id) ||
-					todayPresensiMap.get(s.id)!.status !== "Hadir",
+					todayPresensiMap.get(s.id)?.status !== "Hadir",
 			)
 			.map(async (s) => {
 				const existing = todayPresensiMap.get(s.id);
@@ -278,6 +268,24 @@ function DashboardPage() {
 						</Button>
 					</div>
 				</div>
+				<div className="mb-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-[0.7rem] text-muted-foreground">
+					<span className="inline-flex items-center gap-1">
+						<span className="inline-block size-2 rounded-sm bg-emerald-500" />H
+						= Hadir
+					</span>
+					<span className="inline-flex items-center gap-1">
+						<span className="inline-block size-2 rounded-sm bg-blue-500" />I =
+						Izin
+					</span>
+					<span className="inline-flex items-center gap-1">
+						<span className="inline-block size-2 rounded-sm bg-amber-500" />S =
+						Sakit
+					</span>
+					<span className="inline-flex items-center gap-1">
+						<span className="inline-block size-2 rounded-sm bg-red-500" />A =
+						Alpha
+					</span>
+				</div>
 				{siswaList.length > 0 ? (
 					<div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
 						{siswaList.map((s) => {
@@ -291,6 +299,7 @@ function DashboardPage() {
 									<div className="flex gap-1">
 										{PRESENSI_STATUSES.map((st) => (
 											<button
+												type="button"
 												key={st}
 												onClick={() => handlePresensiChange(s.id, st)}
 												className={`rounded-md px-2 py-0.5 text-xs font-semibold transition-colors ${
@@ -318,40 +327,72 @@ function DashboardPage() {
 				)}
 			</div>
 
-			{/* Weekly Chart */}
+			{/* Weekly Heatmap */}
 			<div className="rounded-2xl border bg-card p-5 shadow-xs">
 				<h2 className="mb-4 text-base font-semibold">Setoran Minggu Ini</h2>
 				{weeklyData.length > 0 ? (
-					<ResponsiveContainer width="100%" height={240}>
-						<BarChart data={weeklyData}>
-							<CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-							<XAxis dataKey="day" className="text-xs" />
-							<YAxis className="text-xs" />
-							<Tooltip
-								contentStyle={{
-									borderRadius: "0.75rem",
-									border: "1px solid var(--border)",
-									background: "var(--card)",
-									fontSize: "0.875rem",
-								}}
-							/>
-							<Legend />
-							<Bar
-								dataKey="ziyadah"
-								name="Ziyadah"
-								stackId="a"
-								fill="#2563eb"
-								radius={[0, 0, 0, 0]}
-							/>
-							<Bar
-								dataKey="murajaah"
-								name="Murajaah"
-								stackId="a"
-								fill="#f59e0b"
-								radius={[6, 6, 0, 0]}
-							/>
-						</BarChart>
-					</ResponsiveContainer>
+					<div className="space-y-3">
+						{/* Ziyadah row */}
+						<div className="flex items-center gap-2">
+							<span className="w-20 shrink-0 text-xs font-medium text-muted-foreground">
+								Ziyadah
+							</span>
+							<div className="grid flex-1 grid-cols-7 gap-1.5">
+								{weeklyData.map((d) => (
+									<div
+										key={`z-${d.day}`}
+										className="aspect-square rounded-md"
+										style={{
+											backgroundColor: heatZiyadah(d.ziyadah as number),
+										}}
+										title={`${d.tanggal ?? d.day}: ${d.ziyadah} ziyadah`}
+									/>
+								))}
+							</div>
+						</div>
+						{/* Murajaah row */}
+						<div className="flex items-center gap-2">
+							<span className="w-20 shrink-0 text-xs font-medium text-muted-foreground">
+								Murajaah
+							</span>
+							<div className="grid flex-1 grid-cols-7 gap-1.5">
+								{weeklyData.map((d) => (
+									<div
+										key={`m-${d.day}`}
+										className="aspect-square rounded-md"
+										style={{
+											backgroundColor: heatMurajaah(d.murajaah as number),
+										}}
+										title={`${d.tanggal ?? d.day}: ${d.murajaah} murajaah`}
+									/>
+								))}
+							</div>
+						</div>
+						{/* Day labels */}
+						<div className="flex items-center gap-2">
+							<span className="w-20 shrink-0" />
+							<div className="grid flex-1 grid-cols-7 gap-1.5">
+								{weeklyData.map((d) => (
+									<div
+										key={`label-${d.day}`}
+										className="text-center text-[0.65rem] text-muted-foreground"
+									>
+										{d.day}
+									</div>
+								))}
+							</div>
+						</div>
+						{/* Color legend */}
+						<div className="flex items-center gap-2 pt-1 text-[0.65rem] text-muted-foreground">
+							<span>0</span>
+							<div className="flex gap-0.5">
+								{HEAT_LEGEND.filter(([, c]) => c > 0).map(([cls]) => (
+									<div key={cls} className={`size-2.5 rounded-sm ${cls}`} />
+								))}
+							</div>
+							<span>5+</span>
+						</div>
+					</div>
 				) : (
 					<p className="py-8 text-center text-sm text-muted-foreground">
 						Belum ada data minggu ini
@@ -540,7 +581,14 @@ function getWeeklyData(setoran: Setoran[]) {
 
 	return Object.entries(data).map(([date, counts]) => {
 		const d = new Date(`${date}T00:00:00`);
-		return { day: days[d.getDay()], ...counts };
+		return {
+			day: days[d.getDay()],
+			tanggal: d.toLocaleDateString("id-ID", {
+				day: "numeric",
+				month: "short",
+			}),
+			...counts,
+		};
 	});
 }
 
@@ -551,4 +599,41 @@ function fmtDate(date?: string) {
 		month: "short",
 		year: "numeric",
 	});
+}
+
+const ZIYADAH_HEAT = [
+	"oklch(0.97 0 0 / 0.4)",
+	"oklch(0.6 0.2 255 / 0.25)",
+	"oklch(0.6 0.2 255 / 0.45)",
+	"oklch(0.6 0.2 255 / 0.7)",
+	"oklch(0.6 0.2 255 / 0.88)",
+	"oklch(0.55 0.22 255)",
+];
+
+const MURAJAAH_HEAT = [
+	"oklch(0.97 0 0 / 0.4)",
+	"oklch(0.7 0.17 65 / 0.25)",
+	"oklch(0.7 0.17 65 / 0.45)",
+	"oklch(0.7 0.17 65 / 0.7)",
+	"oklch(0.7 0.17 65 / 0.88)",
+	"oklch(0.65 0.18 62)",
+];
+
+const HEAT_LEGEND: [string, number][] = [
+	["bg-muted/30", 0],
+	["bg-stone-400/60", 1],
+	["bg-stone-500/70", 2],
+	["bg-stone-500", 3],
+	["bg-stone-600", 4],
+	["bg-stone-700", 5],
+];
+
+function heatZiyadah(count: number): string {
+	const i = Math.min(count, 5);
+	return ZIYADAH_HEAT[i] ?? "oklch(0.97 0 0 / 0.4)";
+}
+
+function heatMurajaah(count: number): string {
+	const i = Math.min(count, 5);
+	return MURAJAAH_HEAT[i] ?? "oklch(0.97 0 0 / 0.4)";
 }
