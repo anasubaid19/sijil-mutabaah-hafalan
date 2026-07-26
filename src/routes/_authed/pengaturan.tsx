@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -31,6 +31,7 @@ export const Route = createFileRoute("/_authed/pengaturan")({
 });
 
 function PengaturanPage() {
+	const navigate = useNavigate();
 	const [profile, setProfile] = useState<UserProfile | null>(null);
 	const [siswaList, setSiswaList] = useState<Siswa[]>([]);
 	const [loading, setLoading] = useState(true);
@@ -45,7 +46,7 @@ function PengaturanPage() {
 	const [siswaUmur, setSiswaUmur] = useState("");
 	const [siswaMetode, setSiswaMetode] = useState<"juz" | "surah">("juz");
 	const [siswaTargetFrom, setSiswaTargetFrom] = useState("1");
-		const [siswaTargetTo, setSiswaTargetTo] = useState("30");
+	const [siswaTargetTo, setSiswaTargetTo] = useState("30");
 	const [editingSiswa, setEditingSiswa] = useState<string | null>(null);
 
 	useEffect(() => {
@@ -513,6 +514,24 @@ function PengaturanPage() {
 						Belum ada siswa
 					</p>
 				)}
+			</div>
+
+			{/* Tutorial */}
+			<div className="space-y-4 rounded-2xl border bg-card p-5 shadow-xs">
+				<h3 className="text-lg font-semibold">Tutorial</h3>
+				<p className="text-xs text-muted-foreground">
+					Lihat kembali panduan penggunaan aplikasi.
+				</p>
+				<Button
+					variant="outline"
+					onClick={() => {
+						localStorage.removeItem("sijil_tutorial_done");
+						window.dispatchEvent(new CustomEvent("sijil-restart-tutorial"));
+						navigate({ to: "/dashboard" });
+					}}
+				>
+					Mulai Ulang Tutorial
+				</Button>
 			</div>
 
 			{/* Backup & Import */}

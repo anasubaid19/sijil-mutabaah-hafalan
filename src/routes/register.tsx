@@ -35,7 +35,7 @@ function RegisterPage() {
 			return;
 		}
 
-		navigate({ to: "/setup" });
+		navigate({ to: "/dashboard" });
 	}
 
 	return (

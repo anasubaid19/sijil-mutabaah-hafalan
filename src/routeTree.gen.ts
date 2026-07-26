@@ -19,7 +19,6 @@ import { Route as AuthedLaporanRouteImport } from './routes/_authed/laporan'
 import { Route as AuthedManajemenDataRouteImport } from './routes/_authed/manajemen-data'
 import { Route as AuthedMurajaahRouteImport } from './routes/_authed/murajaah'
 import { Route as AuthedPengaturanRouteImport } from './routes/_authed/pengaturan'
-import { Route as AuthedSetupRouteImport } from './routes/_authed/setup'
 import { Route as AuthedZiyadahRouteImport } from './routes/_authed/ziyadah'
 import { Route as ApiExportPdfRouteImport } from './routes/api/export-pdf'
 import { Route as ApiParentAuthRouteImport } from './routes/api/parent-auth'
@@ -79,11 +78,6 @@ const AuthedMurajaahRoute = AuthedMurajaahRouteImport.update({
 const AuthedPengaturanRoute = AuthedPengaturanRouteImport.update({
   id: '/pengaturan',
   path: '/pengaturan',
-  getParentRoute: () => AuthedRoute,
-} as any)
-const AuthedSetupRoute = AuthedSetupRouteImport.update({
-  id: '/setup',
-  path: '/setup',
   getParentRoute: () => AuthedRoute,
 } as any)
 const AuthedZiyadahRoute = AuthedZiyadahRouteImport.update({
@@ -152,7 +146,6 @@ export interface FileRoutesByFullPath {
   '/manajemen-data': typeof AuthedManajemenDataRoute
   '/murajaah': typeof AuthedMurajaahRoute
   '/pengaturan': typeof AuthedPengaturanRoute
-  '/setup': typeof AuthedSetupRoute
   '/ziyadah': typeof AuthedZiyadahRoute
   '/api/export-pdf': typeof ApiExportPdfRoute
   '/api/parent-auth': typeof ApiParentAuthRoute
@@ -175,7 +168,6 @@ export interface FileRoutesByTo {
   '/manajemen-data': typeof AuthedManajemenDataRoute
   '/murajaah': typeof AuthedMurajaahRoute
   '/pengaturan': typeof AuthedPengaturanRoute
-  '/setup': typeof AuthedSetupRoute
   '/ziyadah': typeof AuthedZiyadahRoute
   '/api/export-pdf': typeof ApiExportPdfRoute
   '/api/parent-auth': typeof ApiParentAuthRoute
@@ -200,7 +192,6 @@ export interface FileRoutesById {
   '/_authed/manajemen-data': typeof AuthedManajemenDataRoute
   '/_authed/murajaah': typeof AuthedMurajaahRoute
   '/_authed/pengaturan': typeof AuthedPengaturanRoute
-  '/_authed/setup': typeof AuthedSetupRoute
   '/_authed/ziyadah': typeof AuthedZiyadahRoute
   '/api/export-pdf': typeof ApiExportPdfRoute
   '/api/parent-auth': typeof ApiParentAuthRoute
@@ -225,7 +216,6 @@ export interface FileRouteTypes {
     | '/manajemen-data'
     | '/murajaah'
     | '/pengaturan'
-    | '/setup'
     | '/ziyadah'
     | '/api/export-pdf'
     | '/api/parent-auth'
@@ -248,7 +238,6 @@ export interface FileRouteTypes {
     | '/manajemen-data'
     | '/murajaah'
     | '/pengaturan'
-    | '/setup'
     | '/ziyadah'
     | '/api/export-pdf'
     | '/api/parent-auth'
@@ -272,7 +261,6 @@ export interface FileRouteTypes {
     | '/_authed/manajemen-data'
     | '/_authed/murajaah'
     | '/_authed/pengaturan'
-    | '/_authed/setup'
     | '/_authed/ziyadah'
     | '/api/export-pdf'
     | '/api/parent-auth'
@@ -376,13 +364,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthedPengaturanRouteImport
       parentRoute: typeof AuthedRoute
     }
-    '/_authed/setup': {
-      id: '/_authed/setup'
-      path: '/setup'
-      fullPath: '/setup'
-      preLoaderRoute: typeof AuthedSetupRouteImport
-      parentRoute: typeof AuthedRoute
-    }
     '/_authed/ziyadah': {
       id: '/_authed/ziyadah'
       path: '/ziyadah'
@@ -469,7 +450,6 @@ interface AuthedRouteChildren {
   AuthedManajemenDataRoute: typeof AuthedManajemenDataRoute
   AuthedMurajaahRoute: typeof AuthedMurajaahRoute
   AuthedPengaturanRoute: typeof AuthedPengaturanRoute
-  AuthedSetupRoute: typeof AuthedSetupRoute
   AuthedZiyadahRoute: typeof AuthedZiyadahRoute
 }
 
@@ -479,7 +459,6 @@ const AuthedRouteChildren: AuthedRouteChildren = {
   AuthedManajemenDataRoute: AuthedManajemenDataRoute,
   AuthedMurajaahRoute: AuthedMurajaahRoute,
   AuthedPengaturanRoute: AuthedPengaturanRoute,
-  AuthedSetupRoute: AuthedSetupRoute,
   AuthedZiyadahRoute: AuthedZiyadahRoute,
 }
 

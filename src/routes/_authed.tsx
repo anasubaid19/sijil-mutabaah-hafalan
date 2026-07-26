@@ -1,7 +1,12 @@
-import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
+import {
+	createFileRoute,
+	Outlet,
+	redirect,
+	useNavigate,
+} from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/start-server-core";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { BottomNav } from "@/components/layout/bottom-nav";
 import { Header } from "@/components/layout/header";
 import { AppSidebar } from "@/components/layout/sidebar";
@@ -27,6 +32,7 @@ export const Route = createFileRoute("/_authed")({
 });
 
 function AuthedLayout() {
+	const navigate = useNavigate();
 	const [showTutorial, setShowTutorial] = useState(false);
 
 	useEffect(() => {
@@ -35,6 +41,19 @@ function AuthedLayout() {
 			setShowTutorial(true);
 		}
 	}, []);
+
+	useEffect(() => {
+		function restart() {
+			setShowTutorial(true);
+		}
+		window.addEventListener("sijil-restart-tutorial", restart);
+		return () => window.removeEventListener("sijil-restart-tutorial", restart);
+	}, []);
+
+	const handleFinish = useCallback(() => {
+		setShowTutorial(false);
+		navigate({ to: "/dashboard" });
+	}, [navigate]);
 
 	return (
 		<SidebarProvider>
@@ -48,7 +67,7 @@ function AuthedLayout() {
 			<BottomNav />
 			{showTutorial && (
 				<div id="sijil-tutorial-root">
-					<TutorialOverlay />
+					<TutorialOverlay onFinish={handleFinish} />
 				</div>
 			)}
 		</SidebarProvider>
