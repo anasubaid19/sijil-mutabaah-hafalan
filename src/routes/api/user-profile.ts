@@ -45,6 +45,14 @@ export const Route = createFileRoute("/api/user-profile")({
 							nama: body.nama,
 							role: body.role ?? "musyrif",
 						})
+						.onConflictDoUpdate({
+							target: userProfile.id,
+							set: {
+								nama: body.nama,
+								role: body.role ?? "musyrif",
+								updatedAt: new Date(),
+							},
+						})
 						.returning();
 					return Response.json(row, { status: 201 });
 				} catch (e) {
