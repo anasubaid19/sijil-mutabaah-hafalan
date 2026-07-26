@@ -90,9 +90,7 @@ function DashboardPage() {
 	const [presensiList, setPresensiList] = useState<Presensi[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [mushafOpen, setMushafOpen] = useState(false);
-	const [chartType, setChartType] = useState<"heatmap" | "bar" | "line">(
-		"heatmap",
-	);
+	const [chartType, setChartType] = useState<"bar" | "line">("bar");
 	const [chartRange, setChartRange] = useState<"week" | "month">("week");
 
 	const today = todayStr();
@@ -345,7 +343,7 @@ function DashboardPage() {
 				)}
 			</div>
 
-			{/* Weekly/Monthly: Heatmap / Bar / Line */}
+			{/* Weekly/Monthly: Bar / Line */}
 			<div className="rounded-2xl border bg-card p-5 shadow-xs">
 				<div className="mb-4 flex items-center justify-between">
 					<h2 className="text-base font-semibold">
@@ -376,7 +374,6 @@ function DashboardPage() {
 						<div className="flex rounded-lg border bg-muted/50 p-0.5">
 							{(
 								[
-									["heatmap", "Heatmap"],
 									["bar", "Bar"],
 									["line", "Line"],
 								] as const
@@ -400,9 +397,6 @@ function DashboardPage() {
 
 				{chartData.length > 0 ? (
 					<>
-						{chartType === "heatmap" && (
-							<HeatmapView data={chartData} range={chartRange} />
-						)}
 						{chartType === "bar" && (
 							<ResponsiveContainer width="100%" height={240}>
 								<BarChart data={chartData}>
@@ -712,200 +706,4 @@ function fmtDate(date?: string) {
 		month: "short",
 		year: "numeric",
 	});
-}
-
-const ZIYADAH_HEAT = [
-	"oklch(0.97 0 0 / 0.4)",
-	"oklch(0.6 0.2 255 / 0.25)",
-	"oklch(0.6 0.2 255 / 0.45)",
-	"oklch(0.6 0.2 255 / 0.7)",
-	"oklch(0.6 0.2 255 / 0.88)",
-	"oklch(0.55 0.22 255)",
-];
-
-const MURAJAAH_HEAT = [
-	"oklch(0.97 0 0 / 0.4)",
-	"oklch(0.7 0.17 65 / 0.25)",
-	"oklch(0.7 0.17 65 / 0.45)",
-	"oklch(0.7 0.17 65 / 0.7)",
-	"oklch(0.7 0.17 65 / 0.88)",
-	"oklch(0.65 0.18 62)",
-];
-
-const HEAT_LEGEND: [string, number][] = [
-	["bg-muted/30", 0],
-	["bg-stone-400/60", 1],
-	["bg-stone-500/70", 2],
-	["bg-stone-500", 3],
-	["bg-stone-600", 4],
-	["bg-stone-700", 5],
-];
-
-function heatZiyadah(count: number): string {
-	const i = Math.min(count, 5);
-	return ZIYADAH_HEAT[i] ?? "oklch(0.97 0 0 / 0.4)";
-}
-
-function heatMurajaah(count: number): string {
-	const i = Math.min(count, 5);
-	return MURAJAAH_HEAT[i] ?? "oklch(0.97 0 0 / 0.4)";
-}
-
-function heatTotal(count: number): string {
-	const i = Math.min(count, 5);
-	const scale = [
-		"oklch(0.97 0 0 / 0.4)",
-		"oklch(0.6 0.2 255 / 0.25)",
-		"oklch(0.6 0.2 255 / 0.5)",
-		"oklch(0.6 0.2 255 / 0.75)",
-		"oklch(0.55 0.22 255 / 0.88)",
-		"oklch(0.5 0.22 255)",
-	];
-	return scale[i] ?? "oklch(0.97 0 0 / 0.4)";
-}
-
-interface WeeklyDay {
-	day: string;
-	tanggal?: string;
-	ziyadah: number;
-	murajaah: number;
-}
-
-const DAY_NAMES = ["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"];
-
-function buildMonthGrid(data: WeeklyDay[]) {
-	const now = new Date();
-	const year = now.getFullYear();
-	const month = now.getMonth();
-	const firstDay = new Date(year, month, 1).getDay();
-
-	const weeks: (WeeklyDay | null)[][] = [];
-	let week: (WeeklyDay | null)[] = Array.from({ length: firstDay }, () => null);
-
-	for (const item of data) {
-		week.push(item);
-		if (week.length === 7) {
-			weeks.push([...week]);
-			week = [];
-		}
-	}
-	if (week.length > 0) {
-		while (week.length < 7) week.push(null);
-		weeks.push([...week]);
-	}
-
-	return weeks;
-}
-
-function HeatmapView({
-	data,
-	range,
-}: {
-	data: WeeklyDay[];
-	range: "week" | "month";
-}) {
-	if (range === "week") {
-		return (
-			<div className="space-y-3">
-				<div className="flex items-center gap-2">
-					<span className="w-20 shrink-0 text-xs font-medium text-muted-foreground">
-						Ziyadah
-					</span>
-					<div className="grid flex-1 grid-cols-7 gap-[3px]">
-						{data.map((d) => (
-							<div
-								key={`z-${d.day}`}
-								className="w-[10px] h-[10px]"
-								style={{ backgroundColor: heatZiyadah(d.ziyadah) }}
-								title={`${d.tanggal ?? d.day}: ${d.ziyadah} ziyadah`}
-							/>
-						))}
-					</div>
-				</div>
-				<div className="flex items-center gap-2">
-					<span className="w-20 shrink-0 text-xs font-medium text-muted-foreground">
-						Murajaah
-					</span>
-					<div className="grid flex-1 grid-cols-7 gap-[3px]">
-						{data.map((d) => (
-							<div
-								key={`m-${d.day}`}
-								className="w-[10px] h-[10px]"
-								style={{ backgroundColor: heatMurajaah(d.murajaah) }}
-								title={`${d.tanggal ?? d.day}: ${d.murajaah} murajaah`}
-							/>
-						))}
-					</div>
-				</div>
-				<div className="flex items-center gap-2">
-					<span className="w-20 shrink-0" />
-					<div className="grid flex-1 grid-cols-7 gap-[3px]">
-						{data.map((d) => (
-							<div
-								key={`label-${d.day}`}
-								className="text-center text-[0.55rem] text-muted-foreground"
-							>
-								{d.day}
-							</div>
-						))}
-					</div>
-				</div>
-				<div className="flex items-center gap-2 pt-1 text-[0.55rem] text-muted-foreground">
-					<span>0</span>
-					<div className="flex gap-[3px]">
-						{HEAT_LEGEND.filter(([, c]) => c > 0).map(([cls]) => (
-							<div key={cls} className={`size-2.5 rounded-sm ${cls}`} />
-						))}
-					</div>
-					<span>5+</span>
-				</div>
-			</div>
-		);
-	}
-
-	const weeks = buildMonthGrid(data);
-	return (
-		<div className="space-y-2">
-			<div className="grid grid-cols-7 gap-[3px]">
-				{DAY_NAMES.map((name) => (
-					<div
-						key={name}
-						className="text-center text-[0.55rem] font-medium text-muted-foreground"
-					>
-						{name}
-					</div>
-				))}
-			</div>
-			{weeks.map((week, wi) => (
-				<div
-					key={`wk-${week[0]?.day ?? wi}`}
-					className="grid grid-cols-7 gap-[3px]"
-				>
-					{week.map((d, di) =>
-						d ? (
-							<div
-								key={`m-${d.day}`}
-								className="w-[10px] h-[10px]"
-								style={{
-									backgroundColor: heatTotal(d.ziyadah + d.murajaah),
-								}}
-								title={`${d.tanggal ?? d.day}: ${d.ziyadah} ziyadah, ${d.murajaah} murajaah`}
-							/>
-						) : (
-							<div key={`e-${wi}-${di}`} className="w-[10px] h-[10px]" />
-						),
-					)}
-				</div>
-			))}
-			<div className="flex items-center gap-2 pt-1 text-[0.55rem] text-muted-foreground">
-				<span>0</span>
-				<div className="flex gap-[3px]">
-					{HEAT_LEGEND.filter(([, c]) => c > 0).map(([cls]) => (
-						<div key={cls} className={`size-2.5 rounded-sm ${cls}`} />
-					))}
-				</div>
-				<span>5+</span>
-			</div>
-		</div>
-	);
 }

@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { and, eq, gte, inArray, lte } from "drizzle-orm";
 import { auth } from "@/lib/auth/auth";
 import { db } from "@/lib/db";
-import { setoran, siswa } from "@/lib/db/schema";
+import { presensi, setoran, siswa } from "@/lib/db/schema";
 import { SURAH_DATA } from "@/lib/surah-data";
 
 export const Route = createFileRoute("/api/setoran")({
@@ -110,6 +110,26 @@ export const Route = createFileRoute("/api/setoran")({
 							catatan: body.catatan,
 						})
 						.returning();
+
+					// Auto-mark present: if no presensi yet for this date, insert "Hadir"
+					const [existingPresensi] = await db
+						.select({ id: presensi.id })
+						.from(presensi)
+						.where(
+							and(
+								eq(presensi.siswaId, body.siswaId),
+								eq(presensi.tanggal, body.tanggal),
+							),
+						)
+						.limit(1);
+					if (!existingPresensi) {
+						await db.insert(presensi).values({
+							siswaId: body.siswaId,
+							tanggal: body.tanggal,
+							status: "Hadir",
+						});
+					}
+
 					return Response.json(row, { status: 201 });
 				} catch (e) {
 					console.error("POST /api/setoran error:", e);
