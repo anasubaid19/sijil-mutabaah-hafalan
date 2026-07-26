@@ -1,39 +1,16 @@
 import { Search02Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SURAH_DATA } from "@/lib/surah-data";
 
-interface AyahData {
-	number: number;
-	text: string;
-	surah: {
-		number: number;
-		name: string;
-		englishName: string;
-		englishNameTranslation: string;
-	};
-	numberInSurah: number;
+interface VerseMeta {
+	verse_key: string;
+	chapter_id: number;
+	verse_number: number;
 	juz: number;
 	page: number;
-}
-
-interface PageData {
-	number: number;
-	topPageSurah: {
-		number: number;
-		name: string;
-		englishName: string;
-	};
-	topPageJuz: number;
-	ayahs: AyahData[];
-}
-
-interface SurahSearchResult {
-	number: number;
-	name: string;
-	englishName: string;
 }
 
 interface MushafPanelProps {
@@ -46,10 +23,21 @@ interface MushafPanelProps {
 }
 
 const TOTAL_PAGES = 604;
+const SVG_BASE = "https://api.islamic.app/v1/mushaf/page";
+const VERSE_BASE = "https://api.islamic.app/v1/verses/by_page";
 
 function surahNumberToName(n: number): string {
 	const s = SURAH_DATA.find((s) => s.number === n);
 	return s?.name ?? `Surah ${n}`;
+}
+
+function parseAyahKey(key: string): { surah: number; ayat: number } | null {
+	const parts = key.split(":");
+	if (parts.length !== 2) return null;
+	const surah = Number(parts[0]);
+	const ayat = Number(parts[1]);
+	if (!surah || !ayat) return null;
+	return { surah, ayat };
 }
 
 export function MushafPanel({
@@ -59,100 +47,156 @@ export function MushafPanel({
 	mode,
 }: MushafPanelProps) {
 	const [page, setPage] = useState(1);
-	const [data, setData] = useState<PageData | null>(null);
+	const [svgHtml, setSvgHtml] = useState<string | null>(null);
+	const [verses, setVerses] = useState<VerseMeta[]>([]);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
-	const [start, setStart] = useState<{ page: number; ayahIdx: number } | null>(
-		null,
-	);
-	const [end, setEnd] = useState<{ page: number; ayahIdx: number } | null>(
-		null,
-	);
+	const [startKey, setStartKey] = useState<string | null>(null);
+	const [endKey, setEndKey] = useState<string | null>(null);
 	const [pageInput, setPageInput] = useState("");
 	const [searchQuery, setSearchQuery] = useState("");
-	const [searchResults, setSearchResults] = useState<SurahSearchResult[]>([]);
+	const [searchResults, setSearchResults] = useState<
+		{ number: number; name: string }[]
+	>([]);
 	const [showSearch, setShowSearch] = useState(false);
+	const svgContainerRef = useRef<HTMLDivElement>(null);
 
-	// Fetch page data
+	// Fetch SVG + verse metadata
 	useEffect(() => {
 		if (!open) return;
 		let cancelled = false;
 		setLoading(true);
 		setError(null);
-		fetch(`https://api.quranhub.com/v1/page/${page}`)
-			.then((r) => r.json())
-			.then((json) => {
+		setStartKey(null);
+		setEndKey(null);
+
+		Promise.all([
+			fetch(`${SVG_BASE}/${page}.svg?font=uthmani&theme=light&width=720`).then(
+				(r) => {
+					if (!r.ok) throw new Error("SVG fetch failed");
+					return r.text();
+				},
+			),
+			fetch(`${VERSE_BASE}/${page}`)
+				.then((r) => r.json())
+				.then((j) => j.data?.verses ?? []),
+		])
+			.then(([svg, v]) => {
 				if (cancelled) return;
-				if (json.code === 200 && json.data) {
-					setData(json.data);
-				} else {
-					setError("Gagal memuat halaman");
-				}
+				setSvgHtml(svg);
+				setVerses(v);
 			})
 			.catch(() => {
-				if (!cancelled) setError("Gagal menghubungi API");
+				if (!cancelled) setError("Gagal memuat halaman");
 			})
 			.finally(() => {
 				if (!cancelled) setLoading(false);
 			});
+
 		return () => {
 			cancelled = true;
 		};
 	}, [open, page]);
 
-	// Reset selection on page change
+	// Highlight selected ayat in SVG DOM
+	// ponytail: svgHtml dependency needed — effect queries DOM after SVG renders
 	useEffect(() => {
-		setStart(null);
-		setEnd(null);
-	}, [page]);
+		void svgHtml; // biome false positive — svgHtml triggers re-render of DOM we query
+		if (!svgContainerRef.current) return;
+		const container = svgContainerRef.current;
 
-	const ayahs = useMemo(() => data?.ayahs ?? [], [data]);
+		// Remove old highlights
+		container.querySelectorAll("[data-ayah-highlight]").forEach((el) => {
+			el.removeAttribute("data-ayah-highlight");
+			(el as HTMLElement).style.removeProperty("fill");
+			(el as HTMLElement).style.removeProperty("opacity");
+		});
 
-	const handleAyahTap = useCallback(
-		(idx: number) => {
-			if (mode !== "input") return;
-			if (!start || (start && end)) {
-				setStart({ page, ayahIdx: idx });
-				setEnd(null);
-			} else {
-				if (idx === start.ayahIdx) return;
-				if (idx < start.ayahIdx) {
-					setEnd({ ...start });
-					setStart({ page, ayahIdx: idx });
-				} else {
-					setEnd({ page, ayahIdx: idx });
+		if (!startKey) return;
+
+		const allTspans = Array.from(
+			container.querySelectorAll<SVGTSpanElement>("tspan[data-ayah]"),
+		);
+
+		if (endKey) {
+			const sParsed = parseAyahKey(startKey);
+			const eParsed = parseAyahKey(endKey);
+			if (!sParsed || !eParsed) return;
+
+			const sNum = sParsed.surah * 1000 + sParsed.ayat;
+			const eNum = eParsed.surah * 1000 + eParsed.ayat;
+			const minNum = Math.min(sNum, eNum);
+			const maxNum = Math.max(sNum, eNum);
+
+			for (const tspan of allTspans) {
+				const key = tspan.getAttribute("data-ayah");
+				if (!key) continue;
+				const parsed = parseAyahKey(key);
+				if (!parsed) continue;
+				const num = parsed.surah * 1000 + parsed.ayat;
+				if (num >= minNum && num <= maxNum) {
+					tspan.setAttribute("data-ayah-highlight", "range");
+					tspan.style.fill = "#2563eb";
+					tspan.style.opacity = "0.85";
 				}
 			}
-		},
-		[start, end, page, mode],
-	);
+		} else {
+			// Highlight only start ayah
+			for (const tspan of allTspans) {
+				if (tspan.getAttribute("data-ayah") === startKey) {
+					tspan.setAttribute("data-ayah-highlight", "start");
+					tspan.style.fill = "#2563eb";
+					tspan.style.opacity = "0.85";
+					break;
+				}
+			}
+		}
+	}, [startKey, endKey, svgHtml]);
 
-	const isAyahSelected = useCallback(
-		(idx: number) => {
-			if (!start) return false;
-			if (!end) return start.page === page && start.ayahIdx === idx;
-			const sIdx = start.page === page ? start.ayahIdx : -1;
-			const eIdx = end.page === page ? end.ayahIdx : -1;
-			if (sIdx === -1 || eIdx === -1) return false;
-			return idx >= Math.min(sIdx, eIdx) && idx <= Math.max(sIdx, eIdx);
+	// Event delegation for ayah clicks on SVG
+	const handleSvgClick = useCallback(
+		(e: React.MouseEvent<HTMLDivElement>) => {
+			if (mode !== "input") return;
+			const target = e.target as HTMLElement;
+			const tspan = target.closest<SVGTSpanElement>("tspan[data-ayah]");
+			if (!tspan) return;
+
+			const key = tspan.getAttribute("data-ayah");
+			if (!key) return;
+
+			if (!startKey || (startKey && endKey)) {
+				// First click or reset
+				setStartKey(key);
+				setEndKey(null);
+			} else {
+				// Second click
+				if (key === startKey) return;
+				setEndKey(key);
+			}
 		},
-		[start, end, page],
+		[startKey, endKey, mode],
 	);
 
 	const selectionSummary = useMemo(() => {
-		if (!start || !end || ayahs.length === 0) return null;
-		const sAyah = ayahs[start.ayahIdx];
-		const eAyah = ayahs[end.ayahIdx];
-		if (!sAyah || !eAyah) return null;
-		const surahName = surahNumberToName(sAyah.surah.number);
+		if (!startKey || !endKey) return null;
+		const sParsed = parseAyahKey(startKey);
+		const eParsed = parseAyahKey(endKey);
+		if (!sParsed || !eParsed) return null;
+
+		// Ensure correct order
+		const sNum = sParsed.surah * 1000 + sParsed.ayat;
+		const eNum = eParsed.surah * 1000 + eParsed.ayat;
+		const first = sNum <= eNum ? sParsed : eParsed;
+		const last = sNum <= eNum ? eParsed : sParsed;
+
 		return {
-			surah: surahName,
-			surahNumber: sAyah.surah.number,
-			ayatAwal: sAyah.numberInSurah,
-			ayatAkhir: eAyah.numberInSurah,
-			sameSurah: sAyah.surah.number === eAyah.surah.number,
+			surah: surahNumberToName(first.surah),
+			surahNumber: first.surah,
+			ayatAwal: first.ayat,
+			ayatAkhir: last.ayat,
+			sameSurah: first.surah === last.surah,
 		};
-	}, [start, end, ayahs]);
+	}, [startKey, endKey]);
 
 	const handleUse = useCallback(() => {
 		if (!selectionSummary) return;
@@ -166,10 +210,7 @@ export function MushafPanel({
 	const jumpToSurah = useCallback((surahNumber: number) => {
 		const s = SURAH_DATA.find((s) => s.number === surahNumber);
 		if (!s) return;
-		const firstPage = s.juzStart;
-		// Approximate: use a conservative page estimate
-		// ponytail: simple heuristic — first page of juz, refine if needed
-		setPage(firstPage);
+		setPage(s.pageStart);
 		setShowSearch(false);
 		setSearchQuery("");
 	}, []);
@@ -181,20 +222,14 @@ export function MushafPanel({
 			return;
 		}
 		const lower = q.toLowerCase();
-		const results: SurahSearchResult[] = [];
-		for (let i = 1; i <= 114; i++) {
-			const s = SURAH_DATA.find((s) => s.number === i);
-			if (!s) continue;
+		const results: { number: number; name: string }[] = [];
+		for (const s of SURAH_DATA) {
 			if (
 				s.name.toLowerCase().includes(lower) ||
 				s.name.includes(q) ||
 				String(s.number) === q
 			) {
-				results.push({
-					number: s.number,
-					name: s.name,
-					englishName: s.name,
-				});
+				results.push({ number: s.number, name: s.name });
 				if (results.length >= 5) break;
 			}
 		}
@@ -210,6 +245,11 @@ export function MushafPanel({
 	}, [pageInput]);
 
 	if (!open) return null;
+
+	// Get top surah from first verse on page
+	const topSurah =
+		verses.length > 0 ? surahNumberToName(verses[0].chapter_id) : "";
+	const topJuz = verses.length > 0 ? verses[0].juz : 0;
 
 	return (
 		<div className="flex flex-col border rounded-xl overflow-hidden bg-card shadow-sm mt-3">
@@ -307,23 +347,26 @@ export function MushafPanel({
 			)}
 
 			{/* Top surah banner */}
-			{data?.topPageSurah && (
+			{topSurah && (
 				<div className="px-3 py-1.5 border-b bg-muted/20 flex items-center gap-2">
-					<span className="text-xs text-muted-foreground">
-						{data.topPageSurah.name}
-						{ayahs.length > 0 &&
-						ayahs[0].surah.number !== data.topPageSurah.number
-							? ` – ${ayahs[0].surah.name}`
-							: ""}
-					</span>
-					<span className="text-xs text-muted-foreground">
-						· Juz {data.topPageJuz}
-					</span>
+					<span className="text-xs text-muted-foreground">{topSurah}</span>
+					<span className="text-xs text-muted-foreground">· Juz {topJuz}</span>
 				</div>
 			)}
 
-			{/* Ayahs */}
-			<div className="px-3 py-3 max-h-80 overflow-y-auto">
+			{/* SVG Mushaf — interactive via event delegation on tspan[data-ayah] */}
+			{/* biome-ignore lint/a11y/noStaticElementInteractions: click handler delegates to tspan[data-ayah] */}
+			<div
+				ref={svgContainerRef}
+				onClick={handleSvgClick}
+				onKeyDown={(e) => {
+					if (e.key === "Enter" || e.key === " ")
+						handleSvgClick(e as unknown as React.MouseEvent<HTMLDivElement>);
+				}}
+				role="application"
+				tabIndex={mode === "input" ? 0 : undefined}
+				className={`px-3 py-3 max-h-[70vh] overflow-auto ${mode === "input" ? "cursor-pointer" : ""}`}
+			>
 				{loading && (
 					<div className="text-center text-sm text-muted-foreground py-6">
 						Memuat halaman {page}...
@@ -334,57 +377,12 @@ export function MushafPanel({
 						{error}
 					</div>
 				)}
-				{!loading && !error && ayahs.length === 0 && (
-					<div className="text-center text-sm text-muted-foreground py-6">
-						Tidak ada data
-					</div>
-				)}
-				{!loading && !error && ayahs.length > 0 && (
-					<div className="space-y-2" dir="rtl">
-						{ayahs.map((ayah, idx) => {
-							const selected = isAyahSelected(idx);
-							const isStart = start?.page === page && start.ayahIdx === idx;
-							const isEnd = end?.page === page && end.ayahIdx === idx;
-							const borderClass =
-								isStart && isEnd
-									? "ring-2 ring-primary ring-offset-1"
-									: isStart
-										? "ring-2 ring-primary ring-offset-ltr ring-offset-1"
-										: isEnd
-											? "ring-2 ring-primary ring-offset-rtl ring-offset-1"
-											: selected
-												? "ring-1 ring-primary/50"
-												: "";
-							return (
-								<button
-									key={ayah.number}
-									type="button"
-									onClick={() => handleAyahTap(idx)}
-									className={`w-full text-left p-3 rounded-lg border transition-all ${
-										mode === "input"
-											? "cursor-pointer hover:bg-accent/50"
-											: "cursor-default"
-									} ${
-										selected
-											? "bg-primary/5 border-primary/30"
-											: "bg-background"
-									} ${borderClass}`}
-								>
-									<div className="font-arabic text-xl leading-loose text-foreground">
-										{ayah.text}
-										<span className="inline-flex items-center justify-center w-7 h-7 mr-2 text-xs font-sans bg-primary/10 text-primary rounded-full align-middle">
-											{ayah.numberInSurah}
-										</span>
-									</div>
-									{ayah.surah.englishName !== ayahs[0]?.surah.englishName && (
-										<div className="text-xs text-muted-foreground mt-1 mr-2">
-											— {ayah.surah.name}
-										</div>
-									)}
-								</button>
-							);
-						})}
-					</div>
+				{!loading && !error && svgHtml && (
+					<div
+						// biome-ignore lint/security/noDangerouslySetInnerHtml: islamic.app SVGs are safe, rendered server-side
+						dangerouslySetInnerHTML={{ __html: svgHtml }}
+						className="flex justify-center [&_svg]:max-w-full [&_svg]:h-auto"
+					/>
 				)}
 			</div>
 
@@ -400,7 +398,7 @@ export function MushafPanel({
 									{selectionSummary.ayatAkhir}
 								</span>
 							</span>
-						) : start ? (
+						) : startKey ? (
 							<span className="text-xs">Tap ayat terakhir</span>
 						) : (
 							<span className="text-xs">Tap ayat pertama</span>
@@ -411,10 +409,10 @@ export function MushafPanel({
 							size="sm"
 							variant="ghost"
 							onClick={() => {
-								setStart(null);
-								setEnd(null);
+								setStartKey(null);
+								setEndKey(null);
 							}}
-							disabled={!start}
+							disabled={!startKey}
 						>
 							Reset
 						</Button>
