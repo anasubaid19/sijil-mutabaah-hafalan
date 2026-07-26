@@ -182,7 +182,7 @@ function MurajaahPage() {
 						value={selectedSiswa}
 						onChange={(e) => setSelectedSiswa(e.target.value)}
 						required
-						className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+						className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-xs transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring md:text-sm"
 					>
 						<option value="">Pilih siswa...</option>
 						{siswaList.map((s) => (
@@ -357,7 +357,7 @@ function MurajaahPage() {
 					onChange={(e) => setCatatan(e.target.value)}
 					placeholder="Catatan tambahan..."
 					rows={3}
-					className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring resize-none"
+					className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-base shadow-xs placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring resize-none md:text-sm"
 				/>
 			</div>
 

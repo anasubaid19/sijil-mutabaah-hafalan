@@ -292,7 +292,7 @@ export function MushafPanel({
 							if (e.key === "Enter") handlePageJump();
 						}}
 						placeholder="#"
-						className="w-12 text-xs text-center border rounded px-1 py-0.5 bg-background"
+						className="w-14 text-base text-center border rounded px-1 py-1 bg-background md:text-sm"
 					/>
 					<button
 						type="button"

@@ -26,6 +26,10 @@ export const Route = createRootRoute({
 						content="default"
 					/>
 					<meta name="apple-mobile-web-app-title" content="Sijil" />
+					<meta
+						name="viewport"
+						content="width=device-width, initial-scale=1, maximum-scale=1"
+					/>
 					<link rel="apple-touch-icon" href="/logo-sijil.svg" />
 					<HeadContent />
 				</head>
