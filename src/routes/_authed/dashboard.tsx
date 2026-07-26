@@ -815,7 +815,7 @@ function HeatmapView({
 						{data.map((d) => (
 							<div
 								key={`z-${d.day}`}
-								className="w-[10px] h-[10px] rounded-[2px] border border-border/20"
+								className="w-[10px] h-[10px]"
 								style={{ backgroundColor: heatZiyadah(d.ziyadah) }}
 								title={`${d.tanggal ?? d.day}: ${d.ziyadah} ziyadah`}
 							/>
@@ -830,7 +830,7 @@ function HeatmapView({
 						{data.map((d) => (
 							<div
 								key={`m-${d.day}`}
-								className="w-[10px] h-[10px] rounded-[2px] border border-border/20"
+								className="w-[10px] h-[10px]"
 								style={{ backgroundColor: heatMurajaah(d.murajaah) }}
 								title={`${d.tanggal ?? d.day}: ${d.murajaah} murajaah`}
 							/>
@@ -885,7 +885,7 @@ function HeatmapView({
 						d ? (
 							<div
 								key={`m-${d.day}`}
-								className="w-[10px] h-[10px] rounded-[2px] border border-border/20"
+								className="w-[10px] h-[10px]"
 								style={{
 									backgroundColor: heatTotal(d.ziyadah + d.murajaah),
 								}}
