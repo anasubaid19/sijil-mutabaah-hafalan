@@ -811,11 +811,11 @@ function HeatmapView({
 					<span className="w-20 shrink-0 text-xs font-medium text-muted-foreground">
 						Ziyadah
 					</span>
-					<div className="grid flex-1 grid-cols-7 gap-1.5">
+					<div className="grid flex-1 grid-cols-7 gap-[3px]">
 						{data.map((d) => (
 							<div
 								key={`z-${d.day}`}
-								className="aspect-square rounded-md"
+								className="w-[10px] h-[10px] rounded-[2px] border border-border/20"
 								style={{ backgroundColor: heatZiyadah(d.ziyadah) }}
 								title={`${d.tanggal ?? d.day}: ${d.ziyadah} ziyadah`}
 							/>
@@ -826,11 +826,11 @@ function HeatmapView({
 					<span className="w-20 shrink-0 text-xs font-medium text-muted-foreground">
 						Murajaah
 					</span>
-					<div className="grid flex-1 grid-cols-7 gap-1.5">
+					<div className="grid flex-1 grid-cols-7 gap-[3px]">
 						{data.map((d) => (
 							<div
 								key={`m-${d.day}`}
-								className="aspect-square rounded-md"
+								className="w-[10px] h-[10px] rounded-[2px] border border-border/20"
 								style={{ backgroundColor: heatMurajaah(d.murajaah) }}
 								title={`${d.tanggal ?? d.day}: ${d.murajaah} murajaah`}
 							/>
@@ -839,20 +839,20 @@ function HeatmapView({
 				</div>
 				<div className="flex items-center gap-2">
 					<span className="w-20 shrink-0" />
-					<div className="grid flex-1 grid-cols-7 gap-1.5">
+					<div className="grid flex-1 grid-cols-7 gap-[3px]">
 						{data.map((d) => (
 							<div
 								key={`label-${d.day}`}
-								className="text-center text-[0.65rem] text-muted-foreground"
+								className="text-center text-[0.55rem] text-muted-foreground"
 							>
 								{d.day}
 							</div>
 						))}
 					</div>
 				</div>
-				<div className="flex items-center gap-2 pt-1 text-[0.65rem] text-muted-foreground">
+				<div className="flex items-center gap-2 pt-1 text-[0.55rem] text-muted-foreground">
 					<span>0</span>
-					<div className="flex gap-0.5">
+					<div className="flex gap-[3px]">
 						{HEAT_LEGEND.filter(([, c]) => c > 0).map(([cls]) => (
 							<div key={cls} className={`size-2.5 rounded-sm ${cls}`} />
 						))}
@@ -866,11 +866,11 @@ function HeatmapView({
 	const weeks = buildMonthGrid(data);
 	return (
 		<div className="space-y-2">
-			<div className="grid grid-cols-7 gap-1.5">
+			<div className="grid grid-cols-7 gap-[3px]">
 				{DAY_NAMES.map((name) => (
 					<div
 						key={name}
-						className="text-center text-[0.65rem] font-medium text-muted-foreground"
+						className="text-center text-[0.55rem] font-medium text-muted-foreground"
 					>
 						{name}
 					</div>
@@ -879,27 +879,27 @@ function HeatmapView({
 			{weeks.map((week, wi) => (
 				<div
 					key={`wk-${week[0]?.day ?? wi}`}
-					className="grid grid-cols-7 gap-1.5"
+					className="grid grid-cols-7 gap-[3px]"
 				>
 					{week.map((d, di) =>
 						d ? (
 							<div
 								key={`m-${d.day}`}
-								className="aspect-square rounded-md"
+								className="w-[10px] h-[10px] rounded-[2px] border border-border/20"
 								style={{
 									backgroundColor: heatTotal(d.ziyadah + d.murajaah),
 								}}
 								title={`${d.tanggal ?? d.day}: ${d.ziyadah} ziyadah, ${d.murajaah} murajaah`}
 							/>
 						) : (
-							<div key={`e-${wi}-${di}`} className="aspect-square" />
+							<div key={`e-${wi}-${di}`} className="w-[10px] h-[10px]" />
 						),
 					)}
 				</div>
 			))}
-			<div className="flex items-center gap-2 pt-1 text-[0.65rem] text-muted-foreground">
+			<div className="flex items-center gap-2 pt-1 text-[0.55rem] text-muted-foreground">
 				<span>0</span>
-				<div className="flex gap-0.5">
+				<div className="flex gap-[3px]">
 					{HEAT_LEGEND.filter(([, c]) => c > 0).map(([cls]) => (
 						<div key={cls} className={`size-2.5 rounded-sm ${cls}`} />
 					))}
