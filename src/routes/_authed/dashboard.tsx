@@ -8,6 +8,18 @@ import {
 import { HugeiconsIcon } from "@hugeicons/react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
+import {
+	Bar,
+	BarChart,
+	CartesianGrid,
+	Legend,
+	Line,
+	LineChart,
+	ResponsiveContainer,
+	Tooltip,
+	XAxis,
+	YAxis,
+} from "recharts";
 import { MushafPanel } from "@/components/mushaf-panel";
 import { Button } from "@/components/ui/button";
 import { calcProgress, getSurahName } from "@/lib/progress";
@@ -78,6 +90,9 @@ function DashboardPage() {
 	const [presensiList, setPresensiList] = useState<Presensi[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [mushafOpen, setMushafOpen] = useState(false);
+	const [chartType, setChartType] = useState<"heatmap" | "bar" | "line">(
+		"heatmap",
+	);
 
 	const today = todayStr();
 
@@ -327,72 +342,108 @@ function DashboardPage() {
 				)}
 			</div>
 
-			{/* Weekly Heatmap */}
+			{/* Weekly: Heatmap / Bar / Line */}
 			<div className="rounded-2xl border bg-card p-5 shadow-xs">
-				<h2 className="mb-4 text-base font-semibold">Setoran Minggu Ini</h2>
-				{weeklyData.length > 0 ? (
-					<div className="space-y-3">
-						{/* Ziyadah row */}
-						<div className="flex items-center gap-2">
-							<span className="w-20 shrink-0 text-xs font-medium text-muted-foreground">
-								Ziyadah
-							</span>
-							<div className="grid flex-1 grid-cols-7 gap-1.5">
-								{weeklyData.map((d) => (
-									<div
-										key={`z-${d.day}`}
-										className="aspect-square rounded-md"
-										style={{
-											backgroundColor: heatZiyadah(d.ziyadah as number),
-										}}
-										title={`${d.tanggal ?? d.day}: ${d.ziyadah} ziyadah`}
-									/>
-								))}
-							</div>
-						</div>
-						{/* Murajaah row */}
-						<div className="flex items-center gap-2">
-							<span className="w-20 shrink-0 text-xs font-medium text-muted-foreground">
-								Murajaah
-							</span>
-							<div className="grid flex-1 grid-cols-7 gap-1.5">
-								{weeklyData.map((d) => (
-									<div
-										key={`m-${d.day}`}
-										className="aspect-square rounded-md"
-										style={{
-											backgroundColor: heatMurajaah(d.murajaah as number),
-										}}
-										title={`${d.tanggal ?? d.day}: ${d.murajaah} murajaah`}
-									/>
-								))}
-							</div>
-						</div>
-						{/* Day labels */}
-						<div className="flex items-center gap-2">
-							<span className="w-20 shrink-0" />
-							<div className="grid flex-1 grid-cols-7 gap-1.5">
-								{weeklyData.map((d) => (
-									<div
-										key={`label-${d.day}`}
-										className="text-center text-[0.65rem] text-muted-foreground"
-									>
-										{d.day}
-									</div>
-								))}
-							</div>
-						</div>
-						{/* Color legend */}
-						<div className="flex items-center gap-2 pt-1 text-[0.65rem] text-muted-foreground">
-							<span>0</span>
-							<div className="flex gap-0.5">
-								{HEAT_LEGEND.filter(([, c]) => c > 0).map(([cls]) => (
-									<div key={cls} className={`size-2.5 rounded-sm ${cls}`} />
-								))}
-							</div>
-							<span>5+</span>
-						</div>
+				<div className="mb-4 flex items-center justify-between">
+					<h2 className="text-base font-semibold">Setoran Minggu Ini</h2>
+					<div className="flex rounded-lg border bg-muted/50 p-0.5">
+						{(
+							[
+								["heatmap", "Heatmap"],
+								["bar", "Bar"],
+								["line", "Line"],
+							] as const
+						).map(([key, label]) => (
+							<button
+								key={key}
+								type="button"
+								onClick={() => setChartType(key)}
+								className={`rounded-md px-3 py-1 text-xs font-medium transition-colors ${
+									chartType === key
+										? "bg-background text-foreground shadow-sm"
+										: "text-muted-foreground hover:text-foreground"
+								}`}
+							>
+								{label}
+							</button>
+						))}
 					</div>
+				</div>
+
+				{weeklyData.length > 0 ? (
+					<>
+						{chartType === "heatmap" && <HeatmapView data={weeklyData} />}
+						{chartType === "bar" && (
+							<ResponsiveContainer width="100%" height={240}>
+								<BarChart data={weeklyData}>
+									<CartesianGrid
+										strokeDasharray="3 3"
+										className="[stroke:var(--border)]"
+									/>
+									<XAxis dataKey="day" className="text-xs" />
+									<YAxis className="text-xs" />
+									<Tooltip
+										contentStyle={{
+											borderRadius: "0.75rem",
+											border: "1px solid var(--border)",
+											background: "var(--card)",
+											fontSize: "0.875rem",
+										}}
+									/>
+									<Legend />
+									<Bar
+										dataKey="ziyadah"
+										name="Ziyadah"
+										fill="#2563eb"
+										radius={[4, 4, 0, 0]}
+									/>
+									<Bar
+										dataKey="murajaah"
+										name="Murajaah"
+										fill="#f59e0b"
+										radius={[4, 4, 0, 0]}
+									/>
+								</BarChart>
+							</ResponsiveContainer>
+						)}
+						{chartType === "line" && (
+							<ResponsiveContainer width="100%" height={240}>
+								<LineChart data={weeklyData}>
+									<CartesianGrid
+										strokeDasharray="3 3"
+										className="[stroke:var(--border)]"
+									/>
+									<XAxis dataKey="day" className="text-xs" />
+									<YAxis className="text-xs" />
+									<Tooltip
+										contentStyle={{
+											borderRadius: "0.75rem",
+											border: "1px solid var(--border)",
+											background: "var(--card)",
+											fontSize: "0.875rem",
+										}}
+									/>
+									<Legend />
+									<Line
+										type="monotone"
+										dataKey="ziyadah"
+										name="Ziyadah"
+										stroke="#2563eb"
+										strokeWidth={2}
+										dot={{ fill: "#2563eb", r: 4 }}
+									/>
+									<Line
+										type="monotone"
+										dataKey="murajaah"
+										name="Murajaah"
+										stroke="#f59e0b"
+										strokeWidth={2}
+										dot={{ fill: "#f59e0b", r: 4 }}
+									/>
+								</LineChart>
+							</ResponsiveContainer>
+						)}
+					</>
 				) : (
 					<p className="py-8 text-center text-sm text-muted-foreground">
 						Belum ada data minggu ini
@@ -636,4 +687,70 @@ function heatZiyadah(count: number): string {
 function heatMurajaah(count: number): string {
 	const i = Math.min(count, 5);
 	return MURAJAAH_HEAT[i] ?? "oklch(0.97 0 0 / 0.4)";
+}
+
+interface WeeklyDay {
+	day: string;
+	tanggal?: string;
+	ziyadah: number;
+	murajaah: number;
+}
+
+function HeatmapView({ data }: { data: WeeklyDay[] }) {
+	return (
+		<div className="space-y-3">
+			<div className="flex items-center gap-2">
+				<span className="w-20 shrink-0 text-xs font-medium text-muted-foreground">
+					Ziyadah
+				</span>
+				<div className="grid flex-1 grid-cols-7 gap-1.5">
+					{data.map((d) => (
+						<div
+							key={`z-${d.day}`}
+							className="aspect-square rounded-md"
+							style={{ backgroundColor: heatZiyadah(d.ziyadah) }}
+							title={`${d.tanggal ?? d.day}: ${d.ziyadah} ziyadah`}
+						/>
+					))}
+				</div>
+			</div>
+			<div className="flex items-center gap-2">
+				<span className="w-20 shrink-0 text-xs font-medium text-muted-foreground">
+					Murajaah
+				</span>
+				<div className="grid flex-1 grid-cols-7 gap-1.5">
+					{data.map((d) => (
+						<div
+							key={`m-${d.day}`}
+							className="aspect-square rounded-md"
+							style={{ backgroundColor: heatMurajaah(d.murajaah) }}
+							title={`${d.tanggal ?? d.day}: ${d.murajaah} murajaah`}
+						/>
+					))}
+				</div>
+			</div>
+			<div className="flex items-center gap-2">
+				<span className="w-20 shrink-0" />
+				<div className="grid flex-1 grid-cols-7 gap-1.5">
+					{data.map((d) => (
+						<div
+							key={`label-${d.day}`}
+							className="text-center text-[0.65rem] text-muted-foreground"
+						>
+							{d.day}
+						</div>
+					))}
+				</div>
+			</div>
+			<div className="flex items-center gap-2 pt-1 text-[0.65rem] text-muted-foreground">
+				<span>0</span>
+				<div className="flex gap-0.5">
+					{HEAT_LEGEND.filter(([, c]) => c > 0).map(([cls]) => (
+						<div key={cls} className={`size-2.5 rounded-sm ${cls}`} />
+					))}
+				</div>
+				<span>5+</span>
+			</div>
+		</div>
+	);
 }
