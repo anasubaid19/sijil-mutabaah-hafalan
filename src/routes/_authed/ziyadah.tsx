@@ -137,13 +137,8 @@ function ZiyadahPage() {
 
 		if (lintasMode) {
 			// Lintas surah: submit 2 setoran
-			if (!sampaiAyat || !lintasSurahEnd || !lintasSampaiAyat) {
+			if (!lintasSurahEnd || !lintasSampaiAyat) {
 				toast.error("Lengkapi Surah End dan Sampai Ayat");
-				return;
-			}
-			const sampaiErr = validateAyat(surahA, sampaiAyat);
-			if (sampaiErr) {
-				setSampaiAyatError(sampaiErr);
 				return;
 			}
 			const endSurah = findSurah(lintasSurahEnd);
@@ -170,7 +165,7 @@ function ZiyadahPage() {
 					tanggal,
 					surah: surahAData?.number ?? 0,
 					ayatAwal: Number.parseInt(dariAyat, 10) || 0,
-					ayatAkhir: Number.parseInt(sampaiAyat, 10) || 0,
+					ayatAkhir: surahAData?.ayatCount ?? 0,
 					status: gred,
 					catatan,
 				}),
@@ -314,7 +309,9 @@ function ZiyadahPage() {
 						</div>
 
 						{/* Surah, Dari Ayat, Sampai Ayat — Row 1 */}
-						<div className="grid gap-4 sm:grid-cols-3">
+						<div
+							className={`grid gap-4 ${lintasMode ? "sm:grid-cols-2" : "sm:grid-cols-3"}`}
+						>
 							<div className="relative space-y-2">
 								<label className="text-sm font-medium">Surah</label>
 								<Input
@@ -386,30 +383,6 @@ function ZiyadahPage() {
 									)}
 								</div>
 							)}
-							{lintasMode && (
-								<div className="space-y-2">
-									<label className="text-sm font-medium">Sampai Ayat</label>
-									<Input
-										type="text"
-										value={sampaiAyat}
-										onChange={(e) => {
-											setSampaiAyat(e.target.value);
-											setSampaiAyatError("");
-										}}
-										onBlur={() => {
-											const err = validateAyat(surahA, sampaiAyat);
-											setSampaiAyatError(err ?? "");
-										}}
-										placeholder="Ayat akhir surah ini"
-										required
-									/>
-									{sampaiAyatError && (
-										<p className="text-xs text-destructive">
-											{sampaiAyatError}
-										</p>
-									)}
-								</div>
-							)}
 						</div>
 
 						{/* Lintas Surah row 2 — Surah End + Sampai Ayat */}
@@ -422,9 +395,7 @@ function ZiyadahPage() {
 									<Input
 										type="text"
 										value={lintasSurahEnd}
-										onChange={(e) =>
-											handleLintasSurahEndChange(e.target.value)
-										}
+										onChange={(e) => handleLintasSurahEndChange(e.target.value)}
 										placeholder="Surah tujuan..."
 										required
 									/>
