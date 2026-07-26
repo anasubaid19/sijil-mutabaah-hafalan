@@ -2,11 +2,10 @@
 set -euo pipefail
 
 # Sijil Mutabaah — Server Setup
-# Usage: bash deploy/setup.sh [--domain DOMAIN] [--port PORT] [--app-dir DIR] [--db-name NAME] [--db-user USER]
+# Usage: bash deploy/setup.sh [--domain DOMAIN] [--app-dir DIR] [--db-name NAME] [--db-user USER]
 
 # Defaults
 DOMAIN=""
-PORT="3000"
 APP_DIR="/opt/sijil-mutabaah"
 DB_NAME="sijil_db"
 DB_USER="sijil"
@@ -15,7 +14,6 @@ DB_USER="sijil"
 while [[ $# -gt 0 ]]; do
     case $1 in
         --domain) DOMAIN="$2"; shift 2 ;;
-        --port) PORT="$2"; shift 2 ;;
         --app-dir) APP_DIR="$2"; shift 2 ;;
         --db-name) DB_NAME="$2"; shift 2 ;;
         --db-user) DB_USER="$2"; shift 2 ;;
@@ -32,9 +30,6 @@ if [ -z "$DOMAIN" ]; then
     echo "Error: domain is required"
     exit 1
 fi
-
-read -rp "Port [${PORT}]: " INPUT_PORT
-PORT="${INPUT_PORT:-$PORT}"
 
 read -rp "App directory [${APP_DIR}]: " INPUT_DIR
 APP_DIR="${INPUT_DIR:-$APP_DIR}"
@@ -54,7 +49,7 @@ fi
 echo ""
 echo "=== Konfigurasi ==="
 echo "  Domain:    $DOMAIN"
-echo "  Port:      $PORT"
+echo "  Port:      26726 (static)"
 echo "  App dir:   $APP_DIR"
 echo "  DB:        $DB_NAME (user: $DB_USER)"
 echo ""
@@ -103,7 +98,6 @@ if [ ! -f "$APP_DIR/.env" ]; then
 DATABASE_URL=postgresql://${DB_USER}:${DB_PASS}@localhost:5432/${DB_NAME}
 BETTER_AUTH_SECRET=${SECRET}
 BETTER_AUTH_URL=https://${DOMAIN}
-PORT=${PORT}
 TRUSTED_ORIGINS=https://${DOMAIN}
 EOF
     sudo chown "$SYSTEM_USER:$SYSTEM_USER" "$APP_DIR/.env"
@@ -125,7 +119,7 @@ sudo systemctl start sijil-mutabaah
 
 echo ""
 echo "=== Selesai! ==="
-echo "App berjalan di http://localhost:${PORT}"
+echo "App berjalan di http://localhost:26726"
 echo ""
 echo "Langkah selanjutnya:"
 echo "  1. Setup nginx: sudo cp $APP_DIR/deploy/nginx-sijil.conf /etc/nginx/conf.d/"

@@ -11,7 +11,7 @@ export default defineConfig({
 		tsconfigPaths: true,
 	},
 	server: {
-		port: Number(process.env.PORT) || 3000,
+		port: 26726,
 	},
 	optimizeDeps: {
 		exclude: ["@tanstack/start-server-core"],

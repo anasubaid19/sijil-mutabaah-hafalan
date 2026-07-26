@@ -28,7 +28,7 @@ bunx drizzle-kit push
 bun run dev
 ```
 
-App runs at `http://localhost:3000`.
+App runs at `http://localhost:26726`.
 
 ## Deployment
 
@@ -42,7 +42,6 @@ bash deploy/setup.sh
 
 The script will prompt you for:
 - **Domain** — e.g. `sijil.example.com`
-- **Port** — default `3000`
 - **DB credentials** — PostgreSQL user & password
 - **App directory** — default `/opt/sijil-mutabaah`
 
@@ -51,7 +50,6 @@ Or use flags for non-interactive setup:
 ```bash
 bash deploy/setup.sh \
   --domain sijil.example.com \
-  --port 3001 \
   --db-name sijil_db \
   --db-user sijil
 ```
@@ -75,7 +73,6 @@ bash deploy/setup.sh \
    DATABASE_URL=postgresql://sijil:yourpassword@localhost:5432/sijil_db
    BETTER_AUTH_SECRET=<random-secret>
    BETTER_AUTH_URL=https://sijil.example.com
-   PORT=3000
    TRUSTED_ORIGINS=https://sijil.example.com
    ```
 
@@ -119,7 +116,6 @@ sudo systemctl start sijil-mutabaah
 | `DATABASE_URL` | Yes | — | PostgreSQL connection string |
 | `BETTER_AUTH_SECRET` | Yes | — | Auth secret key (random string) |
 | `BETTER_AUTH_URL` | Yes | — | App URL (e.g. `https://sijil.example.com`) |
-| `PORT` | No | `3000` | Server port |
 | `TRUSTED_ORIGINS` | No | — | Comma-separated allowed origins |
 
 ## License
