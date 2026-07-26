@@ -20,6 +20,7 @@ import { Route as AuthedMurajaahRouteImport } from './routes/_authed/murajaah'
 import { Route as AuthedPengaturanRouteImport } from './routes/_authed/pengaturan'
 import { Route as AuthedSetupRouteImport } from './routes/_authed/setup'
 import { Route as AuthedZiyadahRouteImport } from './routes/_authed/ziyadah'
+import { Route as ApiExportPdfRouteImport } from './routes/api/export-pdf'
 import { Route as ApiParentAuthRouteImport } from './routes/api/parent-auth'
 import { Route as ApiParentDataRouteImport } from './routes/api/parent-data'
 import { Route as ApiPresensiRouteImport } from './routes/api/presensi'
@@ -84,6 +85,11 @@ const AuthedZiyadahRoute = AuthedZiyadahRouteImport.update({
   path: '/ziyadah',
   getParentRoute: () => AuthedRoute,
 } as any)
+const ApiExportPdfRoute = ApiExportPdfRouteImport.update({
+  id: '/api/export-pdf',
+  path: '/api/export-pdf',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiParentAuthRoute = ApiParentAuthRouteImport.update({
   id: '/api/parent-auth',
   path: '/api/parent-auth',
@@ -141,6 +147,7 @@ export interface FileRoutesByFullPath {
   '/pengaturan': typeof AuthedPengaturanRoute
   '/setup': typeof AuthedSetupRoute
   '/ziyadah': typeof AuthedZiyadahRoute
+  '/api/export-pdf': typeof ApiExportPdfRoute
   '/api/parent-auth': typeof ApiParentAuthRoute
   '/api/parent-data': typeof ApiParentDataRoute
   '/api/presensi': typeof ApiPresensiRoute
@@ -162,6 +169,7 @@ export interface FileRoutesByTo {
   '/pengaturan': typeof AuthedPengaturanRoute
   '/setup': typeof AuthedSetupRoute
   '/ziyadah': typeof AuthedZiyadahRoute
+  '/api/export-pdf': typeof ApiExportPdfRoute
   '/api/parent-auth': typeof ApiParentAuthRoute
   '/api/parent-data': typeof ApiParentDataRoute
   '/api/presensi': typeof ApiPresensiRoute
@@ -185,6 +193,7 @@ export interface FileRoutesById {
   '/_authed/pengaturan': typeof AuthedPengaturanRoute
   '/_authed/setup': typeof AuthedSetupRoute
   '/_authed/ziyadah': typeof AuthedZiyadahRoute
+  '/api/export-pdf': typeof ApiExportPdfRoute
   '/api/parent-auth': typeof ApiParentAuthRoute
   '/api/parent-data': typeof ApiParentDataRoute
   '/api/presensi': typeof ApiPresensiRoute
@@ -208,6 +217,7 @@ export interface FileRouteTypes {
     | '/pengaturan'
     | '/setup'
     | '/ziyadah'
+    | '/api/export-pdf'
     | '/api/parent-auth'
     | '/api/parent-data'
     | '/api/presensi'
@@ -229,6 +239,7 @@ export interface FileRouteTypes {
     | '/pengaturan'
     | '/setup'
     | '/ziyadah'
+    | '/api/export-pdf'
     | '/api/parent-auth'
     | '/api/parent-data'
     | '/api/presensi'
@@ -251,6 +262,7 @@ export interface FileRouteTypes {
     | '/_authed/pengaturan'
     | '/_authed/setup'
     | '/_authed/ziyadah'
+    | '/api/export-pdf'
     | '/api/parent-auth'
     | '/api/parent-data'
     | '/api/presensi'
@@ -268,6 +280,7 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   ParentRoute: typeof ParentRoute
   RegisterRoute: typeof RegisterRoute
+  ApiExportPdfRoute: typeof ApiExportPdfRoute
   ApiParentAuthRoute: typeof ApiParentAuthRoute
   ApiParentDataRoute: typeof ApiParentDataRoute
   ApiPresensiRoute: typeof ApiPresensiRoute
@@ -357,6 +370,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/ziyadah'
       preLoaderRoute: typeof AuthedZiyadahRouteImport
       parentRoute: typeof AuthedRoute
+    }
+    '/api/export-pdf': {
+      id: '/api/export-pdf'
+      path: '/api/export-pdf'
+      fullPath: '/api/export-pdf'
+      preLoaderRoute: typeof ApiExportPdfRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/api/parent-auth': {
       id: '/api/parent-auth'
@@ -451,6 +471,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   ParentRoute: ParentRoute,
   RegisterRoute: RegisterRoute,
+  ApiExportPdfRoute: ApiExportPdfRoute,
   ApiParentAuthRoute: ApiParentAuthRoute,
   ApiParentDataRoute: ApiParentDataRoute,
   ApiPresensiRoute: ApiPresensiRoute,

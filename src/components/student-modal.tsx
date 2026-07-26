@@ -1,11 +1,11 @@
-import { SURAH_DATA } from "@/lib/surah-data";
-import { calcProgress, getSurahName } from "@/lib/progress";
+import { toast } from "sonner";
 import {
 	Dialog,
 	DialogContent,
 	DialogHeader,
 	DialogTitle,
 } from "@/components/ui/dialog";
+import { calcProgress, getSurahName } from "@/lib/progress";
 
 interface Siswa {
 	id: string;
@@ -34,7 +34,6 @@ interface StudentModalProps {
 	onOpenChange: (open: boolean) => void;
 	siswa: Siswa | null;
 	setoranList: Setoran[];
-	onExportPdf?: () => void;
 }
 
 const STATUS_COLORS: Record<string, string> = {
@@ -63,7 +62,6 @@ export function StudentModal({
 	onOpenChange,
 	siswa,
 	setoranList,
-	onExportPdf,
 }: StudentModalProps) {
 	if (!siswa) return null;
 
@@ -144,10 +142,29 @@ export function StudentModal({
 					)}
 				</div>
 
-				{onExportPdf && (
+				{siswa && (
 					<button
 						type="button"
-						onClick={onExportPdf}
+						onClick={async () => {
+							try {
+								const res = await fetch("/api/export-pdf", {
+									method: "POST",
+									headers: { "Content-Type": "application/json" },
+									body: JSON.stringify({ type: "siswa", siswaId: siswa.id }),
+								});
+								if (!res.ok) throw new Error("Gagal");
+								const blob = await res.blob();
+								const url = URL.createObjectURL(blob);
+								const a = document.createElement("a");
+								a.href = url;
+								a.download = `Rapor_${siswa.nama.replace(/\s+/g, "_")}.pdf`;
+								a.click();
+								URL.revokeObjectURL(url);
+								toast.success("PDF berhasil diunduh!");
+							} catch {
+								toast.error("Gagal generate PDF");
+							}
+						}}
 						className="mt-2 w-full rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
 					>
 						Export PDF

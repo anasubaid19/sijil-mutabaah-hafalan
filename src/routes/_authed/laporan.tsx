@@ -13,12 +13,10 @@ import {
 	YAxis,
 } from "recharts";
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
-import { SURAH_DATA } from "@/lib/surah-data";
-import { calcProgress, getSurahName } from "@/lib/progress";
 import { StudentModal } from "@/components/student-modal";
-import { BookOpen01Icon } from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
+import { Button } from "@/components/ui/button";
+import { calcProgress } from "@/lib/progress";
+import { SURAH_DATA } from "@/lib/surah-data";
 
 interface Siswa {
 	id: string;
@@ -188,8 +186,25 @@ function LaporanPage() {
 		toast.success("CSV diekspor!");
 	}
 
-	function exportPDF() {
-		window.print();
+	async function exportPDF() {
+		try {
+			const res = await fetch("/api/export-pdf", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ type: "laporan" }),
+			});
+			if (!res.ok) throw new Error("Gagal generate PDF");
+			const blob = await res.blob();
+			const url = URL.createObjectURL(blob);
+			const a = document.createElement("a");
+			a.href = url;
+			a.download = `Laporan_${new Date().toISOString().split("T")[0]}.pdf`;
+			a.click();
+			URL.revokeObjectURL(url);
+			toast.success("PDF berhasil diunduh!");
+		} catch {
+			toast.error("Gagal generate PDF");
+		}
 	}
 
 	if (loading) {
@@ -561,7 +576,6 @@ function LaporanPage() {
 				}}
 				siswa={modalSiswa}
 				setoranList={setoranList.filter((r) => r.siswaId === modalSiswa?.id)}
-				onExportPdf={exportPDF}
 			/>
 		</div>
 	);
