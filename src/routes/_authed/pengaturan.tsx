@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { authClient } from "@/lib/auth/auth-client";
+import { SURAH_DATA } from "@/lib/surah-data";
 
 interface Siswa {
 	id: string;
@@ -15,6 +16,8 @@ interface Siswa {
 	target: number;
 	ziyadah: number;
 	murajaah: number;
+	mulaiHafalan?: string;
+	metodeProgress?: string;
 }
 
 interface UserProfile {
@@ -40,7 +43,9 @@ function PengaturanPage() {
 	// Siswa form
 	const [siswaNama, setSiswaNama] = useState("");
 	const [siswaUmur, setSiswaUmur] = useState("");
-	const [siswaTarget, setSiswaTarget] = useState("30");
+	const [siswaMetode, setSiswaMetode] = useState<"juz" | "surah">("juz");
+	const [siswaTargetFrom, setSiswaTargetFrom] = useState("1");
+	const [siswaTargetTo, setSiswaTargetTo] = useState("30");
 	const [siswaParentPw, setSiswaParentPw] = useState("");
 	const [editingSiswa, setEditingSiswa] = useState<string | null>(null);
 
@@ -106,10 +111,19 @@ function PengaturanPage() {
 		e.preventDefault();
 		if (!siswaNama.trim()) return;
 
+		const from =
+			siswaMetode === "juz"
+				? siswaTargetFrom
+				: SURAH_DATA.find(
+						(s) => s.number === Number.parseInt(siswaTargetFrom, 10),
+					)?.name || "Al-Fatihah";
+
 		const payload: Record<string, unknown> = {
 			nama: siswaNama,
 			umur: siswaUmur ? Number.parseInt(siswaUmur, 10) : undefined,
-			target: Number.parseInt(siswaTarget, 10) || 30,
+			mulaiHafalan: from,
+			target: Number.parseInt(siswaTargetTo, 10) || 30,
+			metodeProgress: siswaMetode,
 		};
 
 		if (siswaParentPw) {
@@ -138,7 +152,9 @@ function PengaturanPage() {
 
 		setSiswaNama("");
 		setSiswaUmur("");
-		setSiswaTarget("30");
+		setSiswaMetode("juz");
+		setSiswaTargetFrom("1");
+		setSiswaTargetTo("30");
 		setSiswaParentPw("");
 		const sRes = await fetch("/api/siswa");
 		setSiswaList(await sRes.json());
@@ -157,7 +173,19 @@ function PengaturanPage() {
 		setEditingSiswa(s.id);
 		setSiswaNama(s.nama);
 		setSiswaUmur(s.umur?.toString() || "");
-		setSiswaTarget(s.target.toString());
+		const metode = (s.metodeProgress === "surah" ? "surah" : "juz") as
+			| "juz"
+			| "surah";
+		setSiswaMetode(metode);
+		if (metode === "surah") {
+			const fromSurah = SURAH_DATA.find((sd) => sd.name === s.mulaiHafalan);
+			const toSurah = SURAH_DATA.find((sd) => sd.number === s.target);
+			setSiswaTargetFrom(fromSurah?.number.toString() || "1");
+			setSiswaTargetTo(toSurah?.number.toString() || "114");
+		} else {
+			setSiswaTargetFrom(s.mulaiHafalan || "1");
+			setSiswaTargetTo(s.target.toString());
+		}
 		setSiswaParentPw("");
 	}
 
@@ -321,15 +349,92 @@ function PengaturanPage() {
 							/>
 						</div>
 						<div className="space-y-1">
-							<label htmlFor="siswa-target" className="text-sm font-medium">
-								Target (juz)
+							<label htmlFor="siswa-metode" className="text-sm font-medium">
+								Metode
 							</label>
-							<Input
-								id="siswa-target"
-								type="number"
-								value={siswaTarget}
-								onChange={(e) => setSiswaTarget(e.target.value)}
-							/>
+							<select
+								id="siswa-metode"
+								value={siswaMetode}
+								onChange={(e) => {
+									const v = e.target.value as "juz" | "surah";
+									setSiswaMetode(v);
+									setSiswaTargetFrom(v === "juz" ? "1" : "1");
+									setSiswaTargetTo(v === "juz" ? "30" : "114");
+								}}
+								className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-xs transition-colors md:text-sm"
+							>
+								<option value="juz">Per Juz</option>
+								<option value="surah">Per Surah</option>
+							</select>
+						</div>
+					</div>
+					<div className="grid gap-3 sm:grid-cols-2">
+						<div className="space-y-1">
+							<label
+								htmlFor="siswa-target-from"
+								className="text-sm font-medium"
+							>
+								{siswaMetode === "juz" ? "Mulai Juz" : "Mulai Surah"}
+							</label>
+							{siswaMetode === "juz" ? (
+								<select
+									id="siswa-target-from"
+									value={siswaTargetFrom}
+									onChange={(e) => setSiswaTargetFrom(e.target.value)}
+									className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-xs transition-colors md:text-sm"
+								>
+									{Array.from({ length: 30 }, (_, i) => (
+										<option key={i + 1} value={i + 1}>
+											Juz {i + 1}
+										</option>
+									))}
+								</select>
+							) : (
+								<select
+									id="siswa-target-from"
+									value={siswaTargetFrom}
+									onChange={(e) => setSiswaTargetFrom(e.target.value)}
+									className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-xs transition-colors md:text-sm"
+								>
+									{SURAH_DATA.map((s) => (
+										<option key={s.number} value={s.number}>
+											{s.number}. {s.name}
+										</option>
+									))}
+								</select>
+							)}
+						</div>
+						<div className="space-y-1">
+							<label htmlFor="siswa-target-to" className="text-sm font-medium">
+								{siswaMetode === "juz" ? "Sampai Juz" : "Sampai Surah"}
+							</label>
+							{siswaMetode === "juz" ? (
+								<select
+									id="siswa-target-to"
+									value={siswaTargetTo}
+									onChange={(e) => setSiswaTargetTo(e.target.value)}
+									className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-xs transition-colors md:text-sm"
+								>
+									{Array.from({ length: 30 }, (_, i) => (
+										<option key={i + 1} value={i + 1}>
+											Juz {i + 1}
+										</option>
+									))}
+								</select>
+							) : (
+								<select
+									id="siswa-target-to"
+									value={siswaTargetTo}
+									onChange={(e) => setSiswaTargetTo(e.target.value)}
+									className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-xs transition-colors md:text-sm"
+								>
+									{SURAH_DATA.map((s) => (
+										<option key={s.number} value={s.number}>
+											{s.number}. {s.name}
+										</option>
+									))}
+								</select>
+							)}
 						</div>
 					</div>
 					<div className="space-y-1">
@@ -363,7 +468,9 @@ function PengaturanPage() {
 									setEditingSiswa(null);
 									setSiswaNama("");
 									setSiswaUmur("");
-									setSiswaTarget("30");
+									setSiswaMetode("juz");
+									setSiswaTargetFrom("1");
+									setSiswaTargetTo("30");
 									setSiswaParentPw("");
 								}}
 							>
@@ -385,7 +492,9 @@ function PengaturanPage() {
 									<div>
 										<p className="text-sm font-semibold">{s.nama}</p>
 										<p className="text-xs text-muted-foreground">
-											{s.hafalan}/{s.target} juz
+											{s.hafalan}/{s.target}{" "}
+											{s.metodeProgress === "surah" ? "surah" : "juz"}
+											{s.mulaiHafalan ? ` (dari ${s.mulaiHafalan})` : ""}
 											{s.umur ? ` · ${s.umur} tahun` : ""}
 										</p>
 									</div>

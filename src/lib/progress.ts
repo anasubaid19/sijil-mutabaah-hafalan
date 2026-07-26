@@ -1,4 +1,4 @@
-import { SURAH_DATA, findSurah } from "./surah-data";
+import { findSurah, SURAH_DATA } from "./surah-data";
 
 interface SiswaData {
 	nama: string;

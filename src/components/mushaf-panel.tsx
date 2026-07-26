@@ -60,15 +60,41 @@ export function MushafPanel({
 	>([]);
 	const [showSearch, setShowSearch] = useState(false);
 	const svgContainerRef = useRef<HTMLDivElement>(null);
+	const cachedContainerRef = useRef<HTMLDivElement>(null);
+	const pageCacheRef = useRef<Map<number, string>>(new Map());
+	const [_cacheVersion, setCacheVersion] = useState(0);
 
-	// Fetch SVG + verse metadata
+	// Clear selection only when panel opens
+	useEffect(() => {
+		if (open) {
+			setStartKey(null);
+			setEndKey(null);
+		}
+	}, [open]);
+
+	// Fetch SVG + verse metadata (page change only)
 	useEffect(() => {
 		if (!open) return;
 		let cancelled = false;
 		setLoading(true);
 		setError(null);
-		setStartKey(null);
-		setEndKey(null);
+
+		// Check cache first
+		const cached = pageCacheRef.current.get(page);
+		if (cached) {
+			setSvgHtml(cached);
+			setLoading(false);
+			// Still fetch verse metadata
+			fetch(`${VERSE_BASE}/${page}`)
+				.then((r) => r.json())
+				.then((j) => {
+					if (!cancelled) setVerses(j.data?.verses ?? []);
+				})
+				.catch(() => {});
+			return () => {
+				cancelled = true;
+			};
+		}
 
 		Promise.all([
 			fetch(`${SVG_BASE}/${page}.svg?font=uthmani&theme=light&width=720`).then(
@@ -83,6 +109,8 @@ export function MushafPanel({
 		])
 			.then(([svg, v]) => {
 				if (cancelled) return;
+				pageCacheRef.current.set(page, svg);
+				setCacheVersion((v) => v + 1);
 				setSvgHtml(svg);
 				setVerses(v);
 			})
@@ -98,59 +126,55 @@ export function MushafPanel({
 		};
 	}, [open, page]);
 
-	// Highlight selected ayat in SVG DOM
+	// Highlight selected ayat in SVG DOM (current + cached pages)
 	// ponytail: svgHtml dependency needed — effect queries DOM after SVG renders
 	useEffect(() => {
 		void svgHtml; // biome false positive — svgHtml triggers re-render of DOM we query
-		if (!svgContainerRef.current) return;
-		const container = svgContainerRef.current;
-
-		// Remove old highlights
-		container.querySelectorAll("[data-ayah-highlight]").forEach((el) => {
-			el.removeAttribute("data-ayah-highlight");
-			(el as HTMLElement).style.removeProperty("fill");
-			(el as HTMLElement).style.removeProperty("opacity");
-		});
-
 		if (!startKey) return;
 
-		const allTspans = Array.from(
-			container.querySelectorAll<SVGTSpanElement>("tspan[data-ayah]"),
-		);
+		// Parse range once
+		const sParsed = parseAyahKey(startKey);
+		const eParsed = endKey ? parseAyahKey(endKey) : null;
+		if (!sParsed) return;
 
-		if (endKey) {
-			const sParsed = parseAyahKey(startKey);
-			const eParsed = parseAyahKey(endKey);
-			if (!sParsed || !eParsed) return;
+		const sNum = sParsed.surah * 1000 + sParsed.ayat;
+		const eNum = eParsed ? eParsed.surah * 1000 + eParsed.ayat : null;
+		const minNum = eNum !== null ? Math.min(sNum, eNum) : null;
+		const maxNum = eNum !== null ? Math.max(sNum, eNum) : null;
 
-			const sNum = sParsed.surah * 1000 + sParsed.ayat;
-			const eNum = eParsed.surah * 1000 + eParsed.ayat;
-			const minNum = Math.min(sNum, eNum);
-			const maxNum = Math.max(sNum, eNum);
-
-			for (const tspan of allTspans) {
+		// Highlight tspans in a container
+		const highlightIn = (root: HTMLElement) => {
+			for (const tspan of root.querySelectorAll<SVGTSpanElement>(
+				"tspan[data-ayah]",
+			)) {
 				const key = tspan.getAttribute("data-ayah");
 				if (!key) continue;
 				const parsed = parseAyahKey(key);
 				if (!parsed) continue;
 				const num = parsed.surah * 1000 + parsed.ayat;
-				if (num >= minNum && num <= maxNum) {
+
+				const inRange =
+					minNum !== null && maxNum !== null
+						? num >= minNum && num <= maxNum
+						: num === sNum;
+
+				if (inRange) {
 					tspan.setAttribute("data-ayah-highlight", "range");
 					tspan.style.fill = "#2563eb";
 					tspan.style.opacity = "0.85";
+				} else {
+					tspan.removeAttribute("data-ayah-highlight");
+					tspan.style.removeProperty("fill");
+					tspan.style.removeProperty("opacity");
 				}
 			}
-		} else {
-			// Highlight only start ayah
-			for (const tspan of allTspans) {
-				if (tspan.getAttribute("data-ayah") === startKey) {
-					tspan.setAttribute("data-ayah-highlight", "start");
-					tspan.style.fill = "#2563eb";
-					tspan.style.opacity = "0.85";
-					break;
-				}
-			}
-		}
+		};
+
+		// Current page
+		if (svgContainerRef.current) highlightIn(svgContainerRef.current);
+
+		// Cached pages (hidden)
+		if (cachedContainerRef.current) highlightIn(cachedContainerRef.current);
 	}, [startKey, endKey, svgHtml]);
 
 	// Event delegation for ayah clicks on SVG
@@ -355,7 +379,6 @@ export function MushafPanel({
 			)}
 
 			{/* SVG Mushaf — interactive via event delegation on tspan[data-ayah] */}
-			{/* biome-ignore lint/a11y/noStaticElementInteractions: click handler delegates to tspan[data-ayah] */}
 			<div
 				ref={svgContainerRef}
 				onClick={handleSvgClick}
@@ -385,6 +408,43 @@ export function MushafPanel({
 					/>
 				)}
 			</div>
+
+			{/* Hidden container for cached pages (highlights applied here) */}
+			<div className="hidden" ref={cachedContainerRef}>
+				{Array.from(pageCacheRef.current.entries())
+					.filter(([pg]) => pg !== page)
+					.map(([pg, html]) => (
+						<div
+							key={pg}
+							data-page={pg}
+							// biome-ignore lint/security/noDangerouslySetInnerHtml: islamic.app SVGs are safe
+							dangerouslySetInnerHTML={{ __html: html }}
+						/>
+					))}
+			</div>
+
+			{/* Floating indicator when selection exists but user is on a different page */}
+			{mode === "input" && startKey && !endKey && (
+				<div className="px-3 py-2 border-t bg-blue-50 dark:bg-blue-950/30 flex items-center justify-between">
+					<span className="text-sm text-blue-700 dark:text-blue-300">
+						Ayat dipilih: {(() => {
+							const p = parseAyahKey(startKey);
+							return p ? `${surahNumberToName(p.surah)} ${p.ayat}` : startKey;
+						})()} — tap ayat terakhir
+					</span>
+					<Button
+						size="sm"
+						variant="ghost"
+						onClick={() => {
+							setStartKey(null);
+							setEndKey(null);
+						}}
+						className="text-xs h-6"
+					>
+						Batal
+					</Button>
+				</div>
+			)}
 
 			{/* Selection info + actions */}
 			{mode === "input" && (
