@@ -9,6 +9,8 @@ export const auth = betterAuth({
 		if (!request?.headers) return [];
 		const origin = request.headers.get("origin");
 		if (origin?.startsWith("http://localhost:")) return [origin];
+		const extra = process.env.TRUSTED_ORIGINS?.split(",") || [];
+		if (origin && extra.includes(origin)) return [origin];
 		return [];
 	},
 	database: drizzleAdapter(db, {

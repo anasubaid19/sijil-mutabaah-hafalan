@@ -1,0 +1,24 @@
+[Unit]
+Description=Sijil Mutabaah — Tahsin/Hifz Tracking App
+After=network.target postgresql.service
+
+[Service]
+Type=simple
+User=sijil
+Group=sijil
+WorkingDirectory=/opt/sijil-mutabaah
+ExecStart=/usr/bin/bun run start
+Restart=on-failure
+RestartSec=5
+Environment=NODE_ENV=production
+EnvironmentFile=/opt/sijil-mutabaah/.env
+
+# Security hardening
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/sijil-mutabaah
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
