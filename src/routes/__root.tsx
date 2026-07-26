@@ -30,7 +30,7 @@ export const Route = createRootRoute({
 						name="viewport"
 						content="width=device-width, initial-scale=1, maximum-scale=1"
 					/>
-					<link rel="apple-touch-icon" href="/logo-sijil.svg" />
+					<link rel="apple-touch-icon" href="/icon-192.png" />
 					<HeadContent />
 				</head>
 				<body>

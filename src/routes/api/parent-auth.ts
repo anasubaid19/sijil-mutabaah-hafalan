@@ -23,29 +23,17 @@ function verify(signed: string): string | null {
 	return Buffer.from(dataB64, "base64").toString();
 }
 
-function hashPassword(password: string): string {
-	const salt = crypto.randomBytes(16).toString("hex");
-	const hash = crypto.scryptSync(password, salt, 64).toString("hex");
-	return `${salt}:${hash}`;
-}
-
-function verifyPassword(password: string, stored: string): boolean {
-	const [salt, expectedHash] = stored.split(":");
-	const derived = crypto.scryptSync(password, salt, 64).toString("hex");
-	return derived === expectedHash;
-}
-
 export const Route = createFileRoute("/api/parent-auth")({
 	server: {
 		handlers: {
 			POST: async ({ request }) => {
 				try {
 					const body = await request.json();
-					const { studentId, password } = body;
+					const { studentId } = body;
 
-					if (!studentId || !password) {
+					if (!studentId) {
 						return Response.json(
-							{ error: "ID Siswa dan password harus diisi" },
+							{ error: "ID Siswa harus diisi" },
 							{ status: 400 },
 						);
 					}
@@ -56,16 +44,9 @@ export const Route = createFileRoute("/api/parent-auth")({
 						.where(eq(siswa.studentId, studentId))
 						.limit(1);
 
-					if (!row?.parentPassword) {
+					if (!row) {
 						return Response.json(
-							{ error: "ID Siswa atau password salah" },
-							{ status: 401 },
-						);
-					}
-
-					if (!verifyPassword(password, row.parentPassword)) {
-						return Response.json(
-							{ error: "ID Siswa atau password salah" },
+							{ error: "ID Siswa tidak ditemukan" },
 							{ status: 401 },
 						);
 					}
@@ -141,5 +122,3 @@ export const Route = createFileRoute("/api/parent-auth")({
 		},
 	},
 });
-
-export { hashPassword, verifyPassword };

@@ -18,7 +18,6 @@ function LoginPage() {
 
 	// Orang tua login
 	const [studentId, setStudentId] = useState("");
-	const [parentPassword, setParentPassword] = useState("");
 
 	const [error, setError] = useState("");
 	const [loading, setLoading] = useState(false);
@@ -52,14 +51,14 @@ function LoginPage() {
 			const res = await fetch("/api/parent-auth", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ studentId, password: parentPassword }),
+				body: JSON.stringify({ studentId }),
 			});
 
 			const data = await res.json();
 			setLoading(false);
 
 			if (!res.ok) {
-				setError(data.error || "ID Siswa atau password salah");
+				setError(data.error || "ID Siswa tidak ditemukan");
 				return;
 			}
 
@@ -169,35 +168,21 @@ function LoginPage() {
 							</div>
 						)}
 
-						<div className="space-y-2">
-							<label htmlFor="studentId" className="text-sm font-medium">
-								ID Siswa
-							</label>
-							<Input
-								id="studentId"
-								type="text"
-								placeholder="Masukkan ID siswa dari ustadz"
-								value={studentId}
-								onChange={(e) => setStudentId(e.target.value)}
-								required
-							/>
-						</div>
+				<div className="space-y-2">
+						<label htmlFor="studentId" className="text-sm font-medium">
+							ID Siswa
+						</label>
+						<Input
+							id="studentId"
+							type="text"
+							placeholder="Masukkan ID siswa dari ustadz"
+							value={studentId}
+							onChange={(e) => setStudentId(e.target.value)}
+							required
+						/>
+					</div>
 
-						<div className="space-y-2">
-							<label htmlFor="parentPassword" className="text-sm font-medium">
-								Password
-							</label>
-							<Input
-								id="parentPassword"
-								type="password"
-								placeholder="••••••••"
-								value={parentPassword}
-								onChange={(e) => setParentPassword(e.target.value)}
-								required
-							/>
-						</div>
-
-						<Button type="submit" disabled={loading} className="w-full">
+					<Button type="submit" disabled={loading} className="w-full">
 							{loading ? "Masuk..." : "Masuk"}
 						</Button>
 					</form>

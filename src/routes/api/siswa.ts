@@ -13,12 +13,6 @@ function generateStudentId(): string {
 	return id;
 }
 
-function hashPassword(password: string): string {
-	const salt = crypto.randomBytes(16).toString("hex");
-	const hash = crypto.scryptSync(password, salt, 64).toString("hex");
-	return `${salt}:${hash}`;
-}
-
 export const Route = createFileRoute("/api/siswa")({
 	server: {
 		handlers: {
@@ -59,9 +53,7 @@ export const Route = createFileRoute("/api/siswa")({
 							musyrifId: session.user.id,
 							nama: body.nama,
 							studentId: generateStudentId(),
-							parentPassword: body.parentPassword
-								? hashPassword(body.parentPassword)
-								: null,
+							parentPassword: null,
 							umur: body.umur,
 							hafalan: body.hafalan ?? 0,
 							target: body.target ?? 0,
@@ -116,12 +108,6 @@ export const Route = createFileRoute("/api/siswa")({
 						terakhirIjazah: body.terakhirIjazah,
 						updatedAt: new Date(),
 					};
-
-					if (body.parentPassword !== undefined) {
-						updateData.parentPassword = body.parentPassword
-							? hashPassword(body.parentPassword)
-							: null;
-					}
 
 					const [row] = await db
 						.update(siswa)

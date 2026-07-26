@@ -69,6 +69,7 @@ export const userProfile = pgTable("user_profile", {
 		.references(() => user.id, { onDelete: "cascade" }),
 	nama: varchar("nama", { length: 100 }).notNull(),
 	role: varchar("role", { length: 20 }).notNull().default("musyrif"),
+	halaqahName: varchar("halaqah_name", { length: 100 }),
 	createdAt: timestamp("created_at").defaultNow().notNull(),
 	updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });

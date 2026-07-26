@@ -16,6 +16,7 @@ import { Route as ParentRouteImport } from './routes/parent'
 import { Route as RegisterRouteImport } from './routes/register'
 import { Route as AuthedDashboardRouteImport } from './routes/_authed/dashboard'
 import { Route as AuthedLaporanRouteImport } from './routes/_authed/laporan'
+import { Route as AuthedManajemenDataRouteImport } from './routes/_authed/manajemen-data'
 import { Route as AuthedMurajaahRouteImport } from './routes/_authed/murajaah'
 import { Route as AuthedPengaturanRouteImport } from './routes/_authed/pengaturan'
 import { Route as AuthedSetupRouteImport } from './routes/_authed/setup'
@@ -63,6 +64,11 @@ const AuthedDashboardRoute = AuthedDashboardRouteImport.update({
 const AuthedLaporanRoute = AuthedLaporanRouteImport.update({
   id: '/laporan',
   path: '/laporan',
+  getParentRoute: () => AuthedRoute,
+} as any)
+const AuthedManajemenDataRoute = AuthedManajemenDataRouteImport.update({
+  id: '/manajemen-data',
+  path: '/manajemen-data',
   getParentRoute: () => AuthedRoute,
 } as any)
 const AuthedMurajaahRoute = AuthedMurajaahRouteImport.update({
@@ -143,6 +149,7 @@ export interface FileRoutesByFullPath {
   '/register': typeof RegisterRoute
   '/dashboard': typeof AuthedDashboardRoute
   '/laporan': typeof AuthedLaporanRoute
+  '/manajemen-data': typeof AuthedManajemenDataRoute
   '/murajaah': typeof AuthedMurajaahRoute
   '/pengaturan': typeof AuthedPengaturanRoute
   '/setup': typeof AuthedSetupRoute
@@ -165,6 +172,7 @@ export interface FileRoutesByTo {
   '/register': typeof RegisterRoute
   '/dashboard': typeof AuthedDashboardRoute
   '/laporan': typeof AuthedLaporanRoute
+  '/manajemen-data': typeof AuthedManajemenDataRoute
   '/murajaah': typeof AuthedMurajaahRoute
   '/pengaturan': typeof AuthedPengaturanRoute
   '/setup': typeof AuthedSetupRoute
@@ -189,6 +197,7 @@ export interface FileRoutesById {
   '/register': typeof RegisterRoute
   '/_authed/dashboard': typeof AuthedDashboardRoute
   '/_authed/laporan': typeof AuthedLaporanRoute
+  '/_authed/manajemen-data': typeof AuthedManajemenDataRoute
   '/_authed/murajaah': typeof AuthedMurajaahRoute
   '/_authed/pengaturan': typeof AuthedPengaturanRoute
   '/_authed/setup': typeof AuthedSetupRoute
@@ -213,6 +222,7 @@ export interface FileRouteTypes {
     | '/register'
     | '/dashboard'
     | '/laporan'
+    | '/manajemen-data'
     | '/murajaah'
     | '/pengaturan'
     | '/setup'
@@ -235,6 +245,7 @@ export interface FileRouteTypes {
     | '/register'
     | '/dashboard'
     | '/laporan'
+    | '/manajemen-data'
     | '/murajaah'
     | '/pengaturan'
     | '/setup'
@@ -258,6 +269,7 @@ export interface FileRouteTypes {
     | '/register'
     | '/_authed/dashboard'
     | '/_authed/laporan'
+    | '/_authed/manajemen-data'
     | '/_authed/murajaah'
     | '/_authed/pengaturan'
     | '/_authed/setup'
@@ -341,6 +353,13 @@ declare module '@tanstack/react-router' {
       path: '/laporan'
       fullPath: '/laporan'
       preLoaderRoute: typeof AuthedLaporanRouteImport
+      parentRoute: typeof AuthedRoute
+    }
+    '/_authed/manajemen-data': {
+      id: '/_authed/manajemen-data'
+      path: '/manajemen-data'
+      fullPath: '/manajemen-data'
+      preLoaderRoute: typeof AuthedManajemenDataRouteImport
       parentRoute: typeof AuthedRoute
     }
     '/_authed/murajaah': {
@@ -447,6 +466,7 @@ declare module '@tanstack/react-router' {
 interface AuthedRouteChildren {
   AuthedDashboardRoute: typeof AuthedDashboardRoute
   AuthedLaporanRoute: typeof AuthedLaporanRoute
+  AuthedManajemenDataRoute: typeof AuthedManajemenDataRoute
   AuthedMurajaahRoute: typeof AuthedMurajaahRoute
   AuthedPengaturanRoute: typeof AuthedPengaturanRoute
   AuthedSetupRoute: typeof AuthedSetupRoute
@@ -456,6 +476,7 @@ interface AuthedRouteChildren {
 const AuthedRouteChildren: AuthedRouteChildren = {
   AuthedDashboardRoute: AuthedDashboardRoute,
   AuthedLaporanRoute: AuthedLaporanRoute,
+  AuthedManajemenDataRoute: AuthedManajemenDataRoute,
   AuthedMurajaahRoute: AuthedMurajaahRoute,
   AuthedPengaturanRoute: AuthedPengaturanRoute,
   AuthedSetupRoute: AuthedSetupRoute,

@@ -44,12 +44,14 @@ export const Route = createFileRoute("/api/user-profile")({
 							id: session.user.id,
 							nama: body.nama,
 							role: body.role ?? "musyrif",
+							halaqahName: body.halaqahName ?? null,
 						})
 						.onConflictDoUpdate({
 							target: userProfile.id,
 							set: {
 								nama: body.nama,
 								role: body.role ?? "musyrif",
+								halaqahName: body.halaqahName ?? null,
 								updatedAt: new Date(),
 							},
 						})
@@ -78,6 +80,7 @@ export const Route = createFileRoute("/api/user-profile")({
 						.set({
 							nama: body.nama,
 							role: body.role,
+							halaqahName: body.halaqahName ?? null,
 							updatedAt: new Date(),
 						})
 						.where(eq(userProfile.id, session.user.id))

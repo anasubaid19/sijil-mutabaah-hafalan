@@ -2,6 +2,7 @@ import {
 	BookOpen,
 	ChartBarIncreasingIcon,
 	Document,
+	Group01Icon,
 	Home,
 	SlidersHorizontal,
 } from "@hugeicons/core-free-icons";
@@ -23,13 +24,29 @@ import {
 } from "@/components/ui/sidebar";
 
 const NAV_ITEMS = [
-	{ to: "/dashboard", label: "Beranda", icon: Home },
-	{ to: "/ziyadah", label: "Ziyadah", icon: BookOpen },
-	{ to: "/murajaah", label: "Murajaah", icon: ChartBarIncreasingIcon },
+	{ to: "/dashboard", label: "Beranda", icon: Home, navId: "nav-dashboard" },
+	{ to: "/ziyadah", label: "Ziyadah", icon: BookOpen, navId: "nav-ziyadah" },
+	{
+		to: "/murajaah",
+		label: "Murajaah",
+		icon: ChartBarIncreasingIcon,
+		navId: "nav-murajaah",
+	},
 ];
 const NAV_SECONDARY = [
-	{ to: "/laporan", label: "Laporan", icon: Document },
-	{ to: "/pengaturan", label: "Pengaturan", icon: SlidersHorizontal },
+	{ to: "/laporan", label: "Laporan", icon: Document, navId: "nav-laporan" },
+	{
+		to: "/manajemen-data",
+		label: "Manajemen Data",
+		icon: Group01Icon,
+		navId: "nav-manajemen",
+	},
+	{
+		to: "/pengaturan",
+		label: "Pengaturan",
+		icon: SlidersHorizontal,
+		navId: "nav-pengaturan",
+	},
 ];
 
 export function AppSidebar() {
@@ -63,7 +80,7 @@ export function AppSidebar() {
 							{NAV_ITEMS.map((item) => (
 								<SidebarMenuItem key={item.to}>
 									<SidebarMenuButton
-										render={<Link to={item.to} />}
+										render={<Link to={item.to} data-nav-id={item.navId} />}
 										tooltip={item.label}
 										className="data-[active=true]:bg-foreground data-[active=true]:text-background"
 									>
@@ -85,7 +102,7 @@ export function AppSidebar() {
 							{NAV_SECONDARY.map((item) => (
 								<SidebarMenuItem key={item.to}>
 									<SidebarMenuButton
-										render={<Link to={item.to} />}
+										render={<Link to={item.to} data-nav-id={item.navId} />}
 										tooltip={item.label}
 										className="data-[active=true]:bg-foreground data-[active=true]:text-background"
 									>

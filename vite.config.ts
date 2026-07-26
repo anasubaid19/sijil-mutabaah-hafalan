@@ -1,4 +1,3 @@
-import path from "node:path";
 import tailwindcss from "@tailwindcss/vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import react from "@vitejs/plugin-react";
@@ -57,9 +56,19 @@ export default defineConfig({
 						type: "image/svg+xml",
 					},
 					{
-						src: "logo-sijil.svg",
-						sizes: "any",
-						type: "image/svg+xml",
+						src: "icon-192.png",
+						sizes: "192x192",
+						type: "image/png",
+					},
+					{
+						src: "icon-512.png",
+						sizes: "512x512",
+						type: "image/png",
+					},
+					{
+						src: "icon-512.png",
+						sizes: "512x512",
+						type: "image/png",
 						purpose: "maskable",
 					},
 				],
