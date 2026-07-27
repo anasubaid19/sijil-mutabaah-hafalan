@@ -420,7 +420,7 @@ function DashboardPage() {
 								</button>
 							))}
 						</div>
-						<div className="flex items-center gap-1">
+						<div className="flex rounded-full bg-muted/50 p-0.5">
 							{(
 								[
 									["bar", "Bar"],
@@ -431,10 +431,10 @@ function DashboardPage() {
 									key={key}
 									type="button"
 									onClick={() => setChartType(key)}
-									className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-all duration-200 ${
+									className={`flex-1 rounded-full py-1.5 text-xs font-medium transition-all duration-200 ${
 										chartType === key
-											? "bg-primary/10 text-primary"
-											: "text-muted-foreground/60 hover:text-muted-foreground"
+											? "bg-primary text-primary-foreground"
+											: "text-muted-foreground"
 									}`}
 								>
 									{label}
