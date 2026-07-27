@@ -16,7 +16,13 @@ interface VerseMeta {
 interface MushafPanelProps {
 	open: boolean;
 	onClose: () => void;
-	onSelect: (surah: string, ayatAwal: number, ayatAkhir: number) => void;
+	onSelect: (
+		surah: string,
+		ayatAwal: number,
+		ayatAkhir: number,
+		endSurah?: string,
+		endAyat?: number,
+	) => void;
 	mode: "input" | "read";
 	initialSurah?: string;
 	initialAyat?: number;
@@ -210,7 +216,6 @@ export function MushafPanel({
 		const eParsed = parseAyahKey(endKey);
 		if (!sParsed || !eParsed) return null;
 
-		// Ensure correct order
 		const sNum = sParsed.surah * 1000 + sParsed.ayat;
 		const eNum = eParsed.surah * 1000 + eParsed.ayat;
 		const first = sNum <= eNum ? sParsed : eParsed;
@@ -219,6 +224,7 @@ export function MushafPanel({
 		return {
 			surah: surahNumberToName(first.surah),
 			surahNumber: first.surah,
+			endSurahNumber: last.surah,
 			ayatAwal: first.ayat,
 			ayatAkhir: last.ayat,
 			sameSurah: first.surah === last.surah,
@@ -227,10 +233,15 @@ export function MushafPanel({
 
 	const handleUse = useCallback(() => {
 		if (!selectionSummary) return;
+		const endSurah = selectionSummary.sameSurah
+			? undefined
+			: surahNumberToName(selectionSummary.endSurahNumber);
 		onSelect(
 			surahNumberToName(selectionSummary.surahNumber),
 			selectionSummary.ayatAwal,
 			selectionSummary.ayatAkhir,
+			endSurah,
+			endSurah ? selectionSummary.ayatAkhir : undefined,
 		);
 	}, [selectionSummary, onSelect]);
 

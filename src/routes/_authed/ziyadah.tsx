@@ -65,7 +65,10 @@ function ZiyadahPage() {
 
 	const [panelSize, setPanelSize] = useState(() => {
 		if (typeof window === "undefined") return 40;
-		return Number.parseInt(localStorage.getItem("sijil_ziyadah_panel") ?? "40", 10);
+		return Number.parseInt(
+			localStorage.getItem("sijil_ziyadah_panel") ?? "40",
+			10,
+		);
 	});
 
 	const [lintasMode, setLintasMode] = useState(false);
@@ -253,10 +256,18 @@ function ZiyadahPage() {
 		surah: string,
 		ayatAwal: number,
 		ayatAkhir: number,
+		endSurah?: string,
+		endAyat?: number,
 	) {
 		setSurahA(surah);
 		setDariAyat(String(ayatAwal));
-		setSampaiAyat(String(ayatAkhir));
+		if (endSurah) {
+			setLintasMode(true);
+			setLintasSurahEnd(endSurah);
+			if (endAyat) setLintasSampaiAyat(String(endAyat));
+		} else {
+			setSampaiAyat(String(ayatAkhir));
+		}
 		setMushafOpen(false);
 		setMushafMobileOpen(false);
 	}

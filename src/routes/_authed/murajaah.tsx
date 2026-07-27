@@ -259,10 +259,18 @@ function MurajaahPage() {
 		surah: string,
 		ayatAwal: number,
 		ayatAkhir: number,
+		endSurah?: string,
+		endAyat?: number,
 	) {
 		setSurahA(surah);
 		setDariAyat(String(ayatAwal));
-		setSampaiAyat(String(ayatAkhir));
+		if (endSurah) {
+			setLintasMode(true);
+			setLintasSurahEnd(endSurah);
+			if (endAyat) setLintasSampaiAyat(String(endAyat));
+		} else {
+			setSampaiAyat(String(ayatAkhir));
+		}
 		setMushafOpen(false);
 		setMushafMobileOpen(false);
 	}
