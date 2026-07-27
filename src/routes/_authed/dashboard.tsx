@@ -399,7 +399,7 @@ function DashboardPage() {
 								{chartRange === "week" ? "7 hari terakhir" : "bulan ini"}
 							</p>
 						</div>
-						<div className="flex rounded-lg border bg-muted/50 p-0.5">
+						<div className="inline-flex rounded-lg border bg-muted/50 p-0.5">
 							{(
 								[
 									["week", "Minggu"],
@@ -420,7 +420,7 @@ function DashboardPage() {
 								</button>
 							))}
 						</div>
-						<div className="flex rounded-lg border bg-muted/50 p-0.5">
+						<div className="inline-flex rounded-lg border bg-muted/50 p-0.5">
 							{(
 								[
 									["bar", "Bar"],
@@ -484,7 +484,7 @@ function DashboardPage() {
 								Setoran {chartRange === "week" ? "Minggu" : "Bulan"} Ini
 							</h2>
 							<div className="flex items-center gap-2">
-								<div className="flex rounded-lg border bg-muted/50 p-0.5">
+								<div className="inline-flex rounded-lg border bg-muted/50 p-0.5">
 									{(
 										[
 											["week", "Minggu"],
@@ -505,7 +505,7 @@ function DashboardPage() {
 										</button>
 									))}
 								</div>
-								<div className="flex rounded-lg border bg-muted/50 p-0.5">
+								<div className="inline-flex rounded-lg border bg-muted/50 p-0.5">
 									{(
 										[
 											["bar", "Bar"],
