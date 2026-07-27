@@ -59,6 +59,9 @@ export function MushafPanel({
 		{ number: number; name: string }[]
 	>([]);
 	const [showSearch, setShowSearch] = useState(false);
+	const [zoom, setZoom] = useState(100);
+	const [surahJump, setSurahJump] = useState("");
+	const [juzJump, setJuzJump] = useState("");
 	const svgContainerRef = useRef<HTMLDivElement>(null);
 	const cachedContainerRef = useRef<HTMLDivElement>(null);
 	const pageCacheRef = useRef<Map<number, string>>(new Map());
@@ -337,6 +340,71 @@ export function MushafPanel({
 				</button>
 			</div>
 
+			{/* Toolbar row 2: Surah/Juz nav + Zoom */}
+			<div className="flex items-center gap-1.5 px-3 py-1.5 border-b bg-muted/30">
+				<select
+					value={surahJump}
+					onChange={(e) => {
+						const n = Number(e.target.value);
+						if (n) {
+							const s = SURAH_DATA.find((x) => x.number === n);
+							if (s) setPage(s.pageStart);
+						}
+						setSurahJump("");
+					}}
+					className="flex-1 h-7 rounded border bg-background px-1.5 text-xs"
+				>
+					<option value="">Surah...</option>
+					{SURAH_DATA.map((s) => (
+						<option key={s.number} value={s.number}>
+							{s.number}. {s.name}
+						</option>
+					))}
+				</select>
+				<select
+					value={juzJump}
+					onChange={(e) => {
+						const n = Number(e.target.value);
+						if (n) {
+							const vs =
+								verses.length > 0
+									? verses
+									: [{ juz: n, page: (n - 1) * 20 + 1 }];
+							const first = vs.find((v) => v.juz >= n) ?? vs[0];
+							if (first) setPage(first.page);
+						}
+						setJuzJump("");
+					}}
+					className="w-20 h-7 rounded border bg-background px-1.5 text-xs"
+				>
+					<option value="">Juz...</option>
+					{Array.from({ length: 30 }, (_, i) => i + 1).map((j) => (
+						<option key={j} value={j}>
+							Juz {j}
+						</option>
+					))}
+				</select>
+				<div className="flex items-center gap-0.5 ml-auto">
+					<button
+						type="button"
+						onClick={() => setZoom((z) => Math.max(50, z - 15))}
+						className="px-1.5 py-0.5 text-xs rounded bg-background border hover:bg-accent"
+					>
+						−
+					</button>
+					<span className="text-[0.6rem] text-muted-foreground w-8 text-center tabular-nums">
+						{zoom}%
+					</span>
+					<button
+						type="button"
+						onClick={() => setZoom((z) => Math.min(200, z + 15))}
+						className="px-1.5 py-0.5 text-xs rounded bg-background border hover:bg-accent"
+					>
+						+
+					</button>
+				</div>
+			</div>
+
 			{/* Surah search dropdown */}
 			{showSearch && (
 				<div className="px-3 py-2 border-b bg-muted/30">
@@ -383,12 +451,17 @@ export function MushafPanel({
 				ref={svgContainerRef}
 				onClick={handleSvgClick}
 				onKeyDown={(e) => {
-					if (e.key === "Enter" || e.key === " ")
+					if (e.key === "ArrowRight")
+						setPage((p) => Math.min(TOTAL_PAGES, p + 1));
+					else if (e.key === "ArrowLeft") setPage((p) => Math.max(1, p - 1));
+					else if (e.key === "Escape") onClose();
+					else if (e.key === "Enter" || e.key === " ")
 						handleSvgClick(e as unknown as React.MouseEvent<HTMLDivElement>);
 				}}
 				role="application"
 				tabIndex={mode === "input" ? 0 : undefined}
-				className={`px-3 py-3 max-h-[70vh] overflow-auto ${mode === "input" ? "cursor-pointer" : ""}`}
+				className={`px-3 py-3 overflow-auto ${mode === "input" ? "cursor-pointer" : ""}`}
+				style={{ maxHeight: `${(zoom / 100) * 70}vh` }}
 			>
 				{loading && (
 					<div className="text-center text-sm text-muted-foreground py-6">
