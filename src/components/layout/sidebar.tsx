@@ -126,10 +126,7 @@ export function AppSidebar() {
 			<SidebarSeparator />
 
 			<SidebarFooter>
-				<div className="flex items-center justify-between px-2 py-1.5">
-					<span className="text-[0.65rem] font-medium text-muted-foreground">
-						Tema
-					</span>
+				<div className="flex items-center justify-center px-2 py-1.5">
 					<ToggleTheme />
 				</div>
 			</SidebarFooter>
