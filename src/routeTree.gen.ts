@@ -19,6 +19,7 @@ import { Route as AuthedLaporanRouteImport } from './routes/_authed/laporan'
 import { Route as AuthedManajemenDataRouteImport } from './routes/_authed/manajemen-data'
 import { Route as AuthedMurajaahRouteImport } from './routes/_authed/murajaah'
 import { Route as AuthedPengaturanRouteImport } from './routes/_authed/pengaturan'
+import { Route as AuthedPresensiRouteImport } from './routes/_authed/presensi'
 import { Route as AuthedZiyadahRouteImport } from './routes/_authed/ziyadah'
 import { Route as ApiExportPdfRouteImport } from './routes/api/export-pdf'
 import { Route as ApiExportPresensiRouteImport } from './routes/api/export-presensi'
@@ -79,6 +80,11 @@ const AuthedMurajaahRoute = AuthedMurajaahRouteImport.update({
 const AuthedPengaturanRoute = AuthedPengaturanRouteImport.update({
   id: '/pengaturan',
   path: '/pengaturan',
+  getParentRoute: () => AuthedRoute,
+} as any)
+const AuthedPresensiRoute = AuthedPresensiRouteImport.update({
+  id: '/presensi',
+  path: '/presensi',
   getParentRoute: () => AuthedRoute,
 } as any)
 const AuthedZiyadahRoute = AuthedZiyadahRouteImport.update({
@@ -152,6 +158,7 @@ export interface FileRoutesByFullPath {
   '/manajemen-data': typeof AuthedManajemenDataRoute
   '/murajaah': typeof AuthedMurajaahRoute
   '/pengaturan': typeof AuthedPengaturanRoute
+  '/presensi': typeof AuthedPresensiRoute
   '/ziyadah': typeof AuthedZiyadahRoute
   '/api/export-pdf': typeof ApiExportPdfRoute
   '/api/export-presensi': typeof ApiExportPresensiRoute
@@ -175,6 +182,7 @@ export interface FileRoutesByTo {
   '/manajemen-data': typeof AuthedManajemenDataRoute
   '/murajaah': typeof AuthedMurajaahRoute
   '/pengaturan': typeof AuthedPengaturanRoute
+  '/presensi': typeof AuthedPresensiRoute
   '/ziyadah': typeof AuthedZiyadahRoute
   '/api/export-pdf': typeof ApiExportPdfRoute
   '/api/export-presensi': typeof ApiExportPresensiRoute
@@ -200,6 +208,7 @@ export interface FileRoutesById {
   '/_authed/manajemen-data': typeof AuthedManajemenDataRoute
   '/_authed/murajaah': typeof AuthedMurajaahRoute
   '/_authed/pengaturan': typeof AuthedPengaturanRoute
+  '/_authed/presensi': typeof AuthedPresensiRoute
   '/_authed/ziyadah': typeof AuthedZiyadahRoute
   '/api/export-pdf': typeof ApiExportPdfRoute
   '/api/export-presensi': typeof ApiExportPresensiRoute
@@ -225,6 +234,7 @@ export interface FileRouteTypes {
     | '/manajemen-data'
     | '/murajaah'
     | '/pengaturan'
+    | '/presensi'
     | '/ziyadah'
     | '/api/export-pdf'
     | '/api/export-presensi'
@@ -248,6 +258,7 @@ export interface FileRouteTypes {
     | '/manajemen-data'
     | '/murajaah'
     | '/pengaturan'
+    | '/presensi'
     | '/ziyadah'
     | '/api/export-pdf'
     | '/api/export-presensi'
@@ -272,6 +283,7 @@ export interface FileRouteTypes {
     | '/_authed/manajemen-data'
     | '/_authed/murajaah'
     | '/_authed/pengaturan'
+    | '/_authed/presensi'
     | '/_authed/ziyadah'
     | '/api/export-pdf'
     | '/api/export-presensi'
@@ -377,6 +389,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthedPengaturanRouteImport
       parentRoute: typeof AuthedRoute
     }
+    '/_authed/presensi': {
+      id: '/_authed/presensi'
+      path: '/presensi'
+      fullPath: '/presensi'
+      preLoaderRoute: typeof AuthedPresensiRouteImport
+      parentRoute: typeof AuthedRoute
+    }
     '/_authed/ziyadah': {
       id: '/_authed/ziyadah'
       path: '/ziyadah'
@@ -470,6 +489,7 @@ interface AuthedRouteChildren {
   AuthedManajemenDataRoute: typeof AuthedManajemenDataRoute
   AuthedMurajaahRoute: typeof AuthedMurajaahRoute
   AuthedPengaturanRoute: typeof AuthedPengaturanRoute
+  AuthedPresensiRoute: typeof AuthedPresensiRoute
   AuthedZiyadahRoute: typeof AuthedZiyadahRoute
 }
 
@@ -479,6 +499,7 @@ const AuthedRouteChildren: AuthedRouteChildren = {
   AuthedManajemenDataRoute: AuthedManajemenDataRoute,
   AuthedMurajaahRoute: AuthedMurajaahRoute,
   AuthedPengaturanRoute: AuthedPengaturanRoute,
+  AuthedPresensiRoute: AuthedPresensiRoute,
   AuthedZiyadahRoute: AuthedZiyadahRoute,
 }
 

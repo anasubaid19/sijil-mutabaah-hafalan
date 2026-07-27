@@ -17,6 +17,13 @@ import { PdfPreviewDialog } from "@/components/pdf-preview-dialog";
 import { PresensiExportDialog } from "@/components/presensi-export-dialog";
 import { StudentModal } from "@/components/student-modal";
 import { Button } from "@/components/ui/button";
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
 import { calcProgress } from "@/lib/progress";
 import { SURAH_DATA } from "@/lib/surah-data";
 
@@ -79,6 +86,13 @@ function LaporanPage() {
 	const [loading, setLoading] = useState(true);
 	const [previewOpen, setPreviewOpen] = useState(false);
 	const [presensiExportOpen, setPresensiExportOpen] = useState(false);
+	const [studentSearch, setStudentSearch] = useState("");
+	const [studentSort, setStudentSort] = useState<
+		"progres" | "nama" | "setoran"
+	>("progres");
+	const [showAllStudents, setShowAllStudents] = useState(false);
+	const [riwayatPage, setRiwayatPage] = useState(1);
+	const RIWAYAT_PER_PAGE = 30;
 
 	useEffect(() => {
 		async function load() {
@@ -234,92 +248,152 @@ function LaporanPage() {
 					>
 						List
 					</button>
-					<Button
-						variant="outline"
-						size="sm"
-						onClick={exportCSV}
-						className="ml-2"
-					>
-						Export CSV
-					</Button>
-					<Button
-						variant="outline"
-						size="sm"
-						onClick={() => setPresensiExportOpen(true)}
-						className="ml-2"
-					>
-						Export Presensi
-					</Button>
-					<Button
-						variant="outline"
-						size="sm"
-						onClick={exportPDF}
-						className="ml-2 print:hidden"
-					>
-						Rekap PDF
-					</Button>
+					<DropdownMenu>
+						<DropdownMenuTrigger
+							render={
+								<Button
+									variant="outline"
+									size="sm"
+									className="ml-2 print:hidden"
+								/>
+							}
+						>
+							Export
+						</DropdownMenuTrigger>
+						<DropdownMenuContent align="end">
+							<DropdownMenuItem onClick={exportPDF}>Rekap PDF</DropdownMenuItem>
+							<DropdownMenuItem onClick={() => setPresensiExportOpen(true)}>
+								Presensi PDF
+							</DropdownMenuItem>
+							<DropdownMenuItem onClick={exportCSV}>CSV</DropdownMenuItem>
+						</DropdownMenuContent>
+					</DropdownMenu>
+				</div>
+			</div>
+
+			{/* Student Search + Sort */}
+			<div className="flex items-center gap-3 print:hidden">
+				<Input
+					placeholder="Cari siswa..."
+					value={studentSearch}
+					onChange={(e) => setStudentSearch(e.target.value)}
+					className="max-w-[240px]"
+				/>
+				<div className="flex rounded-lg border bg-muted/50 p-0.5">
+					{(["progres", "nama", "setoran"] as const).map((key) => (
+						<button
+							key={key}
+							type="button"
+							onClick={() => setStudentSort(key)}
+							className={`rounded-md px-3 py-1 text-xs font-medium transition-colors ${
+								studentSort === key
+									? "bg-background text-foreground shadow-sm"
+									: "text-muted-foreground hover:text-foreground"
+							}`}
+						>
+							{key === "progres"
+								? "Progres"
+								: key === "nama"
+									? "Nama"
+									: "Setoran"}
+						</button>
+					))}
 				</div>
 			</div>
 
 			{/* Student Cards */}
-			<div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 print:hidden">
-				{siswaList.map((s) => {
-					const recs = setoranList.filter((r) => r.siswaId === s.id);
-					const p = calcProgress(s, recs);
-					const lastRec = recs.sort((a, b) =>
-						b.tanggal.localeCompare(a.tanggal),
-					)[0];
-					const lastGrade = lastRec?.status || "—";
-					const [bg, fg] = getAvatarColors(s.nama);
-					const initials = s.nama
-						.split(" ")
-						.map((w) => w[0])
-						.join("")
-						.slice(0, 2)
-						.toUpperCase();
-					return (
-						<button
-							key={s.id}
-							onClick={() => setModalSiswa(s)}
-							className="rounded-2xl border bg-card p-4 shadow-xs transition-all hover:shadow-md text-left w-full"
-						>
-							<div className="flex items-center gap-3">
-								<div
-									className="flex size-10 items-center justify-center rounded-full text-sm font-bold shrink-0"
-									style={{ background: bg, color: fg }}
-								>
-									{initials}
-								</div>
-								<div className="min-w-0 flex-1">
-									<p className="truncate text-sm font-semibold">{s.nama}</p>
-									<p className="text-xs text-muted-foreground">
-										{recs.length} setoran
-									</p>
-								</div>
-								<span
-									className={`rounded-full px-2 py-0.5 text-[0.65rem] font-semibold shrink-0 ${
-										STATUS_COLORS[lastGrade] ?? "bg-muted text-muted-foreground"
-									}`}
-								>
-									{lastGrade}
-								</span>
-							</div>
-							<div className="mt-3">
-								<div className="flex items-center justify-between text-xs text-muted-foreground">
-									<span>Progres</span>
-									<span>{p.pct}%</span>
-								</div>
-								<div className="mt-1 h-2 overflow-hidden rounded-full bg-muted">
+			<div className="grid gap-3 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 print:hidden">
+				{siswaList
+					.filter((s) =>
+						s.nama.toLowerCase().includes(studentSearch.toLowerCase()),
+					)
+					.sort((a, b) => {
+						const ra = setoranList.filter((r) => r.siswaId === a.id).length;
+						const rb = setoranList.filter((r) => r.siswaId === b.id).length;
+						if (studentSort === "nama") return a.nama.localeCompare(b.nama);
+						if (studentSort === "setoran") return rb - ra;
+						return (
+							calcProgress(
+								b,
+								setoranList.filter((r) => r.siswaId === b.id),
+							).pct -
+							calcProgress(
+								a,
+								setoranList.filter((r) => r.siswaId === a.id),
+							).pct
+						);
+					})
+					.slice(0, showAllStudents ? undefined : 12)
+					.map((s) => {
+						const recs = setoranList.filter((r) => r.siswaId === s.id);
+						const p = calcProgress(s, recs);
+						const lastRec = recs.sort((a, b) =>
+							b.tanggal.localeCompare(a.tanggal),
+						)[0];
+						const lastGrade = lastRec?.status || "—";
+						const [bg, fg] = getAvatarColors(s.nama);
+						const initials = s.nama
+							.split(" ")
+							.map((w) => w[0])
+							.join("")
+							.slice(0, 2)
+							.toUpperCase();
+						return (
+							<button
+								key={s.id}
+								onClick={() => setModalSiswa(s)}
+								className="rounded-2xl border bg-card p-4 shadow-xs transition-all hover:shadow-md text-left w-full"
+							>
+								<div className="flex items-center gap-3">
 									<div
-										className="h-full rounded-full bg-primary transition-all"
-										style={{ width: `${Math.min(p.pct, 100)}%` }}
-									/>
+										className="flex size-10 items-center justify-center rounded-full text-sm font-bold shrink-0"
+										style={{ background: bg, color: fg }}
+									>
+										{initials}
+									</div>
+									<div className="min-w-0 flex-1">
+										<p className="truncate text-sm font-semibold">{s.nama}</p>
+										<p className="text-xs text-muted-foreground">
+											{recs.length} setoran
+										</p>
+									</div>
+									<span
+										className={`rounded-full px-2 py-0.5 text-[0.65rem] font-semibold shrink-0 ${
+											STATUS_COLORS[lastGrade] ??
+											"bg-muted text-muted-foreground"
+										}`}
+									>
+										{lastGrade}
+									</span>
 								</div>
-							</div>
-						</button>
-					);
-				})}
+								<div className="mt-3">
+									<div className="flex items-center justify-between text-xs text-muted-foreground">
+										<span>Progres</span>
+										<span>{p.pct}%</span>
+									</div>
+									<div className="mt-1 h-2 overflow-hidden rounded-full bg-muted">
+										<div
+											className="h-full rounded-full bg-primary transition-all"
+											style={{ width: `${Math.min(p.pct, 100)}%` }}
+										/>
+									</div>
+								</div>
+							</button>
+						);
+					})}
 			</div>
+			{siswaList.filter((s) =>
+				s.nama.toLowerCase().includes(studentSearch.toLowerCase()),
+			).length > 12 &&
+				!showAllStudents && (
+					<button
+						type="button"
+						onClick={() => setShowAllStudents(true)}
+						className="mt-3 w-full rounded-xl bg-muted/50 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted print:hidden"
+					>
+						Tampilkan Semua Siswa
+					</button>
+				)}
 
 			{/* Monthly Insight Card */}
 			<div className="bg-gradient-to-br from-teal-700 to-teal-900 text-white rounded-2xl p-6">
@@ -471,7 +545,7 @@ function LaporanPage() {
 						<div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
 							{filteredSetoran
 								.sort((a, b) => b.tanggal.localeCompare(a.tanggal))
-								.slice(0, 30)
+								.slice(0, riwayatPage * RIWAYAT_PER_PAGE)
 								.map((r) => {
 									const siswaName =
 										siswaList.find((s) => s.id === r.siswaId)?.nama ?? "?";
@@ -525,7 +599,7 @@ function LaporanPage() {
 								<tbody>
 									{filteredSetoran
 										.sort((a, b) => b.tanggal.localeCompare(a.tanggal))
-										.slice(0, 50)
+										.slice(0, riwayatPage * RIWAYAT_PER_PAGE)
 										.map((r) => (
 											<tr key={r.id} className="border-b border-border/50">
 												<td className="py-2 pr-4">{fmtDate(r.tanggal)}</td>
@@ -561,6 +635,27 @@ function LaporanPage() {
 						Belum ada riwayat setoran
 					</p>
 				)}
+				{filteredSetoran.length > 0 &&
+					riwayatPage * RIWAYAT_PER_PAGE < filteredSetoran.length && (
+						<div className="mt-3 flex items-center justify-center gap-2">
+							{riwayatPage > 1 && (
+								<button
+									type="button"
+									onClick={() => setRiwayatPage((p) => p - 1)}
+									className="rounded-xl bg-muted/50 px-4 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted"
+								>
+									Sebelumnya
+								</button>
+							)}
+							<button
+								type="button"
+								onClick={() => setRiwayatPage((p) => p + 1)}
+								className="rounded-xl bg-primary px-4 py-1.5 text-xs font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+							>
+								Muat Lebih
+							</button>
+						</div>
+					)}
 			</div>
 
 			{/* Student Modal */}

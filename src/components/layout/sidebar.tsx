@@ -1,5 +1,6 @@
 import {
 	BookOpen,
+	CalendarCheck,
 	ChartBarIncreasingIcon,
 	Document,
 	Group01Icon,
@@ -31,6 +32,12 @@ const NAV_ITEMS = [
 		label: "Murajaah",
 		icon: ChartBarIncreasingIcon,
 		navId: "nav-murajaah",
+	},
+	{
+		to: "/presensi",
+		label: "Presensi",
+		icon: CalendarCheck,
+		navId: "nav-presensi",
 	},
 ];
 const NAV_SECONDARY = [

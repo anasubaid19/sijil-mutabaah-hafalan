@@ -1,5 +1,6 @@
 import {
 	BookOpen,
+	CalendarCheck,
 	ChartBarIncreasingIcon,
 	Document,
 	Home,
@@ -13,6 +14,7 @@ const NAV_ITEMS = [
 	{ to: "/ziyadah", label: "Ziyadah", icon: BookOpen },
 	{ to: "/murajaah", label: "Murajaah", icon: ChartBarIncreasingIcon },
 	{ to: "/laporan", label: "Laporan", icon: Document },
+	{ to: "/presensi", label: "Presensi", icon: CalendarCheck },
 	{ to: "/pengaturan", label: "Pengaturan", icon: SlidersHorizontal },
 ];
 

@@ -6,7 +6,7 @@ import {
 	Group,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
 import {
 	Bar,
@@ -277,7 +277,7 @@ function DashboardPage() {
 
 			{/* Presensi */}
 			<div className="rounded-2xl border bg-card p-5 shadow-xs">
-				<div className="mb-4 flex items-center justify-between">
+				<div className="mb-3 flex items-center justify-between">
 					<h2 className="text-base font-semibold">Presensi Hari Ini</h2>
 					<div className="flex gap-2">
 						<Button variant="outline" size="sm" onClick={markAllPresent}>
@@ -287,6 +287,22 @@ function DashboardPage() {
 							Reset
 						</Button>
 					</div>
+				</div>
+				{/* Summary bar */}
+				<div className="mb-3 flex items-center gap-4 rounded-xl bg-muted/50 px-4 py-2.5">
+					<div className="flex-1">
+						<div className="h-2 overflow-hidden rounded-full bg-muted">
+							<div
+								className="h-full rounded-full bg-emerald-500 transition-all"
+								style={{
+									width: `${siswaList.length > 0 ? Math.round((hadirCount / siswaList.length) * 100) : 0}%`,
+								}}
+							/>
+						</div>
+					</div>
+					<span className="shrink-0 text-xs font-semibold text-muted-foreground">
+						{hadirCount}/{siswaList.length} Hadir
+					</span>
 				</div>
 				<div className="mb-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-[0.7rem] text-muted-foreground">
 					<span className="inline-flex items-center gap-1">
@@ -307,42 +323,54 @@ function DashboardPage() {
 					</span>
 				</div>
 				{siswaList.length > 0 ? (
-					<div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-						{siswaList.map((s) => {
-							const current = todayPresensiMap.get(s.id)?.status;
-							return (
-								<div
-									key={s.id}
-									className="flex items-center justify-between rounded-xl bg-muted/50 px-3 py-2"
-								>
-									<span className="text-sm font-medium truncate">{s.nama}</span>
-									<div className="flex gap-1">
-										{PRESENSI_STATUSES.map((st) => (
-											<button
-												type="button"
-												key={st}
-												onClick={() => handlePresensiChange(s.id, st)}
-												className={`rounded-md px-2 py-1.5 text-xs font-semibold transition-all duration-150 min-h-[44px] min-w-[44px] focus-visible:ring-2 focus-visible:ring-ring ${
-													current === st ? CHIP_ACTIVE[st] : CHIP_COLORS[st]
-												}`}
-											>
-												{st[0]}
-											</button>
-										))}
+					<>
+						<div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+							{siswaList.slice(0, 8).map((s) => {
+								const current = todayPresensiMap.get(s.id)?.status;
+								return (
+									<div
+										key={s.id}
+										className="flex items-center justify-between rounded-xl bg-muted/50 px-3 py-2"
+									>
+										<span className="text-sm font-medium truncate">
+											{s.nama}
+										</span>
+										<div className="flex gap-1">
+											{PRESENSI_STATUSES.map((st) => (
+												<button
+													type="button"
+													key={st}
+													onClick={() => handlePresensiChange(s.id, st)}
+													className={`rounded-md px-2 py-1.5 text-xs font-semibold transition-all duration-150 min-h-[44px] min-w-[44px] focus-visible:ring-2 focus-visible:ring-ring ${
+														current === st ? CHIP_ACTIVE[st] : CHIP_COLORS[st]
+													}`}
+												>
+													{st[0]}
+												</button>
+											))}
+										</div>
 									</div>
-								</div>
-							);
-						})}
-					</div>
+								);
+							})}
+						</div>
+						{siswaList.length > 8 && (
+							<Link
+								to="/presensi"
+								className="mt-3 inline-flex w-full items-center justify-center rounded-xl bg-muted/50 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted"
+							>
+								Lihat Semua Presensi ({siswaList.length} siswa)
+							</Link>
+						)}
+					</>
 				) : (
 					<p className="py-8 text-center text-sm text-muted-foreground">
 						Belum ada siswa.{" "}
-						<a
-							href="/pengaturan"
+						<Link
+							to="/pengaturan"
 							className="font-medium text-primary hover:underline"
 						>
 							Tambah siswa
-						</a>
+						</Link>
 					</p>
 				)}
 			</div>
@@ -564,43 +592,64 @@ function DashboardPage() {
 			<div className="rounded-2xl border bg-card p-5 shadow-xs">
 				<h2 className="mb-4 text-base font-semibold">Progres Siswa</h2>
 				{siswaList.length > 0 ? (
-					<div className="space-y-3">
-						{siswaList.map((s) => {
-							const prog = calcProgress(
-								s,
-								setoranList.filter((r) => r.siswaId === s.id),
-							);
-							return (
-								<div key={s.id} className="space-y-1.5">
-									<div className="flex items-center justify-between">
-										<span className="text-sm font-semibold">{s.nama}</span>
-										<span className="text-xs text-muted-foreground">
-											{prog.noTarget
-												? "Belum ada target"
-												: `${prog.current}/${prog.target} ${prog.unit.toLowerCase()} (${prog.pct}%)`}
-										</span>
-									</div>
-									{!prog.noTarget && (
-										<div className="h-2 overflow-hidden rounded-full bg-muted">
-											<div
-												className="h-full rounded-full bg-primary transition-all"
-												style={{ width: `${prog.pct}%` }}
-											/>
+					<>
+						<div className="space-y-3">
+							{siswaList
+								.map((s) => {
+									const prog = calcProgress(
+										s,
+										setoranList.filter((r) => r.siswaId === s.id),
+									);
+									return { siswa: s, ...prog };
+								})
+								.sort((a, b) => b.pct - a.pct)
+								.slice(0, 5)
+								.map((item, i) => (
+									<div key={item.siswa.id} className="space-y-1.5">
+										<div className="flex items-center justify-between">
+											<div className="flex items-center gap-2">
+												<span className="flex size-5 items-center justify-center rounded-full bg-muted text-[0.6rem] font-bold text-muted-foreground">
+													{i + 1}
+												</span>
+												<span className="text-sm font-semibold">
+													{item.siswa.nama}
+												</span>
+											</div>
+											<span className="text-xs text-muted-foreground">
+												{item.noTarget
+													? "Belum ada target"
+													: `${item.current}/${item.target} ${item.unit.toLowerCase()} (${item.pct}%)`}
+											</span>
 										</div>
-									)}
-								</div>
-							);
-						})}
-					</div>
+										{!item.noTarget && (
+											<div className="h-2 overflow-hidden rounded-full bg-muted">
+												<div
+													className="h-full rounded-full bg-primary transition-all"
+													style={{ width: `${item.pct}%` }}
+												/>
+											</div>
+										)}
+									</div>
+								))}
+						</div>
+						{siswaList.length > 5 && (
+							<Link
+								to="/laporan"
+								className="mt-4 inline-flex w-full items-center justify-center rounded-xl bg-muted/50 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted"
+							>
+								Lihat Semua Siswa ({siswaList.length})
+							</Link>
+						)}
+					</>
 				) : (
 					<p className="py-8 text-center text-sm text-muted-foreground">
 						Belum ada siswa.{" "}
-						<a
-							href="/pengaturan"
+						<Link
+							to="/pengaturan"
 							className="font-medium text-primary hover:underline"
 						>
 							Tambah siswa
-						</a>
+						</Link>
 					</p>
 				)}
 			</div>
