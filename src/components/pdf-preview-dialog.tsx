@@ -13,8 +13,10 @@ import {
 interface PdfPreviewDialogProps {
 	open: boolean;
 	onOpenChange: (open: boolean) => void;
-	/** API endpoint payload */
-	payload: { type: "laporan" | "siswa"; siswaId?: string };
+	/** API endpoint URL */
+	endpoint?: string;
+	/** API request payload */
+	payload: Record<string, unknown>;
 	/** Suggested download filename */
 	filename: string;
 }
@@ -22,6 +24,7 @@ interface PdfPreviewDialogProps {
 export function PdfPreviewDialog({
 	open,
 	onOpenChange,
+	endpoint = "/api/export-pdf",
 	payload,
 	filename,
 }: PdfPreviewDialogProps) {
@@ -32,7 +35,7 @@ export function PdfPreviewDialog({
 		setLoading(true);
 		setPdfUrl(null);
 		try {
-			const res = await fetch("/api/export-pdf", {
+			const res = await fetch(endpoint, {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify(payload),
@@ -45,7 +48,7 @@ export function PdfPreviewDialog({
 		} finally {
 			setLoading(false);
 		}
-	}, [payload]);
+	}, [endpoint, payload]);
 
 	useEffect(() => {
 		if (open) generate();

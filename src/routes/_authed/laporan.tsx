@@ -14,6 +14,7 @@ import {
 } from "recharts";
 import { toast } from "sonner";
 import { PdfPreviewDialog } from "@/components/pdf-preview-dialog";
+import { PresensiExportDialog } from "@/components/presensi-export-dialog";
 import { StudentModal } from "@/components/student-modal";
 import { Button } from "@/components/ui/button";
 import { calcProgress } from "@/lib/progress";
@@ -77,6 +78,7 @@ function LaporanPage() {
 	const [halaqahName, setHalaqahName] = useState<string>("");
 	const [loading, setLoading] = useState(true);
 	const [previewOpen, setPreviewOpen] = useState(false);
+	const [presensiExportOpen, setPresensiExportOpen] = useState(false);
 
 	useEffect(() => {
 		async function load() {
@@ -239,6 +241,14 @@ function LaporanPage() {
 						className="ml-2"
 					>
 						Export CSV
+					</Button>
+					<Button
+						variant="outline"
+						size="sm"
+						onClick={() => setPresensiExportOpen(true)}
+						className="ml-2"
+					>
+						Export Presensi
 					</Button>
 					<Button
 						variant="outline"
@@ -569,6 +579,12 @@ function LaporanPage() {
 				onOpenChange={setPreviewOpen}
 				payload={{ type: "laporan" }}
 				filename={`Laporan_${new Date().toISOString().split("T")[0]}.pdf`}
+			/>
+
+			{/* Presensi Export */}
+			<PresensiExportDialog
+				open={presensiExportOpen}
+				onOpenChange={setPresensiExportOpen}
 			/>
 		</div>
 	);

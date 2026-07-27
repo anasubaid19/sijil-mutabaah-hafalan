@@ -21,6 +21,7 @@ import { Route as AuthedMurajaahRouteImport } from './routes/_authed/murajaah'
 import { Route as AuthedPengaturanRouteImport } from './routes/_authed/pengaturan'
 import { Route as AuthedZiyadahRouteImport } from './routes/_authed/ziyadah'
 import { Route as ApiExportPdfRouteImport } from './routes/api/export-pdf'
+import { Route as ApiExportPresensiRouteImport } from './routes/api/export-presensi'
 import { Route as ApiParentAuthRouteImport } from './routes/api/parent-auth'
 import { Route as ApiParentDataRouteImport } from './routes/api/parent-data'
 import { Route as ApiPresensiRouteImport } from './routes/api/presensi'
@@ -90,6 +91,11 @@ const ApiExportPdfRoute = ApiExportPdfRouteImport.update({
   path: '/api/export-pdf',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiExportPresensiRoute = ApiExportPresensiRouteImport.update({
+  id: '/api/export-presensi',
+  path: '/api/export-presensi',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiParentAuthRoute = ApiParentAuthRouteImport.update({
   id: '/api/parent-auth',
   path: '/api/parent-auth',
@@ -148,6 +154,7 @@ export interface FileRoutesByFullPath {
   '/pengaturan': typeof AuthedPengaturanRoute
   '/ziyadah': typeof AuthedZiyadahRoute
   '/api/export-pdf': typeof ApiExportPdfRoute
+  '/api/export-presensi': typeof ApiExportPresensiRoute
   '/api/parent-auth': typeof ApiParentAuthRoute
   '/api/parent-data': typeof ApiParentDataRoute
   '/api/presensi': typeof ApiPresensiRoute
@@ -170,6 +177,7 @@ export interface FileRoutesByTo {
   '/pengaturan': typeof AuthedPengaturanRoute
   '/ziyadah': typeof AuthedZiyadahRoute
   '/api/export-pdf': typeof ApiExportPdfRoute
+  '/api/export-presensi': typeof ApiExportPresensiRoute
   '/api/parent-auth': typeof ApiParentAuthRoute
   '/api/parent-data': typeof ApiParentDataRoute
   '/api/presensi': typeof ApiPresensiRoute
@@ -194,6 +202,7 @@ export interface FileRoutesById {
   '/_authed/pengaturan': typeof AuthedPengaturanRoute
   '/_authed/ziyadah': typeof AuthedZiyadahRoute
   '/api/export-pdf': typeof ApiExportPdfRoute
+  '/api/export-presensi': typeof ApiExportPresensiRoute
   '/api/parent-auth': typeof ApiParentAuthRoute
   '/api/parent-data': typeof ApiParentDataRoute
   '/api/presensi': typeof ApiPresensiRoute
@@ -218,6 +227,7 @@ export interface FileRouteTypes {
     | '/pengaturan'
     | '/ziyadah'
     | '/api/export-pdf'
+    | '/api/export-presensi'
     | '/api/parent-auth'
     | '/api/parent-data'
     | '/api/presensi'
@@ -240,6 +250,7 @@ export interface FileRouteTypes {
     | '/pengaturan'
     | '/ziyadah'
     | '/api/export-pdf'
+    | '/api/export-presensi'
     | '/api/parent-auth'
     | '/api/parent-data'
     | '/api/presensi'
@@ -263,6 +274,7 @@ export interface FileRouteTypes {
     | '/_authed/pengaturan'
     | '/_authed/ziyadah'
     | '/api/export-pdf'
+    | '/api/export-presensi'
     | '/api/parent-auth'
     | '/api/parent-data'
     | '/api/presensi'
@@ -281,6 +293,7 @@ export interface RootRouteChildren {
   ParentRoute: typeof ParentRoute
   RegisterRoute: typeof RegisterRoute
   ApiExportPdfRoute: typeof ApiExportPdfRoute
+  ApiExportPresensiRoute: typeof ApiExportPresensiRoute
   ApiParentAuthRoute: typeof ApiParentAuthRoute
   ApiParentDataRoute: typeof ApiParentDataRoute
   ApiPresensiRoute: typeof ApiPresensiRoute
@@ -378,6 +391,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiExportPdfRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/export-presensi': {
+      id: '/api/export-presensi'
+      path: '/api/export-presensi'
+      fullPath: '/api/export-presensi'
+      preLoaderRoute: typeof ApiExportPresensiRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/parent-auth': {
       id: '/api/parent-auth'
       path: '/api/parent-auth'
@@ -472,6 +492,7 @@ const rootRouteChildren: RootRouteChildren = {
   ParentRoute: ParentRoute,
   RegisterRoute: RegisterRoute,
   ApiExportPdfRoute: ApiExportPdfRoute,
+  ApiExportPresensiRoute: ApiExportPresensiRoute,
   ApiParentAuthRoute: ApiParentAuthRoute,
   ApiParentDataRoute: ApiParentDataRoute,
   ApiPresensiRoute: ApiPresensiRoute,
