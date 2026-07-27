@@ -24,6 +24,7 @@ interface UserProfile {
 	id: string;
 	nama: string;
 	role: string;
+	halaqahName?: string;
 }
 
 export const Route = createFileRoute("/_authed/pengaturan")({
@@ -41,6 +42,7 @@ function PengaturanPage() {
 
 	// Profile
 	const [nama, setNama] = useState("");
+	const [halaqahName, setHalaqahName] = useState("");
 	const [newPassword, setNewPassword] = useState("");
 	const [confirmPassword, setConfirmPassword] = useState("");
 
@@ -66,7 +68,10 @@ function PengaturanPage() {
 				if (pRes.ok) {
 					const p = await pRes.json();
 					setProfile(p);
-					if (p) setNama(p.nama || "");
+					if (p) {
+						setNama(p.nama || "");
+						setHalaqahName(p.halaqahName || "");
+					}
 				}
 				if (sRes.ok) setSiswaList(await sRes.json());
 			} catch {}
@@ -82,7 +87,7 @@ function PengaturanPage() {
 		const res = await fetch("/api/user-profile", {
 			method,
 			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({ nama, role: "musyrif" }),
+			body: JSON.stringify({ nama, role: "musyrif", halaqahName }),
 		});
 		if (res.ok) {
 			toast.success("Profil tersimpan!");
@@ -262,6 +267,27 @@ function PengaturanPage() {
 
 			{isMobile && (
 				<>
+					{/* Nama Halaqah */}
+					<form
+						onSubmit={saveProfile}
+						className="space-y-4 rounded-2xl border bg-card p-5 shadow-xs"
+					>
+						<h3 className="text-lg font-semibold">Nama Halaqah</h3>
+						<div className="space-y-2">
+							<label htmlFor="halaqah-name" className="text-sm font-medium">
+								Nama Halaqah / Grup
+							</label>
+							<Input
+								id="halaqah-name"
+								type="text"
+								value={halaqahName}
+								onChange={(e) => setHalaqahName(e.target.value)}
+								placeholder="Contoh: Halaqah Putra A"
+							/>
+						</div>
+						<Button type="submit">Simpan</Button>
+					</form>
+
 					{/* Profile */}
 					<form
 						onSubmit={saveProfile}
