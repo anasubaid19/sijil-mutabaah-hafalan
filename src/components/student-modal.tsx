@@ -1,4 +1,5 @@
-import { toast } from "sonner";
+import { useState } from "react";
+import { PdfPreviewDialog } from "@/components/pdf-preview-dialog";
 import {
 	Dialog,
 	DialogContent,
@@ -63,6 +64,8 @@ export function StudentModal({
 	siswa,
 	setoranList,
 }: StudentModalProps) {
+	const [previewOpen, setPreviewOpen] = useState(false);
+
 	if (!siswa) return null;
 
 	const recs = setoranList.filter((r) => r.siswaId === siswa.id);
@@ -145,32 +148,20 @@ export function StudentModal({
 				{siswa && (
 					<button
 						type="button"
-						onClick={async () => {
-							try {
-								const res = await fetch("/api/export-pdf", {
-									method: "POST",
-									headers: { "Content-Type": "application/json" },
-									body: JSON.stringify({ type: "siswa", siswaId: siswa.id }),
-								});
-								if (!res.ok) throw new Error("Gagal");
-								const blob = await res.blob();
-								const url = URL.createObjectURL(blob);
-								const a = document.createElement("a");
-								a.href = url;
-								a.download = `Rapor_${siswa.nama.replace(/\s+/g, "_")}.pdf`;
-								a.click();
-								URL.revokeObjectURL(url);
-								toast.success("PDF berhasil diunduh!");
-							} catch {
-								toast.error("Gagal generate PDF");
-							}
-						}}
+						onClick={() => setPreviewOpen(true)}
 						className="mt-2 w-full rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
 					>
 						Export PDF
 					</button>
 				)}
 			</DialogContent>
+
+			<PdfPreviewDialog
+				open={previewOpen}
+				onOpenChange={setPreviewOpen}
+				payload={{ type: "siswa", siswaId: siswa?.id }}
+				filename={`Rapor_${(siswa?.nama ?? "").replace(/\s+/g, "_")}.pdf`}
+			/>
 		</Dialog>
 	);
 }

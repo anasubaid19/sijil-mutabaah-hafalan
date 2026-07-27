@@ -13,6 +13,7 @@ import {
 	YAxis,
 } from "recharts";
 import { toast } from "sonner";
+import { PdfPreviewDialog } from "@/components/pdf-preview-dialog";
 import { StudentModal } from "@/components/student-modal";
 import { Button } from "@/components/ui/button";
 import { calcProgress } from "@/lib/progress";
@@ -75,6 +76,7 @@ function LaporanPage() {
 	const [modalSiswa, setModalSiswa] = useState<Siswa | null>(null);
 	const [halaqahName, setHalaqahName] = useState<string>("");
 	const [loading, setLoading] = useState(true);
+	const [previewOpen, setPreviewOpen] = useState(false);
 
 	useEffect(() => {
 		async function load() {
@@ -187,24 +189,7 @@ function LaporanPage() {
 	}
 
 	async function exportPDF() {
-		try {
-			const res = await fetch("/api/export-pdf", {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ type: "laporan" }),
-			});
-			if (!res.ok) throw new Error("Gagal generate PDF");
-			const blob = await res.blob();
-			const url = URL.createObjectURL(blob);
-			const a = document.createElement("a");
-			a.href = url;
-			a.download = `Laporan_${new Date().toISOString().split("T")[0]}.pdf`;
-			a.click();
-			URL.revokeObjectURL(url);
-			toast.success("PDF berhasil diunduh!");
-		} catch {
-			toast.error("Gagal generate PDF");
-		}
+		setPreviewOpen(true);
 	}
 
 	if (loading) {
@@ -576,6 +561,14 @@ function LaporanPage() {
 				}}
 				siswa={modalSiswa}
 				setoranList={setoranList.filter((r) => r.siswaId === modalSiswa?.id)}
+			/>
+
+			{/* PDF Preview */}
+			<PdfPreviewDialog
+				open={previewOpen}
+				onOpenChange={setPreviewOpen}
+				payload={{ type: "laporan" }}
+				filename={`Laporan_${new Date().toISOString().split("T")[0]}.pdf`}
 			/>
 		</div>
 	);

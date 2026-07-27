@@ -75,11 +75,12 @@ export const Route = createFileRoute("/api/export-pdf")({
 					subtitle = `${halaqahName}`;
 					content = [
 						{
-							type: "h1",
+							type: "h2",
 							text: `Rapor Hafalan — ${s.nama}`,
 						},
 						{
 							type: "table",
+							style: "summary",
 							headers: ["Metrik", "Nilai"],
 							rows: [
 								["Total Setoran", `${recs.length}`],
@@ -95,6 +96,7 @@ export const Route = createFileRoute("/api/export-pdf")({
 						{ type: "h2", text: "Riwayat Setoran" },
 						{
 							type: "table",
+							style: "detail",
 							headers: ["Tanggal", "Type", "Surah", "Ayat", "Status", "Mutqin"],
 							rows: recs
 								.slice()
@@ -140,9 +142,10 @@ export const Route = createFileRoute("/api/export-pdf")({
 					});
 
 					content = [
-						{ type: "h1", text: "Ringkasan Laporan" },
+						{ type: "h2", text: "Ringkasan Laporan" },
 						{
 							type: "table",
+							style: "summary",
 							headers: ["Siswa", "Setoran", "Total Ayat", "Terakhir", "Metode"],
 							rows: summaryRows,
 						},
@@ -163,6 +166,7 @@ export const Route = createFileRoute("/api/export-pdf")({
 						if (recs.length > 0) {
 							content.push({
 								type: "table",
+								style: "detail",
 								headers: ["Tanggal", "Type", "Surah", "Ayat", "Status"],
 								rows: recs.map((r) => {
 									const sData = SURAH_DATA.find((x) => x.number === r.surah);
@@ -190,11 +194,11 @@ export const Route = createFileRoute("/api/export-pdf")({
 				try {
 					writeFileSync(
 						contentPath,
-						JSON.stringify({ title, subtitle, type: "report", content }),
+						JSON.stringify({ title, subtitle, date: dateStr, content }),
 					);
 
 					execSync(
-						`python3 "${scriptPath}" --content "${contentPath}" --out "${outPath}"`,
+						`python3 "${scriptPath}" --title "${title.replace(/"/g, '\\"')}" --subtitle "${subtitle.replace(/"/g, '\\"')}" --date "${dateStr}" --content "${contentPath}" --out "${outPath}"`,
 						{ timeout: 15000 },
 					);
 
