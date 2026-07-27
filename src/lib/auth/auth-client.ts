@@ -1,4 +1,4 @@
-import { createAuthClient } from "better-auth/client";
+import { createAuthClient } from "better-auth/react";
 import { usernameClient } from "better-auth/client/plugins";
 
 // ponytail: empty baseURL = same origin, works on any port
