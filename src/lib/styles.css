@@ -58,6 +58,7 @@
   --duration-fast: var(--motion-duration-fast);
   --duration-normal: var(--motion-duration-normal);
   --duration-slow: var(--motion-duration-slow);
+  --duration-micro: var(--motion-duration-micro);
   --ease-entrance: var(--motion-ease-entrance);
   --ease-default: var(--motion-ease-default);
 }
@@ -107,6 +108,7 @@
 	--space-page: 1rem;
 
 	/* Motion */
+	--motion-duration-micro: 100ms;
 	--motion-duration-fast: 150ms;
 	--motion-duration-normal: 200ms;
 	--motion-duration-slow: 500ms;

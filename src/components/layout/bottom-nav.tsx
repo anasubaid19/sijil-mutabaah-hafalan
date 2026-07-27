@@ -70,7 +70,7 @@ export function BottomNav() {
 									/>
 								</div>
 								<span
-									className={`text-[0.6rem] font-semibold uppercase tracking-wider ${
+									className={`text-[0.6rem] font-semibold uppercase tracking-wider transition-colors duration-200 ${
 										active ? "text-primary" : ""
 									}`}
 								>
@@ -97,7 +97,7 @@ export function BottomNav() {
 								strokeWidth={1.8}
 							/>
 						</div>
-						<span className="text-[0.6rem] font-semibold uppercase tracking-wider">
+						<span className="text-[0.6rem] font-semibold uppercase tracking-wider transition-colors duration-200">
 							Lainnya
 						</span>
 					</button>
