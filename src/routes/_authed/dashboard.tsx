@@ -12,7 +12,6 @@ import {
 	Bar,
 	BarChart,
 	CartesianGrid,
-	Legend,
 	Line,
 	LineChart,
 	ResponsiveContainer,
@@ -92,6 +91,9 @@ function DashboardPage() {
 	const [mushafOpen, setMushafOpen] = useState(false);
 	const [chartType, setChartType] = useState<"bar" | "line">("bar");
 	const [chartRange, setChartRange] = useState<"week" | "month">("week");
+	const [isMobile, setIsMobile] = useState(
+		typeof window !== "undefined" && window.innerWidth < 768,
+	);
 
 	const today = todayStr();
 
@@ -111,6 +113,14 @@ function DashboardPage() {
 		}
 		load();
 	}, [today]);
+
+	useEffect(() => {
+		function onResize() {
+			setIsMobile(window.innerWidth < 768);
+		}
+		window.addEventListener("resize", onResize);
+		return () => window.removeEventListener("resize", onResize);
+	}, []);
 
 	const todayPresensiMap = new Map(presensiList.map((p) => [p.siswaId, p]));
 
@@ -377,12 +387,19 @@ function DashboardPage() {
 
 			{/* Weekly/Monthly: Bar / Line */}
 			<div className="rounded-2xl border bg-card p-5 shadow-xs">
-				<div className="mb-4 flex items-center justify-between">
-					<h2 className="text-base font-semibold">
-						Setoran {chartRange === "week" ? "Minggu" : "Bulan"} Ini
-					</h2>
-					<div className="flex items-center gap-2">
-						<div className="flex rounded-lg border bg-muted/50 p-0.5">
+				{isMobile ? (
+					/* Mobile: vertical stack */
+					<div className="space-y-3">
+						<div>
+							<h2 className="text-base font-semibold">
+								Setoran {chartRange === "week" ? "Minggu" : "Bulan"} Ini
+							</h2>
+							<p className="mt-0.5 text-xs text-muted-foreground">
+								Statistik setoran{" "}
+								{chartRange === "week" ? "7 hari terakhir" : "bulan ini"}
+							</p>
+						</div>
+						<div className="flex rounded-full bg-muted/50 p-0.5">
 							{(
 								[
 									["week", "Minggu"],
@@ -393,17 +410,17 @@ function DashboardPage() {
 									key={key}
 									type="button"
 									onClick={() => setChartRange(key)}
-									className={`rounded-md px-3 py-1 text-xs font-medium transition-colors ${
+									className={`flex-1 rounded-full py-1.5 text-xs font-medium transition-all duration-200 ${
 										chartRange === key
-											? "bg-background text-foreground shadow-sm"
-											: "text-muted-foreground hover:text-foreground"
+											? "bg-primary text-primary-foreground"
+											: "text-muted-foreground"
 									}`}
 								>
 									{label}
 								</button>
 							))}
 						</div>
-						<div className="flex rounded-lg border bg-muted/50 p-0.5">
+						<div className="flex items-center gap-1">
 							{(
 								[
 									["bar", "Bar"],
@@ -414,96 +431,117 @@ function DashboardPage() {
 									key={key}
 									type="button"
 									onClick={() => setChartType(key)}
-									className={`rounded-md px-3 py-1 text-xs font-medium transition-colors ${
+									className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-all duration-200 ${
 										chartType === key
-											? "bg-background text-foreground shadow-sm"
-											: "text-muted-foreground hover:text-foreground"
+											? "bg-primary/10 text-primary"
+											: "text-muted-foreground/60 hover:text-muted-foreground"
 									}`}
 								>
+									{key === "bar" ? "📊 " : "📈 "}
 									{label}
 								</button>
 							))}
 						</div>
-					</div>
-				</div>
-
-				{chartData.length > 0 ? (
-					<>
-						{chartType === "bar" && (
-							<ResponsiveContainer width="100%" height={200}>
-								<BarChart data={chartData}>
-									<CartesianGrid
-										strokeDasharray="3 3"
-										className="[stroke:var(--border)]"
-									/>
-									<XAxis dataKey="day" className="text-xs" />
-									<YAxis className="text-xs" />
-									<Tooltip
-										contentStyle={{
-											borderRadius: "0.75rem",
-											border: "1px solid var(--border)",
-											background: "var(--card)",
-											fontSize: "0.875rem",
-										}}
-									/>
-									<Legend />
-									<Bar
-										dataKey="ziyadah"
-										name="Ziyadah"
-										fill="#2563eb"
-										radius={[4, 4, 0, 0]}
-									/>
-									<Bar
-										dataKey="murajaah"
-										name="Murajaah"
-										fill="#f59e0b"
-										radius={[4, 4, 0, 0]}
-									/>
-								</BarChart>
-							</ResponsiveContainer>
+						{/* Legend — compact pills */}
+						<div className="flex items-center justify-center gap-4 text-[0.65rem] font-medium">
+							<span className="inline-flex items-center gap-1.5">
+								<span className="size-2 rounded-full bg-[#2563eb]" />
+								Ziyadah
+							</span>
+							<span className="inline-flex items-center gap-1.5">
+								<span className="size-2 rounded-full bg-[#f59e0b]" />
+								Murajaah
+							</span>
+						</div>
+						{chartData.length > 0 ? (
+							<ChartBlock
+								chartType={chartType}
+								chartData={chartData}
+								height={220}
+							/>
+						) : (
+							<div className="flex flex-col items-center gap-2 py-10">
+								<HugeiconsIcon
+									icon={BookOpen}
+									className="size-8 text-muted-foreground/30"
+									strokeWidth={1.5}
+								/>
+								<p className="text-sm text-muted-foreground">
+									Belum ada setoran {chartRange === "week" ? "minggu" : "bulan"}{" "}
+									ini
+								</p>
+								<p className="text-xs text-muted-foreground/60">
+									Mulai input Ziyadah atau Murajaah agar statistik dapat
+									ditampilkan
+								</p>
+							</div>
 						)}
-						{chartType === "line" && (
-							<ResponsiveContainer width="100%" height={200}>
-								<LineChart data={chartData}>
-									<CartesianGrid
-										strokeDasharray="3 3"
-										className="[stroke:var(--border)]"
-									/>
-									<XAxis dataKey="day" className="text-xs" />
-									<YAxis className="text-xs" />
-									<Tooltip
-										contentStyle={{
-											borderRadius: "0.75rem",
-											border: "1px solid var(--border)",
-											background: "var(--card)",
-											fontSize: "0.875rem",
-										}}
-									/>
-									<Legend />
-									<Line
-										type="monotone"
-										dataKey="ziyadah"
-										name="Ziyadah"
-										stroke="#2563eb"
-										strokeWidth={2}
-										dot={{ fill: "#2563eb", r: 4 }}
-									/>
-									<Line
-										type="monotone"
-										dataKey="murajaah"
-										name="Murajaah"
-										stroke="#f59e0b"
-										strokeWidth={2}
-										dot={{ fill: "#f59e0b", r: 4 }}
-									/>
-								</LineChart>
-							</ResponsiveContainer>
+					</div>
+				) : (
+					/* Desktop: unchanged layout */
+					<>
+						<div className="mb-4 flex items-center justify-between">
+							<h2 className="text-base font-semibold">
+								Setoran {chartRange === "week" ? "Minggu" : "Bulan"} Ini
+							</h2>
+							<div className="flex items-center gap-2">
+								<div className="flex rounded-lg border bg-muted/50 p-0.5">
+									{(
+										[
+											["week", "Minggu"],
+											["month", "Bulan"],
+										] as const
+									).map(([key, label]) => (
+										<button
+											key={key}
+											type="button"
+											onClick={() => setChartRange(key)}
+											className={`rounded-md px-3 py-1 text-xs font-medium transition-colors ${
+												chartRange === key
+													? "bg-background text-foreground shadow-sm"
+													: "text-muted-foreground hover:text-foreground"
+											}`}
+										>
+											{label}
+										</button>
+									))}
+								</div>
+								<div className="flex rounded-lg border bg-muted/50 p-0.5">
+									{(
+										[
+											["bar", "Bar"],
+											["line", "Line"],
+										] as const
+									).map(([key, label]) => (
+										<button
+											key={key}
+											type="button"
+											onClick={() => setChartType(key)}
+											className={`rounded-md px-3 py-1 text-xs font-medium transition-colors ${
+												chartType === key
+													? "bg-background text-foreground shadow-sm"
+													: "text-muted-foreground hover:text-foreground"
+											}`}
+										>
+											{label}
+										</button>
+									))}
+								</div>
+							</div>
+						</div>
+						{chartData.length > 0 ? (
+							<ChartBlock
+								chartType={chartType}
+								chartData={chartData}
+								height={200}
+							/>
+						) : (
+							<p className="py-8 text-center text-sm text-muted-foreground">
+								Belum ada setoran {chartRange === "week" ? "minggu" : "bulan"}{" "}
+								ini
+							</p>
 						)}
 					</>
-				) : (
-					<p className="py-8 text-center text-sm text-muted-foreground">
-						Belum ada setoran {chartRange === "week" ? "minggu" : "bulan"} ini
-					</p>
 				)}
 			</div>
 
@@ -654,6 +692,89 @@ function DashboardPage() {
 				)}
 			</div>
 		</div>
+	);
+}
+
+function ChartBlock({
+	chartType,
+	chartData,
+	height,
+}: {
+	chartType: "bar" | "line";
+	chartData: { day: string; ziyadah: number; murajaah: number }[];
+	height: number;
+}) {
+	if (chartType === "bar") {
+		return (
+			<ResponsiveContainer width="100%" height={height}>
+				<BarChart data={chartData} animationDuration={400}>
+					<CartesianGrid
+						strokeDasharray="3 3"
+						className="[stroke:var(--border)]"
+						strokeOpacity={0.15}
+					/>
+					<XAxis dataKey="day" className="text-xs" />
+					<YAxis className="text-xs" />
+					<Tooltip
+						contentStyle={{
+							borderRadius: "0.75rem",
+							border: "1px solid var(--border)",
+							background: "var(--card)",
+							fontSize: "0.875rem",
+						}}
+					/>
+					<Bar
+						dataKey="ziyadah"
+						name="Ziyadah"
+						fill="#2563eb"
+						radius={[4, 4, 0, 0]}
+					/>
+					<Bar
+						dataKey="murajaah"
+						name="Murajaah"
+						fill="#f59e0b"
+						radius={[4, 4, 0, 0]}
+					/>
+				</BarChart>
+			</ResponsiveContainer>
+		);
+	}
+	return (
+		<ResponsiveContainer width="100%" height={height}>
+			<LineChart data={chartData} animationDuration={400}>
+				<CartesianGrid
+					strokeDasharray="3 3"
+					className="[stroke:var(--border)]"
+					strokeOpacity={0.15}
+				/>
+				<XAxis dataKey="day" className="text-xs" />
+				<YAxis className="text-xs" />
+				<Tooltip
+					contentStyle={{
+						borderRadius: "0.75rem",
+						border: "1px solid var(--border)",
+						background: "var(--card)",
+						fontSize: "0.875rem",
+					}}
+				/>
+				<Line
+					type="monotone"
+					dataKey="ziyadah"
+					name="Ziyadah"
+					stroke="#2563eb"
+					strokeWidth={2}
+					dot={{ fill: "#2563eb", r: 4 }}
+				/>
+				<Line
+					type="monotone"
+					dataKey="murajaah"
+					name="Murajaah"
+					stroke="#f59e0b"
+					strokeWidth={2}
+					dot={{ fill: "#f59e0b", r: 4 }}
+				/>
+			</LineChart>
+		</ResponsiveContainer>
 	);
 }
 
