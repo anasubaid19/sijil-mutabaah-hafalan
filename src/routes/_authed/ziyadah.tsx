@@ -259,6 +259,7 @@ function ZiyadahPage() {
 		endSurah?: string,
 		endAyat?: number,
 	) {
+		console.log("[ziyadah] handleMushafSelect", { surah, ayatAwal, ayatAkhir, endSurah, endAyat });
 		setSurahA(surah);
 		setDariAyat(String(ayatAwal));
 		if (endSurah) {

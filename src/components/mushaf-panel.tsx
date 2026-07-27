@@ -236,6 +236,16 @@ export function MushafPanel({
 		const endSurah = selectionSummary.sameSurah
 			? undefined
 			: surahNumberToName(selectionSummary.endSurahNumber);
+		console.log("[mushaf] handleUse", {
+			surah: surahNumberToName(selectionSummary.surahNumber),
+			ayatAwal: selectionSummary.ayatAwal,
+			ayatAkhir: selectionSummary.ayatAkhir,
+			endSurah,
+			endAyat: endSurah ? selectionSummary.ayatAkhir : undefined,
+			sameSurah: selectionSummary.sameSurah,
+			startKey,
+			endKey,
+		});
 		onSelect(
 			surahNumberToName(selectionSummary.surahNumber),
 			selectionSummary.ayatAwal,
@@ -243,7 +253,7 @@ export function MushafPanel({
 			endSurah,
 			endSurah ? selectionSummary.ayatAkhir : undefined,
 		);
-	}, [selectionSummary, onSelect]);
+	}, [selectionSummary, onSelect, startKey, endKey]);
 
 	const jumpToSurah = useCallback((surahNumber: number) => {
 		const s = SURAH_DATA.find((s) => s.number === surahNumber);

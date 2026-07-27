@@ -262,6 +262,7 @@ function MurajaahPage() {
 		endSurah?: string,
 		endAyat?: number,
 	) {
+		console.log("[murajaah] handleMushafSelect", { surah, ayatAwal, ayatAkhir, endSurah, endAyat });
 		setSurahA(surah);
 		setDariAyat(String(ayatAwal));
 		if (endSurah) {
