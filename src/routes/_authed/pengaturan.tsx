@@ -32,6 +32,9 @@ export const Route = createFileRoute("/_authed/pengaturan")({
 
 function PengaturanPage() {
 	const navigate = useNavigate();
+	const [isMobile, setIsMobile] = useState(
+		typeof window !== "undefined" && window.innerWidth < 768,
+	);
 	const [profile, setProfile] = useState<UserProfile | null>(null);
 	const [siswaList, setSiswaList] = useState<Siswa[]>([]);
 	const [loading, setLoading] = useState(true);
@@ -50,6 +53,10 @@ function PengaturanPage() {
 	const [editingSiswa, setEditingSiswa] = useState<string | null>(null);
 
 	useEffect(() => {
+		function onResize() {
+			setIsMobile(window.innerWidth < 768);
+		}
+		window.addEventListener("resize", onResize);
 		async function load() {
 			try {
 				const [pRes, sRes] = await Promise.all([
@@ -66,6 +73,7 @@ function PengaturanPage() {
 			setLoading(false);
 		}
 		load();
+		return () => window.removeEventListener("resize", onResize);
 	}, []);
 
 	async function saveProfile(e: React.FormEvent) {
@@ -252,27 +260,31 @@ function PengaturanPage() {
 		<div className="mx-auto max-w-2xl space-y-6 pb-20 md:pb-6">
 			<h2 className="text-base font-semibold">Pengaturan</h2>
 
-			{/* Profile */}
-			<form
-				onSubmit={saveProfile}
-				className="space-y-4 rounded-2xl border bg-card p-5 shadow-xs"
-			>
-				<h3 className="text-lg font-semibold">Profil Ustadz/Ustadzah</h3>
-				<div className="space-y-2">
-					<label htmlFor="profile-nama" className="text-sm font-medium">
-						Nama
-					</label>
-					<Input
-						id="profile-nama"
-						type="text"
-						value={nama}
-						onChange={(e) => setNama(e.target.value)}
-						placeholder="Nama lengkap"
-						required
-					/>
-				</div>
-				<Button type="submit">Simpan Profil</Button>
-			</form>
+			{isMobile && (
+				<>
+					{/* Profile */}
+					<form
+						onSubmit={saveProfile}
+						className="space-y-4 rounded-2xl border bg-card p-5 shadow-xs"
+					>
+						<h3 className="text-lg font-semibold">Profil Ustadz/Ustadzah</h3>
+						<div className="space-y-2">
+							<label htmlFor="profile-nama" className="text-sm font-medium">
+								Nama
+							</label>
+							<Input
+								id="profile-nama"
+								type="text"
+								value={nama}
+								onChange={(e) => setNama(e.target.value)}
+								placeholder="Nama lengkap"
+								required
+							/>
+						</div>
+						<Button type="submit">Simpan Profil</Button>
+					</form>
+				</>
+			)}
 
 			{/* Change Password */}
 			<form
@@ -311,210 +323,217 @@ function PengaturanPage() {
 				</Button>
 			</form>
 
-			{/* Siswa Management */}
-			<div className="space-y-4 rounded-2xl border bg-card p-5 shadow-xs">
-				<h3 className="text-lg font-semibold">Kelola Siswa</h3>
+			{isMobile && (
+				<>
+					{/* Siswa Management */}
+					<div className="space-y-4 rounded-2xl border bg-card p-5 shadow-xs">
+						<h3 className="text-lg font-semibold">Kelola Siswa</h3>
 
-				<form onSubmit={addSiswa} className="space-y-3">
-					<div className="grid gap-3 sm:grid-cols-3">
-						<div className="space-y-1">
-							<label htmlFor="siswa-nama" className="text-sm font-medium">
-								Nama
-							</label>
-							<Input
-								id="siswa-nama"
-								type="text"
-								value={siswaNama}
-								onChange={(e) => setSiswaNama(e.target.value)}
-								placeholder="Nama siswa"
-								required
-							/>
-						</div>
-						<div className="space-y-1">
-							<label htmlFor="siswa-umur" className="text-sm font-medium">
-								Umur
-							</label>
-							<Input
-								id="siswa-umur"
-								type="number"
-								value={siswaUmur}
-								onChange={(e) => setSiswaUmur(e.target.value)}
-								placeholder="7"
-							/>
-						</div>
-						<div className="space-y-1">
-							<label htmlFor="siswa-metode" className="text-sm font-medium">
-								Metode
-							</label>
-							<select
-								id="siswa-metode"
-								value={siswaMetode}
-								onChange={(e) => {
-									const v = e.target.value as "juz" | "surah";
-									setSiswaMetode(v);
-									setSiswaTargetFrom(v === "juz" ? "1" : "1");
-									setSiswaTargetTo(v === "juz" ? "30" : "114");
-								}}
-								className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-xs transition-colors md:text-sm"
-							>
-								<option value="juz">Per Juz</option>
-								<option value="surah">Per Surah</option>
-							</select>
-						</div>
-					</div>
-					<div className="grid gap-3 sm:grid-cols-2">
-						<div className="space-y-1">
-							<label
-								htmlFor="siswa-target-from"
-								className="text-sm font-medium"
-							>
-								{siswaMetode === "juz" ? "Mulai Juz" : "Mulai Surah"}
-							</label>
-							{siswaMetode === "juz" ? (
-								<select
-									id="siswa-target-from"
-									value={siswaTargetFrom}
-									onChange={(e) => setSiswaTargetFrom(e.target.value)}
-									className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-xs transition-colors md:text-sm"
-								>
-									{Array.from({ length: 30 }, (_, i) => (
-										<option key={i + 1} value={i + 1}>
-											Juz {i + 1}
-										</option>
-									))}
-								</select>
-							) : (
-								<select
-									id="siswa-target-from"
-									value={siswaTargetFrom}
-									onChange={(e) => setSiswaTargetFrom(e.target.value)}
-									className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-xs transition-colors md:text-sm"
-								>
-									{SURAH_DATA.map((s) => (
-										<option key={s.number} value={s.number}>
-											{s.number}. {s.name}
-										</option>
-									))}
-								</select>
-							)}
-						</div>
-						<div className="space-y-1">
-							<label htmlFor="siswa-target-to" className="text-sm font-medium">
-								{siswaMetode === "juz" ? "Sampai Juz" : "Sampai Surah"}
-							</label>
-							{siswaMetode === "juz" ? (
-								<select
-									id="siswa-target-to"
-									value={siswaTargetTo}
-									onChange={(e) => setSiswaTargetTo(e.target.value)}
-									className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-xs transition-colors md:text-sm"
-								>
-									{Array.from({ length: 30 }, (_, i) => (
-										<option key={i + 1} value={i + 1}>
-											Juz {i + 1}
-										</option>
-									))}
-								</select>
-							) : (
-								<select
-									id="siswa-target-to"
-									value={siswaTargetTo}
-									onChange={(e) => setSiswaTargetTo(e.target.value)}
-									className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-xs transition-colors md:text-sm"
-								>
-									{SURAH_DATA.map((s) => (
-										<option key={s.number} value={s.number}>
-											{s.number}. {s.name}
-										</option>
-									))}
-								</select>
-							)}
-						</div>
-					</div>
-					<div className="flex gap-2">
-						<Button type="submit">
-							{editingSiswa ? "Update" : "Tambah Siswa"}
-						</Button>
-						{editingSiswa && (
-							<Button
-								type="button"
-								variant="outline"
-								onClick={() => {
-									setEditingSiswa(null);
-									setSiswaNama("");
-									setSiswaUmur("");
-									setSiswaMetode("juz");
-									setSiswaTargetFrom("1");
-									setSiswaTargetTo("30");
-								}}
-							>
-								Batal
-							</Button>
-						)}
-					</div>
-				</form>
-
-				{/* Siswa List */}
-				{siswaList.length > 0 ? (
-					<div className="space-y-2 border-t border-border pt-4">
-						{siswaList.map((s) => (
-							<div
-								key={s.id}
-								className="space-y-2 rounded-xl bg-muted/50 px-4 py-3"
-							>
-								<div className="flex items-center justify-between">
-									<div>
-										<p className="text-sm font-semibold">{s.nama}</p>
-										<p className="text-xs text-muted-foreground">
-											{s.hafalan}/{s.target}{" "}
-											{s.metodeProgress === "surah" ? "surah" : "juz"}
-											{s.mulaiHafalan ? ` (dari ${s.mulaiHafalan})` : ""}
-											{s.umur ? ` · ${s.umur} tahun` : ""}
-										</p>
-									</div>
-									<div className="flex gap-1">
-										<button
-											type="button"
-											onClick={() => editSiswa(s)}
-											className="rounded-lg px-3 py-1 text-xs font-semibold text-primary hover:bg-primary/10"
-										>
-											Edit
-										</button>
-										<button
-											type="button"
-											onClick={() => deleteSiswa(s.id)}
-											className="rounded-lg px-3 py-1 text-xs font-semibold text-red-600 hover:bg-red-500/10"
-										>
-											Hapus
-										</button>
-									</div>
+						<form onSubmit={addSiswa} className="space-y-3">
+							<div className="grid gap-3 sm:grid-cols-3">
+								<div className="space-y-1">
+									<label htmlFor="siswa-nama" className="text-sm font-medium">
+										Nama
+									</label>
+									<Input
+										id="siswa-nama"
+										type="text"
+										value={siswaNama}
+										onChange={(e) => setSiswaNama(e.target.value)}
+										placeholder="Nama siswa"
+										required
+									/>
 								</div>
-								{s.studentId && (
-									<div className="flex items-center gap-2 rounded-lg bg-background px-3 py-2 text-xs">
-										<span className="text-muted-foreground">ID:</span>
-										<code className="font-mono font-semibold">
-											{s.studentId}
-										</code>
-										<button
-											type="button"
-											onClick={() => {
-												if (s.studentId) copyToClipboard(s.studentId);
-											}}
-											className="ml-auto text-primary hover:underline"
+								<div className="space-y-1">
+									<label htmlFor="siswa-umur" className="text-sm font-medium">
+										Umur
+									</label>
+									<Input
+										id="siswa-umur"
+										type="number"
+										value={siswaUmur}
+										onChange={(e) => setSiswaUmur(e.target.value)}
+										placeholder="7"
+									/>
+								</div>
+								<div className="space-y-1">
+									<label htmlFor="siswa-metode" className="text-sm font-medium">
+										Metode
+									</label>
+									<select
+										id="siswa-metode"
+										value={siswaMetode}
+										onChange={(e) => {
+											const v = e.target.value as "juz" | "surah";
+											setSiswaMetode(v);
+											setSiswaTargetFrom(v === "juz" ? "1" : "1");
+											setSiswaTargetTo(v === "juz" ? "30" : "114");
+										}}
+										className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-xs transition-colors md:text-sm"
+									>
+										<option value="juz">Per Juz</option>
+										<option value="surah">Per Surah</option>
+									</select>
+								</div>
+							</div>
+							<div className="grid gap-3 sm:grid-cols-2">
+								<div className="space-y-1">
+									<label
+										htmlFor="siswa-target-from"
+										className="text-sm font-medium"
+									>
+										{siswaMetode === "juz" ? "Mulai Juz" : "Mulai Surah"}
+									</label>
+									{siswaMetode === "juz" ? (
+										<select
+											id="siswa-target-from"
+											value={siswaTargetFrom}
+											onChange={(e) => setSiswaTargetFrom(e.target.value)}
+											className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-xs transition-colors md:text-sm"
 										>
-											Salin
-										</button>
-									</div>
+											{Array.from({ length: 30 }, (_, i) => (
+												<option key={i + 1} value={i + 1}>
+													Juz {i + 1}
+												</option>
+											))}
+										</select>
+									) : (
+										<select
+											id="siswa-target-from"
+											value={siswaTargetFrom}
+											onChange={(e) => setSiswaTargetFrom(e.target.value)}
+											className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-xs transition-colors md:text-sm"
+										>
+											{SURAH_DATA.map((s) => (
+												<option key={s.number} value={s.number}>
+													{s.number}. {s.name}
+												</option>
+											))}
+										</select>
+									)}
+								</div>
+								<div className="space-y-1">
+									<label
+										htmlFor="siswa-target-to"
+										className="text-sm font-medium"
+									>
+										{siswaMetode === "juz" ? "Sampai Juz" : "Sampai Surah"}
+									</label>
+									{siswaMetode === "juz" ? (
+										<select
+											id="siswa-target-to"
+											value={siswaTargetTo}
+											onChange={(e) => setSiswaTargetTo(e.target.value)}
+											className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-xs transition-colors md:text-sm"
+										>
+											{Array.from({ length: 30 }, (_, i) => (
+												<option key={i + 1} value={i + 1}>
+													Juz {i + 1}
+												</option>
+											))}
+										</select>
+									) : (
+										<select
+											id="siswa-target-to"
+											value={siswaTargetTo}
+											onChange={(e) => setSiswaTargetTo(e.target.value)}
+											className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-xs transition-colors md:text-sm"
+										>
+											{SURAH_DATA.map((s) => (
+												<option key={s.number} value={s.number}>
+													{s.number}. {s.name}
+												</option>
+											))}
+										</select>
+									)}
+								</div>
+							</div>
+							<div className="flex gap-2">
+								<Button type="submit">
+									{editingSiswa ? "Update" : "Tambah Siswa"}
+								</Button>
+								{editingSiswa && (
+									<Button
+										type="button"
+										variant="outline"
+										onClick={() => {
+											setEditingSiswa(null);
+											setSiswaNama("");
+											setSiswaUmur("");
+											setSiswaMetode("juz");
+											setSiswaTargetFrom("1");
+											setSiswaTargetTo("30");
+										}}
+									>
+										Batal
+									</Button>
 								)}
 							</div>
-						))}
+						</form>
+
+						{/* Siswa List */}
+						{siswaList.length > 0 ? (
+							<div className="space-y-2 border-t border-border pt-4">
+								{siswaList.map((s) => (
+									<div
+										key={s.id}
+										className="space-y-2 rounded-xl bg-muted/50 px-4 py-3"
+									>
+										<div className="flex items-center justify-between">
+											<div>
+												<p className="text-sm font-semibold">{s.nama}</p>
+												<p className="text-xs text-muted-foreground">
+													{s.hafalan}/{s.target}{" "}
+													{s.metodeProgress === "surah" ? "surah" : "juz"}
+													{s.mulaiHafalan ? ` (dari ${s.mulaiHafalan})` : ""}
+													{s.umur ? ` · ${s.umur} tahun` : ""}
+												</p>
+											</div>
+											<div className="flex gap-1">
+												<button
+													type="button"
+													onClick={() => editSiswa(s)}
+													className="rounded-lg px-3 py-1 text-xs font-semibold text-primary hover:bg-primary/10"
+												>
+													Edit
+												</button>
+												<button
+													type="button"
+													onClick={() => deleteSiswa(s.id)}
+													className="rounded-lg px-3 py-1 text-xs font-semibold text-red-600 hover:bg-red-500/10"
+												>
+													Hapus
+												</button>
+											</div>
+										</div>
+										{s.studentId && (
+											<div className="flex items-center gap-2 rounded-lg bg-background px-3 py-2 text-xs">
+												<span className="text-muted-foreground">ID:</span>
+												<code className="font-mono font-semibold">
+													{s.studentId}
+												</code>
+												<button
+													type="button"
+													onClick={() => {
+														if (s.studentId) copyToClipboard(s.studentId);
+													}}
+													className="ml-auto text-primary hover:underline"
+												>
+													Salin
+												</button>
+											</div>
+										)}
+									</div>
+								))}
+							</div>
+						) : (
+							<p className="py-4 text-center text-sm text-muted-foreground">
+								Belum ada siswa
+							</p>
+						)}
 					</div>
-				) : (
-					<p className="py-4 text-center text-sm text-muted-foreground">
-						Belum ada siswa
-					</p>
-				)}
-			</div>
+				</>
+			)}
 
 			{/* Tutorial */}
 			<div className="space-y-4 rounded-2xl border bg-card p-5 shadow-xs">
@@ -534,28 +553,32 @@ function PengaturanPage() {
 				</Button>
 			</div>
 
-			{/* Backup & Import */}
-			<div className="space-y-4 rounded-2xl border bg-card p-5 shadow-xs">
-				<h3 className="text-lg font-semibold">Backup & Import</h3>
-				<div className="flex gap-3">
-					<Button variant="outline" onClick={exportJSON}>
-						Export JSON
-					</Button>
-					<label className="inline-flex items-center justify-center gap-2 rounded-md border border-input bg-background px-4 py-2 text-sm font-medium shadow-xs hover:bg-accent hover:text-accent-foreground cursor-pointer">
-						Import JSON
-						<input
-							type="file"
-							accept=".json"
-							onChange={importJSON}
-							className="hidden"
-						/>
-					</label>
-				</div>
-				<p className="text-xs text-muted-foreground">
-					Backup menyimpan profil dan daftar siswa. Riwayat setoran tersimpan di
-					database.
-				</p>
-			</div>
+			{isMobile && (
+				<>
+					{/* Backup & Import */}
+					<div className="space-y-4 rounded-2xl border bg-card p-5 shadow-xs">
+						<h3 className="text-lg font-semibold">Backup & Import</h3>
+						<div className="flex gap-3">
+							<Button variant="outline" onClick={exportJSON}>
+								Export JSON
+							</Button>
+							<label className="inline-flex items-center justify-center gap-2 rounded-md border border-input bg-background px-4 py-2 text-sm font-medium shadow-xs hover:bg-accent hover:text-accent-foreground cursor-pointer">
+								Import JSON
+								<input
+									type="file"
+									accept=".json"
+									onChange={importJSON}
+									className="hidden"
+								/>
+							</label>
+						</div>
+						<p className="text-xs text-muted-foreground">
+							Backup menyimpan profil dan daftar siswa. Riwayat setoran
+							tersimpan di database.
+						</p>
+					</div>
+				</>
+			)}
 
 			{/* Danger Zone */}
 			<div className="space-y-4 rounded-2xl border border-destructive/30 bg-card p-5 shadow-xs">
