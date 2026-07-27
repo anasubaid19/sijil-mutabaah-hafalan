@@ -100,7 +100,7 @@ export const setoran = pgTable("setoran", {
 	id: uuid("id").primaryKey().defaultRandom(),
 	siswaId: uuid("siswa_id")
 		.notNull()
-		.references(() => siswa.id),
+		.references(() => siswa.id, { onDelete: "cascade" }),
 	type: varchar("type", { length: 20 }).notNull(),
 	tanggal: date("tanggal").notNull(),
 	surah: integer("surah").notNull(),
@@ -120,7 +120,7 @@ export const waliLink = pgTable("wali_link", {
 		.references(() => userProfile.id),
 	siswaId: uuid("siswa_id")
 		.notNull()
-		.references(() => siswa.id),
+		.references(() => siswa.id, { onDelete: "cascade" }),
 	hubungan: varchar("hubungan", { length: 30 }).notNull(),
 	createdAt: timestamp("created_at").defaultNow().notNull(),
 });
@@ -129,7 +129,7 @@ export const presensi = pgTable("presensi", {
 	id: uuid("id").primaryKey().defaultRandom(),
 	siswaId: uuid("siswa_id")
 		.notNull()
-		.references(() => siswa.id),
+		.references(() => siswa.id, { onDelete: "cascade" }),
 	tanggal: date("tanggal").notNull(),
 	status: varchar("status", { length: 20 }).notNull().default("Hadir"),
 	createdAt: timestamp("created_at").defaultNow().notNull(),

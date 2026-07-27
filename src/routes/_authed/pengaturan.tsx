@@ -45,6 +45,7 @@ function PengaturanPage() {
 	const [halaqahName, setHalaqahName] = useState("");
 	const [newPassword, setNewPassword] = useState("");
 	const [confirmPassword, setConfirmPassword] = useState("");
+	const [currentPassword, setCurrentPassword] = useState("");
 
 	// Siswa form
 	const [siswaNama, setSiswaNama] = useState("");
@@ -100,6 +101,10 @@ function PengaturanPage() {
 
 	async function changePassword(e: React.FormEvent) {
 		e.preventDefault();
+		if (!currentPassword) {
+			toast.error("Isi password saat ini");
+			return;
+		}
 		if (newPassword.length < 8) {
 			toast.error("Password minimal 8 karakter");
 			return;
@@ -110,11 +115,13 @@ function PengaturanPage() {
 		}
 		const { error } = await authClient.changePassword({
 			newPassword,
+			currentPassword,
 		});
 		if (error) {
 			toast.error(error.message || "Gagal mengubah password");
 		} else {
 			toast.success("Password berhasil diubah!");
+			setCurrentPassword("");
 			setNewPassword("");
 			setConfirmPassword("");
 		}
@@ -318,6 +325,19 @@ function PengaturanPage() {
 				className="space-y-4 rounded-2xl border bg-card p-5 shadow-xs"
 			>
 				<h3 className="text-lg font-semibold">Ganti Password</h3>
+				<div className="space-y-2">
+					<label htmlFor="current-password" className="text-sm font-medium">
+						Password Saat Ini
+					</label>
+					<Input
+						id="current-password"
+						type="password"
+						value={currentPassword}
+						onChange={(e) => setCurrentPassword(e.target.value)}
+						placeholder="Password lama"
+						required
+					/>
+				</div>
 				<div className="space-y-2">
 					<label htmlFor="new-password" className="text-sm font-medium">
 						Password Baru
@@ -616,11 +636,23 @@ function PengaturanPage() {
 					variant="destructive"
 					onClick={async () => {
 						if (!confirm("Yakin ingin menghapus semua siswa?")) return;
+						let failed = 0;
 						for (const s of siswaList) {
-							await fetch(`/api/siswa?id=${s.id}`, { method: "DELETE" });
+							const res = await fetch(`/api/siswa?id=${s.id}`, {
+								method: "DELETE",
+							});
+							if (!res.ok) failed++;
 						}
-						setSiswaList([]);
-						toast.success("Semua siswa dihapus");
+						if (failed === 0) {
+							setSiswaList([]);
+							toast.success("Semua siswa dihapus");
+						} else {
+							const sRes = await fetch("/api/siswa");
+							if (sRes.ok) setSiswaList(await sRes.json());
+							toast.error(
+								`${failed} siswa gagal dihapus (hapus data setoran terlebih dahulu)`,
+							);
+						}
 					}}
 				>
 					Hapus Semua Siswa
