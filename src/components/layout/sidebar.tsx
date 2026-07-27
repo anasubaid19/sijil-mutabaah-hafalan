@@ -6,6 +6,7 @@ import {
 	Group01Icon,
 	Home,
 	SlidersHorizontal,
+	UserGroupIcon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Link } from "@tanstack/react-router";
@@ -23,6 +24,7 @@ import {
 	SidebarMenuItem,
 	SidebarSeparator,
 } from "@/components/ui/sidebar";
+import { authClient } from "@/lib/auth/auth-client";
 
 const NAV_ITEMS = [
 	{ to: "/dashboard", label: "Beranda", icon: Home, navId: "nav-dashboard" },
@@ -57,6 +59,8 @@ const NAV_SECONDARY = [
 ];
 
 export function AppSidebar() {
+	const { data } = authClient.useSession();
+	const isAdmin = data?.user?.username === "anasubaid19";
 	return (
 		<Sidebar>
 			<SidebarHeader>
@@ -118,6 +122,18 @@ export function AppSidebar() {
 									</SidebarMenuButton>
 								</SidebarMenuItem>
 							))}
+							{isAdmin && (
+								<SidebarMenuItem>
+									<SidebarMenuButton
+										render={<Link to="/admin" data-nav-id="nav-admin" />}
+										tooltip="Admin"
+										className="data-[active=true]:bg-foreground data-[active=true]:text-background"
+									>
+										<HugeiconsIcon icon={UserGroupIcon} strokeWidth={1.8} />
+										<span>Admin</span>
+									</SidebarMenuButton>
+								</SidebarMenuItem>
+							)}
 						</SidebarMenu>
 					</SidebarGroupContent>
 				</SidebarGroup>

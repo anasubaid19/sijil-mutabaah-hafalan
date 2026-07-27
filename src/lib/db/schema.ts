@@ -134,3 +134,8 @@ export const presensi = pgTable("presensi", {
 	status: varchar("status", { length: 20 }).notNull().default("Hadir"),
 	createdAt: timestamp("created_at").defaultNow().notNull(),
 });
+
+export const appConfig = pgTable("app_config", {
+	key: varchar("key", { length: 50 }).primaryKey(),
+	value: text("value"),
+});

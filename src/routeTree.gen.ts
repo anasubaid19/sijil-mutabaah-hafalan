@@ -14,6 +14,7 @@ import { Route as AuthedRouteImport } from './routes/_authed'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ParentRouteImport } from './routes/parent'
 import { Route as RegisterRouteImport } from './routes/register'
+import { Route as AuthedAdminRouteImport } from './routes/_authed/admin'
 import { Route as AuthedDashboardRouteImport } from './routes/_authed/dashboard'
 import { Route as AuthedLaporanRouteImport } from './routes/_authed/laporan'
 import { Route as AuthedManajemenDataRouteImport } from './routes/_authed/manajemen-data'
@@ -21,6 +22,8 @@ import { Route as AuthedMurajaahRouteImport } from './routes/_authed/murajaah'
 import { Route as AuthedPengaturanRouteImport } from './routes/_authed/pengaturan'
 import { Route as AuthedPresensiRouteImport } from './routes/_authed/presensi'
 import { Route as AuthedZiyadahRouteImport } from './routes/_authed/ziyadah'
+import { Route as ApiAdminConfigRouteImport } from './routes/api/admin-config'
+import { Route as ApiAdminStatsRouteImport } from './routes/api/admin-stats'
 import { Route as ApiExportPdfRouteImport } from './routes/api/export-pdf'
 import { Route as ApiExportPresensiRouteImport } from './routes/api/export-presensi'
 import { Route as ApiParentAuthRouteImport } from './routes/api/parent-auth'
@@ -57,6 +60,11 @@ const RegisterRoute = RegisterRouteImport.update({
   path: '/register',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthedAdminRoute = AuthedAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthedRoute,
+} as any)
 const AuthedDashboardRoute = AuthedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -91,6 +99,16 @@ const AuthedZiyadahRoute = AuthedZiyadahRouteImport.update({
   id: '/ziyadah',
   path: '/ziyadah',
   getParentRoute: () => AuthedRoute,
+} as any)
+const ApiAdminConfigRoute = ApiAdminConfigRouteImport.update({
+  id: '/api/admin-config',
+  path: '/api/admin-config',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAdminStatsRoute = ApiAdminStatsRouteImport.update({
+  id: '/api/admin-stats',
+  path: '/api/admin-stats',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const ApiExportPdfRoute = ApiExportPdfRouteImport.update({
   id: '/api/export-pdf',
@@ -153,6 +171,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/parent': typeof ParentRoute
   '/register': typeof RegisterRoute
+  '/admin': typeof AuthedAdminRoute
   '/dashboard': typeof AuthedDashboardRoute
   '/laporan': typeof AuthedLaporanRoute
   '/manajemen-data': typeof AuthedManajemenDataRoute
@@ -160,6 +179,8 @@ export interface FileRoutesByFullPath {
   '/pengaturan': typeof AuthedPengaturanRoute
   '/presensi': typeof AuthedPresensiRoute
   '/ziyadah': typeof AuthedZiyadahRoute
+  '/api/admin-config': typeof ApiAdminConfigRoute
+  '/api/admin-stats': typeof ApiAdminStatsRoute
   '/api/export-pdf': typeof ApiExportPdfRoute
   '/api/export-presensi': typeof ApiExportPresensiRoute
   '/api/parent-auth': typeof ApiParentAuthRoute
@@ -177,6 +198,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/parent': typeof ParentRoute
   '/register': typeof RegisterRoute
+  '/admin': typeof AuthedAdminRoute
   '/dashboard': typeof AuthedDashboardRoute
   '/laporan': typeof AuthedLaporanRoute
   '/manajemen-data': typeof AuthedManajemenDataRoute
@@ -184,6 +206,8 @@ export interface FileRoutesByTo {
   '/pengaturan': typeof AuthedPengaturanRoute
   '/presensi': typeof AuthedPresensiRoute
   '/ziyadah': typeof AuthedZiyadahRoute
+  '/api/admin-config': typeof ApiAdminConfigRoute
+  '/api/admin-stats': typeof ApiAdminStatsRoute
   '/api/export-pdf': typeof ApiExportPdfRoute
   '/api/export-presensi': typeof ApiExportPresensiRoute
   '/api/parent-auth': typeof ApiParentAuthRoute
@@ -203,6 +227,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/parent': typeof ParentRoute
   '/register': typeof RegisterRoute
+  '/_authed/admin': typeof AuthedAdminRoute
   '/_authed/dashboard': typeof AuthedDashboardRoute
   '/_authed/laporan': typeof AuthedLaporanRoute
   '/_authed/manajemen-data': typeof AuthedManajemenDataRoute
@@ -210,6 +235,8 @@ export interface FileRoutesById {
   '/_authed/pengaturan': typeof AuthedPengaturanRoute
   '/_authed/presensi': typeof AuthedPresensiRoute
   '/_authed/ziyadah': typeof AuthedZiyadahRoute
+  '/api/admin-config': typeof ApiAdminConfigRoute
+  '/api/admin-stats': typeof ApiAdminStatsRoute
   '/api/export-pdf': typeof ApiExportPdfRoute
   '/api/export-presensi': typeof ApiExportPresensiRoute
   '/api/parent-auth': typeof ApiParentAuthRoute
@@ -229,6 +256,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/parent'
     | '/register'
+    | '/admin'
     | '/dashboard'
     | '/laporan'
     | '/manajemen-data'
@@ -236,6 +264,8 @@ export interface FileRouteTypes {
     | '/pengaturan'
     | '/presensi'
     | '/ziyadah'
+    | '/api/admin-config'
+    | '/api/admin-stats'
     | '/api/export-pdf'
     | '/api/export-presensi'
     | '/api/parent-auth'
@@ -253,6 +283,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/parent'
     | '/register'
+    | '/admin'
     | '/dashboard'
     | '/laporan'
     | '/manajemen-data'
@@ -260,6 +291,8 @@ export interface FileRouteTypes {
     | '/pengaturan'
     | '/presensi'
     | '/ziyadah'
+    | '/api/admin-config'
+    | '/api/admin-stats'
     | '/api/export-pdf'
     | '/api/export-presensi'
     | '/api/parent-auth'
@@ -278,6 +311,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/parent'
     | '/register'
+    | '/_authed/admin'
     | '/_authed/dashboard'
     | '/_authed/laporan'
     | '/_authed/manajemen-data'
@@ -285,6 +319,8 @@ export interface FileRouteTypes {
     | '/_authed/pengaturan'
     | '/_authed/presensi'
     | '/_authed/ziyadah'
+    | '/api/admin-config'
+    | '/api/admin-stats'
     | '/api/export-pdf'
     | '/api/export-presensi'
     | '/api/parent-auth'
@@ -304,6 +340,8 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   ParentRoute: typeof ParentRoute
   RegisterRoute: typeof RegisterRoute
+  ApiAdminConfigRoute: typeof ApiAdminConfigRoute
+  ApiAdminStatsRoute: typeof ApiAdminStatsRoute
   ApiExportPdfRoute: typeof ApiExportPdfRoute
   ApiExportPresensiRoute: typeof ApiExportPresensiRoute
   ApiParentAuthRoute: typeof ApiParentAuthRoute
@@ -354,6 +392,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RegisterRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authed/admin': {
+      id: '/_authed/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthedAdminRouteImport
+      parentRoute: typeof AuthedRoute
+    }
     '/_authed/dashboard': {
       id: '/_authed/dashboard'
       path: '/dashboard'
@@ -402,6 +447,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/ziyadah'
       preLoaderRoute: typeof AuthedZiyadahRouteImport
       parentRoute: typeof AuthedRoute
+    }
+    '/api/admin-config': {
+      id: '/api/admin-config'
+      path: '/api/admin-config'
+      fullPath: '/api/admin-config'
+      preLoaderRoute: typeof ApiAdminConfigRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/admin-stats': {
+      id: '/api/admin-stats'
+      path: '/api/admin-stats'
+      fullPath: '/api/admin-stats'
+      preLoaderRoute: typeof ApiAdminStatsRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/api/export-pdf': {
       id: '/api/export-pdf'
@@ -484,6 +543,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthedRouteChildren {
+  AuthedAdminRoute: typeof AuthedAdminRoute
   AuthedDashboardRoute: typeof AuthedDashboardRoute
   AuthedLaporanRoute: typeof AuthedLaporanRoute
   AuthedManajemenDataRoute: typeof AuthedManajemenDataRoute
@@ -494,6 +554,7 @@ interface AuthedRouteChildren {
 }
 
 const AuthedRouteChildren: AuthedRouteChildren = {
+  AuthedAdminRoute: AuthedAdminRoute,
   AuthedDashboardRoute: AuthedDashboardRoute,
   AuthedLaporanRoute: AuthedLaporanRoute,
   AuthedManajemenDataRoute: AuthedManajemenDataRoute,
@@ -512,6 +573,8 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   ParentRoute: ParentRoute,
   RegisterRoute: RegisterRoute,
+  ApiAdminConfigRoute: ApiAdminConfigRoute,
+  ApiAdminStatsRoute: ApiAdminStatsRoute,
   ApiExportPdfRoute: ApiExportPdfRoute,
   ApiExportPresensiRoute: ApiExportPresensiRoute,
   ApiParentAuthRoute: ApiParentAuthRoute,
