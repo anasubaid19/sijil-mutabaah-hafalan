@@ -24,9 +24,10 @@ export function BottomNav() {
 					<Link
 						key={item.to}
 						to={item.to}
-						className="flex flex-1 flex-col items-center gap-0.5 py-2 text-muted-foreground transition-colors"
+						className="flex flex-1 flex-col items-center gap-0.5 py-2 text-muted-foreground transition-colors duration-200 relative"
 						activeProps={{
-							className: "text-primary",
+							className:
+								"text-primary after:absolute after:bottom-0 after:left-1/4 after:right-1/4 after:h-0.5 after:rounded-full after:bg-primary",
 						}}
 					>
 						<HugeiconsIcon

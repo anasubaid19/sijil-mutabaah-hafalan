@@ -299,7 +299,7 @@ function LaporanPage() {
 									<span>Progres</span>
 									<span>{p.pct}%</span>
 								</div>
-								<div className="mt-1 h-1.5 overflow-hidden rounded-full bg-muted">
+								<div className="mt-1 h-2 overflow-hidden rounded-full bg-muted">
 									<div
 										className="h-full rounded-full bg-primary transition-all"
 										style={{ width: `${Math.min(p.pct, 100)}%` }}

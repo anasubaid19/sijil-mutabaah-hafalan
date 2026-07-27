@@ -280,7 +280,7 @@ function ZiyadahPage() {
 						className="space-y-5 rounded-2xl border bg-card p-5 shadow-xs"
 					>
 						{/* Siswa & Tanggal */}
-						<div className="grid gap-4 sm:grid-cols-2">
+						<div className="grid gap-3 sm:grid-cols-2">
 							<div className="space-y-2">
 								<label className="text-sm font-medium">Siswa</label>
 								<select
@@ -310,7 +310,7 @@ function ZiyadahPage() {
 
 						{/* Surah, Dari Ayat, Sampai Ayat — Row 1 */}
 						<div
-							className={`grid gap-4 ${lintasMode ? "sm:grid-cols-2" : "sm:grid-cols-3"}`}
+							className={`grid gap-3 ${lintasMode ? "sm:grid-cols-2" : "sm:grid-cols-3"}`}
 						>
 							<div className="relative space-y-2">
 								<label className="text-sm font-medium">Surah</label>
@@ -387,7 +387,7 @@ function ZiyadahPage() {
 
 						{/* Lintas Surah row 2 — Surah End + Sampai Ayat */}
 						{lintasMode && (
-							<div className="grid gap-4 sm:grid-cols-2 rounded-xl bg-muted/30 p-3 border border-dashed border-primary/30">
+							<div className="grid gap-3 sm:grid-cols-2 rounded-xl bg-muted/30 p-3 border border-dashed border-primary/30">
 								<div className="relative space-y-2">
 									<label className="text-sm font-medium text-primary">
 										Surah End

@@ -244,30 +244,34 @@ function DashboardPage() {
 			/>
 
 			{/* Stats Cards */}
-			<div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+			<div className="grid gap-3 grid-cols-2 lg:grid-cols-4">
 				<StatCard
 					icon={Group}
 					label="Kehadiran"
 					value={`${hadirCount}/${siswaList.length}`}
 					color="text-emerald-600 dark:text-emerald-400"
+					sub={`${siswaList.length > 0 ? Math.round((hadirCount / siswaList.length) * 100) : 0}% tingkat kehadiran`}
 				/>
 				<StatCard
 					icon={CalendarCheck}
 					label="Hadir Hari Ini"
 					value={hadirCount}
 					color="text-blue-600 dark:text-blue-400"
+					sub={`dari ${siswaList.length} siswa`}
 				/>
 				<StatCard
 					icon={BookOpen}
 					label="Sudah Setor"
 					value={sudahSetor}
 					color="text-primary"
+					sub="hari ini"
 				/>
 				<StatCard
 					icon={Clock}
 					label="Belum Setor"
 					value={belumSetor}
 					color="text-amber-600 dark:text-amber-400"
+					sub="perlu tindak lanjut"
 				/>
 			</div>
 
@@ -318,7 +322,7 @@ function DashboardPage() {
 												type="button"
 												key={st}
 												onClick={() => handlePresensiChange(s.id, st)}
-												className={`rounded-md px-2 py-0.5 text-xs font-semibold transition-colors ${
+												className={`rounded-md px-2 py-1.5 text-xs font-semibold transition-all duration-150 min-h-[44px] min-w-[44px] focus-visible:ring-2 focus-visible:ring-ring ${
 													current === st ? CHIP_ACTIVE[st] : CHIP_COLORS[st]
 												}`}
 											>
@@ -398,7 +402,7 @@ function DashboardPage() {
 				{chartData.length > 0 ? (
 					<>
 						{chartType === "bar" && (
-							<ResponsiveContainer width="100%" height={240}>
+							<ResponsiveContainer width="100%" height={200}>
 								<BarChart data={chartData}>
 									<CartesianGrid
 										strokeDasharray="3 3"
@@ -431,7 +435,7 @@ function DashboardPage() {
 							</ResponsiveContainer>
 						)}
 						{chartType === "line" && (
-							<ResponsiveContainer width="100%" height={240}>
+							<ResponsiveContainer width="100%" height={200}>
 								<LineChart data={chartData}>
 									<CartesianGrid
 										strokeDasharray="3 3"
@@ -470,7 +474,7 @@ function DashboardPage() {
 					</>
 				) : (
 					<p className="py-8 text-center text-sm text-muted-foreground">
-						Belum ada data {chartRange === "week" ? "minggu" : "bulan"} ini
+						Belum ada setoran {chartRange === "week" ? "minggu" : "bulan"} ini
 					</p>
 				)}
 			</div>
@@ -485,7 +489,7 @@ function DashboardPage() {
 							return (
 								<div
 									key={r.id}
-									className="flex items-center justify-between rounded-xl bg-muted/50 px-4 py-2.5"
+									className="flex items-center justify-between rounded-xl bg-muted/50 px-4 py-2.5 transition-colors duration-200 hover:bg-muted"
 								>
 									<div className="min-w-0">
 										<p className="text-sm font-medium truncate">
@@ -533,7 +537,7 @@ function DashboardPage() {
 							return (
 								<div
 									key={s.id}
-									className="flex items-center justify-between rounded-xl bg-muted/50 px-4 py-3"
+									className="flex items-center justify-between rounded-xl bg-muted/50 px-4 py-3 transition-colors duration-200 hover:bg-muted"
 								>
 									<div>
 										<p className="text-sm font-semibold">{s.nama}</p>
@@ -609,14 +613,16 @@ function StatCard({
 	label,
 	value,
 	color,
+	sub,
 }: {
 	icon: React.ComponentType<{ strokeWidth: number }>;
 	label: string;
 	value: number | string;
 	color: string;
+	sub?: string;
 }) {
 	return (
-		<div className="flex items-center gap-4 rounded-2xl border bg-card p-5 shadow-xs">
+		<div className="flex items-center gap-4 rounded-2xl border bg-card p-5 shadow-xs transition-all duration-200 hover:shadow-sm">
 			<div
 				className={`flex size-10 items-center justify-center rounded-xl bg-muted ${color}`}
 			>
@@ -625,6 +631,9 @@ function StatCard({
 			<div>
 				<p className="text-xs text-muted-foreground">{label}</p>
 				<p className="text-2xl font-bold tracking-tight">{value}</p>
+				{sub && (
+					<p className="mt-0.5 text-[0.65rem] text-muted-foreground">{sub}</p>
+				)}
 			</div>
 		</div>
 	);

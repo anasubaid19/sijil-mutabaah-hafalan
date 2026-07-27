@@ -276,7 +276,7 @@ function MurajaahPage() {
 						className="space-y-5 rounded-2xl border bg-card p-5 shadow-xs"
 					>
 						{/* Siswa & Tanggal */}
-						<div className="grid gap-4 sm:grid-cols-2">
+						<div className="grid gap-3 sm:grid-cols-2">
 							<div className="space-y-2">
 								<label className="text-sm font-medium">Siswa</label>
 								<select
@@ -306,7 +306,7 @@ function MurajaahPage() {
 
 						{/* Quick Stats */}
 						{selectedSiswaData && (
-							<div className="flex items-center gap-4 rounded-2xl border bg-card p-4 shadow-xs">
+							<div className="flex items-center gap-3 rounded-2xl border bg-card p-4 shadow-xs">
 								<div className="flex size-10 items-center justify-center rounded-xl bg-primary/15 text-primary">
 									<span className="text-lg font-bold">
 										{selectedSiswaData.nama.charAt(0)}
@@ -346,7 +346,7 @@ function MurajaahPage() {
 
 						{/* Surah, Dari Ayat, Sampai Ayat */}
 						<div
-							className={`grid gap-4 ${lintasMode ? "sm:grid-cols-2" : "sm:grid-cols-3"}`}
+							className={`grid gap-3 ${lintasMode ? "sm:grid-cols-2" : "sm:grid-cols-3"}`}
 						>
 							<div className="relative space-y-2">
 								<label className="text-sm font-medium">Surah</label>
@@ -426,7 +426,7 @@ function MurajaahPage() {
 
 						{/* Lintas Surah row 2 */}
 						{lintasMode && (
-							<div className="grid gap-4 sm:grid-cols-2 rounded-xl bg-muted/30 p-3 border border-dashed border-primary/30">
+							<div className="grid gap-3 sm:grid-cols-2 rounded-xl bg-muted/30 p-3 border border-dashed border-primary/30">
 								<div className="relative space-y-2">
 									<label className="text-sm font-medium text-primary">
 										Surah End

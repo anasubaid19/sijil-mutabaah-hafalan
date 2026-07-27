@@ -20,7 +20,7 @@ export function Header({ title }: HeaderProps) {
 	}
 
 	return (
-		<header className="sticky top-0 z-40 flex h-14 items-center justify-between bg-background px-4 after:absolute after:bottom-0 after:-left-(--sidebar-width) after:right-0 after:h-px after:bg-border md:px-6">
+		<header className="sticky top-0 z-40 flex h-12 md:h-14 items-center justify-between bg-background px-3 md:px-6 after:absolute after:bottom-0 after:-left-(--sidebar-width) after:right-0 after:h-px after:bg-border">
 			<div className="flex items-center gap-3">
 				<Button
 					variant="ghost"
