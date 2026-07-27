@@ -427,15 +427,18 @@ function DashboardPage() {
 									["line", "Line"],
 								] as const
 							).map(([key, label]) => (
-								<Button
+								<button
 									key={key}
-									variant={chartType === key ? "secondary" : "ghost"}
-									size="xs"
+									type="button"
 									onClick={() => setChartType(key)}
-									className="rounded-lg px-3"
+									className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-all duration-200 ${
+										chartType === key
+											? "bg-primary/10 text-primary"
+											: "text-muted-foreground/60 hover:text-muted-foreground"
+									}`}
 								>
 									{label}
-								</Button>
+								</button>
 							))}
 						</div>
 						{/* Legend — compact pills */}
