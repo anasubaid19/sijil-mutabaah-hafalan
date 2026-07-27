@@ -65,93 +65,95 @@ export function AppSidebar() {
 	const { data } = authClient.useSession();
 	const isAdmin = data?.user?.username === "anasubaid19";
 	return (
-		<Sidebar>
-			<SidebarHeader>
-				<div className="flex items-center gap-2.5 px-2 py-1.5">
-					<img
-						src="/logo-sijil-v3.svg"
-						alt="Sijil"
-						className="size-8 rounded-xl"
-					/>
-					<div className="flex flex-col">
-						<span className="text-sm font-semibold leading-tight">
-							Sijil Mutaba'ah
-						</span>
-						<span className="text-[0.65rem] leading-tight text-muted-foreground">
-							Tahsin & Hifz Tracker
-						</span>
+		<div className="hidden md:block">
+			<Sidebar>
+				<SidebarHeader>
+					<div className="flex items-center gap-2.5 px-2 py-1.5">
+						<img
+							src="/logo-sijil-v3.svg"
+							alt="Sijil"
+							className="size-8 rounded-xl"
+						/>
+						<div className="flex flex-col">
+							<span className="text-sm font-semibold leading-tight">
+								Sijil Mutaba'ah
+							</span>
+							<span className="text-[0.65rem] leading-tight text-muted-foreground">
+								Tahsin & Hifz Tracker
+							</span>
+						</div>
 					</div>
-				</div>
-			</SidebarHeader>
+				</SidebarHeader>
 
-			<SidebarContent>
-				<SidebarGroup>
-					<SidebarGroupLabel className="text-[10px] font-semibold uppercase tracking-wider">
-						Navigasi
-					</SidebarGroupLabel>
-					<SidebarGroupContent>
-						<SidebarMenu>
-							{NAV_ITEMS.map((item) => (
-								<SidebarMenuItem key={item.to}>
-									<SidebarMenuButton
-										isActive={isActive(item.to)}
-										render={<Link to={item.to} data-nav-id={item.navId} />}
-										tooltip={item.label}
-										className="data-active:bg-foreground data-active:text-background"
-									>
-										<HugeiconsIcon icon={item.icon} strokeWidth={1.8} />
-										<span>{item.label}</span>
-									</SidebarMenuButton>
-								</SidebarMenuItem>
-							))}
-						</SidebarMenu>
-					</SidebarGroupContent>
-				</SidebarGroup>
+				<SidebarContent>
+					<SidebarGroup>
+						<SidebarGroupLabel className="text-[10px] font-semibold uppercase tracking-wider">
+							Navigasi
+						</SidebarGroupLabel>
+						<SidebarGroupContent>
+							<SidebarMenu>
+								{NAV_ITEMS.map((item) => (
+									<SidebarMenuItem key={item.to}>
+										<SidebarMenuButton
+											isActive={isActive(item.to)}
+											render={<Link to={item.to} data-nav-id={item.navId} />}
+											tooltip={item.label}
+											className="data-active:bg-foreground data-active:text-background"
+										>
+											<HugeiconsIcon icon={item.icon} strokeWidth={1.8} />
+											<span>{item.label}</span>
+										</SidebarMenuButton>
+									</SidebarMenuItem>
+								))}
+							</SidebarMenu>
+						</SidebarGroupContent>
+					</SidebarGroup>
 
-				<SidebarGroup>
-					<SidebarGroupLabel className="text-[10px] font-semibold uppercase tracking-wider">
-						Lainnya
-					</SidebarGroupLabel>
-					<SidebarGroupContent>
-						<SidebarMenu>
-							{NAV_SECONDARY.map((item) => (
-								<SidebarMenuItem key={item.to}>
-									<SidebarMenuButton
-										isActive={isActive(item.to)}
-										render={<Link to={item.to} data-nav-id={item.navId} />}
-										tooltip={item.label}
-										className="data-active:bg-foreground data-active:text-background"
-									>
-										<HugeiconsIcon icon={item.icon} strokeWidth={1.8} />
-										<span>{item.label}</span>
-									</SidebarMenuButton>
-								</SidebarMenuItem>
-							))}
-							{isAdmin && (
-								<SidebarMenuItem>
-									<SidebarMenuButton
-										isActive={isActive("/admin")}
-										render={<Link to="/admin" data-nav-id="nav-admin" />}
-										tooltip="Admin"
-										className="data-active:bg-foreground data-active:text-background"
-									>
-										<HugeiconsIcon icon={UserGroupIcon} strokeWidth={1.8} />
-										<span>Admin</span>
-									</SidebarMenuButton>
-								</SidebarMenuItem>
-							)}
-						</SidebarMenu>
-					</SidebarGroupContent>
-				</SidebarGroup>
-			</SidebarContent>
+					<SidebarGroup>
+						<SidebarGroupLabel className="text-[10px] font-semibold uppercase tracking-wider">
+							Lainnya
+						</SidebarGroupLabel>
+						<SidebarGroupContent>
+							<SidebarMenu>
+								{NAV_SECONDARY.map((item) => (
+									<SidebarMenuItem key={item.to}>
+										<SidebarMenuButton
+											isActive={isActive(item.to)}
+											render={<Link to={item.to} data-nav-id={item.navId} />}
+											tooltip={item.label}
+											className="data-active:bg-foreground data-active:text-background"
+										>
+											<HugeiconsIcon icon={item.icon} strokeWidth={1.8} />
+											<span>{item.label}</span>
+										</SidebarMenuButton>
+									</SidebarMenuItem>
+								))}
+								{isAdmin && (
+									<SidebarMenuItem>
+										<SidebarMenuButton
+											isActive={isActive("/admin")}
+											render={<Link to="/admin" data-nav-id="nav-admin" />}
+											tooltip="Admin"
+											className="data-active:bg-foreground data-active:text-background"
+										>
+											<HugeiconsIcon icon={UserGroupIcon} strokeWidth={1.8} />
+											<span>Admin</span>
+										</SidebarMenuButton>
+									</SidebarMenuItem>
+								)}
+							</SidebarMenu>
+						</SidebarGroupContent>
+					</SidebarGroup>
+				</SidebarContent>
 
-			<SidebarSeparator />
+				<SidebarSeparator />
 
-			<SidebarFooter>
-				<div className="flex items-center justify-center px-2 py-1.5">
-					<ToggleTheme />
-				</div>
-			</SidebarFooter>
-		</Sidebar>
+				<SidebarFooter>
+					<div className="flex items-center justify-center px-2 py-1.5">
+						<ToggleTheme />
+					</div>
+				</SidebarFooter>
+			</Sidebar>
+		</div>
 	);
 }

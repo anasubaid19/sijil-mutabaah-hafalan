@@ -21,15 +21,8 @@ export function Header({ title }: HeaderProps) {
 
 	return (
 		<header className="sticky top-0 z-40 flex h-12 md:h-14 items-center justify-between bg-background px-3 md:px-6 after:absolute after:bottom-0 after:-left-(--sidebar-width) after:right-0 after:h-px after:bg-border">
-			<div className="flex items-center gap-3">
-				<Button
-					variant="ghost"
-					size="icon-sm"
-					className="md:hidden"
-					onClick={toggleSidebar}
-				>
-					<HugeiconsIcon icon={PanelLeftOpen} strokeWidth={2} />
-				</Button>
+			<div className="flex items-center gap-2 md:gap-3">
+				{/* Desktop: sidebar toggle */}
 				<Button
 					variant="ghost"
 					size="icon-sm"
@@ -38,9 +31,15 @@ export function Header({ title }: HeaderProps) {
 				>
 					<HugeiconsIcon icon={PanelLeftOpen} strokeWidth={2} />
 				</Button>
+				{/* Logo — visible only on mobile (sidebar hidden) */}
+				<img
+					src="/logo-sijil-v3.svg"
+					alt="Sijil"
+					className="size-7 rounded-lg md:hidden"
+				/>
 				<h1 className="text-base font-semibold">{title}</h1>
 			</div>
-			<div className="flex items-center gap-2">
+			<div className="flex items-center gap-1 md:gap-2">
 				<ToggleTheme />
 				<Button
 					variant="ghost"

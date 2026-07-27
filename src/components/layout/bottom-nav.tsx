@@ -44,8 +44,8 @@ export function BottomNav() {
 
 	return (
 		<>
-			<nav className="fixed inset-x-0 bottom-0 z-50 border-t bg-background md:hidden">
-				<div className="flex items-center justify-around px-2 pb-[env(safe-area-inset-bottom)]">
+			<nav className="fixed inset-x-0 bottom-0 z-50 pb-[env(safe-area-inset-bottom)] md:hidden">
+				<div className="mx-3 mb-2 flex items-center justify-around rounded-2xl border bg-background/95 shadow-lg backdrop-blur-sm">
 					{MAIN_TABS.map((item) => {
 						const active = isActive(item.to);
 						return (
