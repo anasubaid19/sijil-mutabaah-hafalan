@@ -9,7 +9,7 @@ import {
 	UserGroupIcon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { Link } from "@tanstack/react-router";
+import { Link, useRouterState } from "@tanstack/react-router";
 import { ToggleTheme } from "@/components/toggle-theme";
 import {
 	Sidebar,
@@ -59,6 +59,9 @@ const NAV_SECONDARY = [
 ];
 
 export function AppSidebar() {
+	const pathname = useRouterState({ select: (s) => s.location.pathname });
+	const isActive = (to: string) =>
+		pathname === to || pathname.startsWith(`${to}/`);
 	const { data } = authClient.useSession();
 	const isAdmin = data?.user?.username === "anasubaid19";
 	return (
@@ -91,9 +94,10 @@ export function AppSidebar() {
 							{NAV_ITEMS.map((item) => (
 								<SidebarMenuItem key={item.to}>
 									<SidebarMenuButton
+										isActive={isActive(item.to)}
 										render={<Link to={item.to} data-nav-id={item.navId} />}
 										tooltip={item.label}
-										className="data-[active=true]:bg-foreground data-[active=true]:text-background"
+										className="data-active:bg-foreground data-active:text-background"
 									>
 										<HugeiconsIcon icon={item.icon} strokeWidth={1.8} />
 										<span>{item.label}</span>
@@ -113,9 +117,10 @@ export function AppSidebar() {
 							{NAV_SECONDARY.map((item) => (
 								<SidebarMenuItem key={item.to}>
 									<SidebarMenuButton
+										isActive={isActive(item.to)}
 										render={<Link to={item.to} data-nav-id={item.navId} />}
 										tooltip={item.label}
-										className="data-[active=true]:bg-foreground data-[active=true]:text-background"
+										className="data-active:bg-foreground data-active:text-background"
 									>
 										<HugeiconsIcon icon={item.icon} strokeWidth={1.8} />
 										<span>{item.label}</span>
@@ -125,9 +130,10 @@ export function AppSidebar() {
 							{isAdmin && (
 								<SidebarMenuItem>
 									<SidebarMenuButton
+										isActive={isActive("/admin")}
 										render={<Link to="/admin" data-nav-id="nav-admin" />}
 										tooltip="Admin"
-										className="data-[active=true]:bg-foreground data-[active=true]:text-background"
+										className="data-active:bg-foreground data-active:text-background"
 									>
 										<HugeiconsIcon icon={UserGroupIcon} strokeWidth={1.8} />
 										<span>Admin</span>
