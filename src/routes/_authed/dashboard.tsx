@@ -399,47 +399,49 @@ function DashboardPage() {
 								{chartRange === "week" ? "7 hari terakhir" : "bulan ini"}
 							</p>
 						</div>
-						<div className="inline-flex rounded-lg border bg-muted/50 p-0.5">
-							{(
-								[
-									["week", "Minggu"],
-									["month", "Bulan"],
-								] as const
-							).map(([key, label]) => (
-								<button
-									key={key}
-									type="button"
-									onClick={() => setChartRange(key)}
-									className={`rounded-md px-3 py-1 text-xs font-medium transition-colors ${
-										chartRange === key
-											? "bg-background text-foreground shadow-sm"
-											: "text-muted-foreground hover:text-foreground"
-									}`}
-								>
-									{label}
-								</button>
-							))}
-						</div>
-						<div className="inline-flex rounded-lg border bg-muted/50 p-0.5">
-							{(
-								[
-									["bar", "Bar"],
-									["line", "Line"],
-								] as const
-							).map(([key, label]) => (
-								<button
-									key={key}
-									type="button"
-									onClick={() => setChartType(key)}
-									className={`rounded-md px-3 py-1 text-xs font-medium transition-colors ${
-										chartType === key
-											? "bg-background text-foreground shadow-sm"
-											: "text-muted-foreground hover:text-foreground"
-									}`}
-								>
-									{label}
-								</button>
-							))}
+						<div className="flex items-center gap-2">
+							<div className="inline-flex rounded-lg border bg-muted/50 p-0.5">
+								{(
+									[
+										["week", "Minggu"],
+										["month", "Bulan"],
+									] as const
+								).map(([key, label]) => (
+									<button
+										key={key}
+										type="button"
+										onClick={() => setChartRange(key)}
+										className={`rounded-md px-3 py-1 text-xs font-medium transition-colors ${
+											chartRange === key
+												? "bg-background text-foreground shadow-sm"
+												: "text-muted-foreground hover:text-foreground"
+										}`}
+									>
+										{label}
+									</button>
+								))}
+							</div>
+							<div className="inline-flex rounded-lg border bg-muted/50 p-0.5">
+								{(
+									[
+										["bar", "Bar"],
+										["line", "Line"],
+									] as const
+								).map(([key, label]) => (
+									<button
+										key={key}
+										type="button"
+										onClick={() => setChartType(key)}
+										className={`rounded-md px-3 py-1 text-xs font-medium transition-colors ${
+											chartType === key
+												? "bg-background text-foreground shadow-sm"
+												: "text-muted-foreground hover:text-foreground"
+										}`}
+									>
+										{label}
+									</button>
+								))}
+							</div>
 						</div>
 						{/* Legend — compact pills */}
 						<div className="flex items-center justify-center gap-4 text-[0.65rem] font-medium">
