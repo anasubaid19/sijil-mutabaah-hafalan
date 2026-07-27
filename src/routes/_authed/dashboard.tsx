@@ -399,7 +399,7 @@ function DashboardPage() {
 								{chartRange === "week" ? "7 hari terakhir" : "bulan ini"}
 							</p>
 						</div>
-						<div className="flex rounded-full bg-muted/50 p-0.5">
+						<div className="flex rounded-lg border bg-muted/50 p-0.5">
 							{(
 								[
 									["week", "Minggu"],
@@ -410,17 +410,17 @@ function DashboardPage() {
 									key={key}
 									type="button"
 									onClick={() => setChartRange(key)}
-									className={`flex-1 rounded-full py-1.5 text-xs font-medium transition-all duration-200 ${
+									className={`rounded-md px-3 py-1 text-xs font-medium transition-colors ${
 										chartRange === key
-											? "bg-primary text-primary-foreground"
-											: "text-muted-foreground"
+											? "bg-background text-foreground shadow-sm"
+											: "text-muted-foreground hover:text-foreground"
 									}`}
 								>
 									{label}
 								</button>
 							))}
 						</div>
-						<div className="flex rounded-full bg-muted/50 p-0.5">
+						<div className="flex rounded-lg border bg-muted/50 p-0.5">
 							{(
 								[
 									["bar", "Bar"],
@@ -431,10 +431,10 @@ function DashboardPage() {
 									key={key}
 									type="button"
 									onClick={() => setChartType(key)}
-									className={`flex-1 rounded-full py-1.5 text-xs font-medium transition-all duration-200 ${
+									className={`rounded-md px-3 py-1 text-xs font-medium transition-colors ${
 										chartType === key
-											? "bg-primary text-primary-foreground"
-											: "text-muted-foreground"
+											? "bg-background text-foreground shadow-sm"
+											: "text-muted-foreground hover:text-foreground"
 									}`}
 								>
 									{label}
