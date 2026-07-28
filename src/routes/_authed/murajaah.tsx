@@ -437,14 +437,45 @@ function MurajaahPage() {
 				throw new Error();
 			})
 			.then(
-				(data: { surah?: number; ayatAwal?: number; ayatAkhir?: number }[]) => {
+				(
+					data: {
+						surah?: number;
+						surahAkhir?: number;
+						lintas?: boolean;
+						ayatAwal?: number;
+						ayatAkhir?: number;
+					}[],
+				) => {
 					if (data.length > 0) {
-						const last = data[0];
-						if (last.surah) {
-							const s = SURAH_DATA.find((s) => s.number === last.surah);
-							if (s) setSurahA(s.name);
+						const last = data[data.length - 1];
+						if (last.lintas && last.surahAkhir) {
+							const endSurah = SURAH_DATA.find(
+								(s) => s.number === last.surahAkhir,
+							);
+							if (endSurah && last.ayatAkhir != null) {
+								if (last.ayatAkhir >= endSurah.ayatCount) {
+									const next = SURAH_DATA.find(
+										(s) => s.number === last.surahAkhir! + 1,
+									);
+									if (next) {
+										setSurahA(next.name);
+										setDariAyat("1");
+									}
+								} else {
+									setSurahA(endSurah.name);
+									setDariAyat(String(last.ayatAkhir + 1));
+								}
+							}
+						} else {
+							if (last.surah) {
+								const s = SURAH_DATA.find(
+									(s) => s.number === last.surah,
+								);
+								if (s) setSurahA(s.name);
+							}
+							if (last.ayatAkhir)
+								setDariAyat(String(last.ayatAkhir + 1));
 						}
-						if (last.ayatAkhir) setDariAyat(String(last.ayatAkhir + 1));
 					}
 				},
 			)
