@@ -170,9 +170,18 @@ function LaporanPage() {
 	// Monthly insight computations
 	const uniqueJuzSet = new Set<number>();
 	monthlySetoran.forEach((r) => {
-		const surah = SURAH_DATA.find((s) => s.number === r.surah);
-		if (surah) {
-			for (let j = surah.juzStart; j <= surah.juzEnd; j++) uniqueJuzSet.add(j);
+		if (r.lintas && r.juz) {
+			const pts = String(r.juz)
+				.split("-")
+				.map(Number)
+				.filter((n) => !Number.isNaN(n));
+			for (let j = pts[0]; j <= (pts[1] ?? pts[0]); j++) uniqueJuzSet.add(j);
+		} else {
+			const surah = SURAH_DATA.find((s) => s.number === r.surah);
+			if (surah) {
+				for (let j = surah.juzStart; j <= surah.juzEnd; j++)
+					uniqueJuzSet.add(j);
+			}
 		}
 	});
 	const juzCompleted = uniqueJuzSet.size;

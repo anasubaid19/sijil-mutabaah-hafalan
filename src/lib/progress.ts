@@ -11,6 +11,8 @@ interface SiswaData {
 interface SetoranData {
 	type: string;
 	surah: number;
+	surahAkhir?: number | null;
+	lintas?: boolean;
 	ayatAwal: number;
 	ayatAkhir: number;
 	juz?: string | null;
@@ -145,8 +147,15 @@ export function calcProgress(
 	} else if (m === "surah") {
 		const sSet = new Set<string>();
 		ziyadahRecords.forEach((r) => {
-			const surah = SURAH_DATA.find((s) => s.number === r.surah);
-			if (surah) sSet.add(surah.name);
+			if (r.lintas && r.surahAkhir) {
+				for (let sn = r.surah; sn <= r.surahAkhir; sn++) {
+					const sData = SURAH_DATA.find((s) => s.number === sn);
+					if (sData) sSet.add(sData.name);
+				}
+			} else {
+				const surah = SURAH_DATA.find((s) => s.number === r.surah);
+				if (surah) sSet.add(surah.name);
+			}
 		});
 
 		const idxMulai = siswa.mulaiHafalan
