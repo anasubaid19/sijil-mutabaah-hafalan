@@ -9,6 +9,41 @@ import { db } from "@/lib/db";
 import { setoran, siswa, userProfile } from "@/lib/db/schema";
 import { SURAH_DATA } from "@/lib/surah-data";
 
+// ponytail: page calculation uses proportional mapping from SURAH_DATA
+// pageStart/pageEnd are from api.islamic.app /v1/chapters (Madinah mushaf 604 pages)
+function calcHalaman(
+	surahNum: number,
+	ayatAwal: number,
+	ayatAkhir: number,
+): number {
+	const sData = SURAH_DATA.find((x) => x.number === surahNum);
+	if (!sData) return 0;
+	const ayatCovered = ayatAkhir - ayatAwal + 1;
+	const surahPages = sData.pageEnd - sData.pageStart + 1;
+	return Math.max(1, Math.ceil((ayatCovered / sData.ayatCount) * surahPages));
+}
+
+function calcJuz(
+	surahNum: number,
+	ayatAwal: number,
+	ayatAkhir: number,
+): string {
+	const sData = SURAH_DATA.find((x) => x.number === surahNum);
+	if (!sData) return "-";
+	if (sData.juzStart === sData.juzEnd) return `${sData.juzStart}`;
+	const progress = (ayatAwal + ayatAkhir) / 2 / sData.ayatCount;
+	const juz = Math.round(
+		sData.juzStart + progress * (sData.juzEnd - sData.juzStart),
+	);
+	return `${juz}`;
+}
+
+function surahName(surahNum: number): string {
+	return (
+		SURAH_DATA.find((x) => x.number === surahNum)?.name || `Surah ${surahNum}`
+	);
+}
+
 export const Route = createFileRoute("/api/export-pdf")({
 	server: {
 		handlers: {
@@ -46,7 +81,7 @@ export const Route = createFileRoute("/api/export-pdf")({
 					.select()
 					.from(userProfile)
 					.where(eq(userProfile.id, session.user.id));
-				const halaqahName = profile?.nama || "Halaqah Tahsin";
+				const halaqahName = profile?.halaqahName || "Halaqah Tahsin";
 
 				const now = new Date();
 				const dateStr = now.toLocaleDateString("id-ID", {
@@ -69,7 +104,15 @@ export const Route = createFileRoute("/api/export-pdf")({
 						(sum, r) => sum + (r.ayatAkhir - r.ayatAwal + 1),
 						0,
 					);
+					const totalHalaman = recs.reduce(
+						(sum, r) => sum + calcHalaman(r.surah, r.ayatAwal, r.ayatAkhir),
+						0,
+					);
 					const mutqinCount = recs.filter((r) => r.isMutqin).length;
+					const lastRec = recs.length > 0 ? recs[recs.length - 1] : null;
+					const currentJuz = lastRec
+						? calcJuz(lastRec.surah, lastRec.ayatAwal, lastRec.ayatAkhir)
+						: "-";
 
 					title = `Rapor — ${s.nama}`;
 					subtitle = `${halaqahName}`;
@@ -79,17 +122,24 @@ export const Route = createFileRoute("/api/export-pdf")({
 							text: `Rapor Hafalan — ${s.nama}`,
 						},
 						{
+							type: "h3",
+							text: `Halaqah: ${halaqahName}`,
+						},
+						{
 							type: "table",
 							style: "summary",
 							headers: ["Metrik", "Nilai"],
 							rows: [
 								["Total Setoran", `${recs.length}`],
 								["Total Ayat", `${totalAyat}`],
+								["Total Halaman", `${totalHalaman}`],
+								["Juz Saat Ini", currentJuz],
 								["Mutqin", `${mutqinCount}`],
 								[
 									"Metode",
 									s.metodeProgress === "juz" ? "Per Juz" : "Per Halaman",
 								],
+								["Mulai Hafalan", s.mulaiHafalan || "-"],
 							],
 						},
 						{ type: "divider" },
@@ -97,17 +147,29 @@ export const Route = createFileRoute("/api/export-pdf")({
 						{
 							type: "table",
 							style: "detail",
-							headers: ["Tanggal", "Type", "Surah", "Ayat", "Status", "Mutqin"],
+							headers: [
+								"Tanggal",
+								"Type",
+								"Surah",
+								"Ayat",
+								"Juz",
+								"Hlm",
+								"Status",
+								"Mutqin",
+							],
 							rows: recs
 								.slice()
 								.reverse()
 								.map((r) => {
-									const sData = SURAH_DATA.find((x) => x.number === r.surah);
+									const halaman = calcHalaman(r.surah, r.ayatAwal, r.ayatAkhir);
+									const juz = calcJuz(r.surah, r.ayatAwal, r.ayatAkhir);
 									return [
 										r.tanggal,
 										r.type,
-										sData?.name || `Surah ${r.surah}`,
+										surahName(r.surah),
 										`${r.ayatAwal}-${r.ayatAkhir}`,
+										juz,
+										`${halaman}`,
 										r.status,
 										r.isMutqin ? "Ya" : "",
 									];
@@ -125,17 +187,19 @@ export const Route = createFileRoute("/api/export-pdf")({
 							(sum, r) => sum + (r.ayatAkhir - r.ayatAwal + 1),
 							0,
 						);
+						const totalHalaman = recs.reduce(
+							(sum, r) => sum + calcHalaman(r.surah, r.ayatAwal, r.ayatAkhir),
+							0,
+						);
 						const lastRec = recs[recs.length - 1];
-						const lastSurah = lastRec
-							? SURAH_DATA.find((x) => x.number === lastRec.surah)
-							: null;
 						const lastAyat = lastRec
-							? `${lastSurah?.name || `Surah ${lastRec.surah}`} ${lastRec.ayatAwal}-${lastRec.ayatAkhir}`
+							? `${surahName(lastRec.surah)} ${lastRec.ayatAwal}-${lastRec.ayatAkhir}`
 							: "-";
 						return [
 							s.nama,
-							`${recs.length} setoran`,
-							`${totalAyat} ayat`,
+							`${recs.length}`,
+							`${totalAyat}`,
+							`${totalHalaman}`,
 							lastAyat,
 							s.metodeProgress === "juz" ? "Juz" : "Halaman",
 						];
@@ -146,7 +210,14 @@ export const Route = createFileRoute("/api/export-pdf")({
 						{
 							type: "table",
 							style: "summary",
-							headers: ["Siswa", "Setoran", "Total Ayat", "Terakhir", "Metode"],
+							headers: [
+								"Siswa",
+								"Setoran",
+								"Ayat",
+								"Halaman",
+								"Terakhir",
+								"Metode",
+							],
 							rows: summaryRows,
 						},
 						{ type: "divider" },
@@ -167,14 +238,25 @@ export const Route = createFileRoute("/api/export-pdf")({
 							content.push({
 								type: "table",
 								style: "detail",
-								headers: ["Tanggal", "Type", "Surah", "Ayat", "Status"],
+								headers: [
+									"Tanggal",
+									"Type",
+									"Surah",
+									"Ayat",
+									"Juz",
+									"Hlm",
+									"Status",
+								],
 								rows: recs.map((r) => {
-									const sData = SURAH_DATA.find((x) => x.number === r.surah);
+									const halaman = calcHalaman(r.surah, r.ayatAwal, r.ayatAkhir);
+									const juz = calcJuz(r.surah, r.ayatAwal, r.ayatAkhir);
 									return [
 										r.tanggal,
 										r.type,
-										sData?.name || `Surah ${r.surah}`,
+										surahName(r.surah),
 										`${r.ayatAwal}-${r.ayatAkhir}`,
+										juz,
+										`${halaman}`,
 										r.status,
 									];
 								}),
