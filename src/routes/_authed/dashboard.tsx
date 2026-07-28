@@ -38,6 +38,8 @@ interface Setoran {
 	type: string;
 	tanggal: string;
 	surah: number;
+	surahAkhir?: number | null;
+	lintas?: boolean;
 	ayatAwal: number;
 	ayatAkhir: number;
 	status: string;
@@ -563,8 +565,10 @@ function DashboardPage() {
 											{siswa?.nama ?? "—"}
 										</p>
 										<p className="text-xs text-muted-foreground">
-											{r.type} — {getSurahName(r.surah)} {r.ayatAwal}:
-											{r.ayatAkhir}
+											{r.type} —{" "}
+											{r.lintas && r.surahAkhir
+												? `${getSurahName(r.surah)} → ${getSurahName(r.surahAkhir)} (${r.ayatAwal}–${r.ayatAkhir})`
+												: `${getSurahName(r.surah)} ${r.ayatAwal}:${r.ayatAkhir}`}
 										</p>
 									</div>
 									<div className="flex items-center gap-2 shrink-0">

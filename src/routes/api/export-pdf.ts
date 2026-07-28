@@ -6,7 +6,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { eq, inArray } from "drizzle-orm";
 import { auth } from "@/lib/auth/auth";
 import { db } from "@/lib/db";
-import { setoran, siswa, userProfile } from "@/lib/db/schema";
+import { appConfig, setoran, siswa, userProfile } from "@/lib/db/schema";
 import { SURAH_DATA } from "@/lib/surah-data";
 
 // ponytail: page calculation uses proportional mapping from SURAH_DATA
@@ -100,9 +100,10 @@ export const Route = createFileRoute("/api/export-pdf")({
 					return Response.json({ error: "Unauthorized" }, { status: 401 });
 
 				const body = await request.json();
-				const { type, siswaId } = body as {
+				const { type, siswaId, periode } = body as {
 					type: "laporan" | "siswa";
 					siswaId?: string;
+					periode?: string;
 				};
 
 				// Get siswa belonging to this musyrif
@@ -121,12 +122,21 @@ export const Route = createFileRoute("/api/export-pdf")({
 					.where(inArray(setoran.siswaId, siswaIds))
 					.orderBy(setoran.tanggal);
 
-				// Get profile for halaqah name
+				// Get profile for halaqah name & guru name
 				const [profile] = await db
 					.select()
 					.from(userProfile)
 					.where(eq(userProfile.id, session.user.id));
 				const halaqahName = profile?.halaqahName || "Halaqah Tahsin";
+				const guruName = profile?.nama || session.user.name || "Ustadz";
+
+				// Get school profile from appConfig
+				const configRows = await db.select().from(appConfig);
+				const configByKey: Record<string, string> = {};
+				for (const r of configRows) configByKey[r.key] = r.value ?? "";
+				const schoolLogo = configByKey.SCHOOL_LOGO ?? "";
+				const schoolFoundationName = configByKey.SCHOOL_FOUNDATION_NAME ?? "";
+				const schoolName = configByKey.SCHOOL_NAME ?? "";
 
 				const now = new Date();
 				const dateStr = now.toLocaleDateString("id-ID", {
@@ -137,6 +147,12 @@ export const Route = createFileRoute("/api/export-pdf")({
 				let content: unknown[];
 				let title: string;
 				let subtitle: string;
+				let siswaName = "";
+				let totalSetoran = 0;
+				let summaryTotalAyat = 0;
+				let summaryTotalHalaman = 0;
+				let summaryJuz = "-";
+				let summaryTerakhir = "-";
 
 				if (type === "siswa" && siswaId) {
 					// Single student report
@@ -144,8 +160,10 @@ export const Route = createFileRoute("/api/export-pdf")({
 					if (!s)
 						return Response.json({ error: "Siswa not found" }, { status: 404 });
 
+					siswaName = s.nama;
 					const recs = allSetoran.filter((r) => r.siswaId === siswaId);
-					const totalAyat = recs.reduce((sum, r) => {
+					totalSetoran = recs.length;
+					summaryTotalAyat = recs.reduce((sum, r) => {
 						if (r.lintas && r.surahAkhir)
 							return (
 								sum +
@@ -153,7 +171,7 @@ export const Route = createFileRoute("/api/export-pdf")({
 							);
 						return sum + (r.ayatAkhir - r.ayatAwal + 1);
 					}, 0);
-					const totalHalaman = recs.reduce((sum, r) => {
+					summaryTotalHalaman = recs.reduce((sum, r) => {
 						if (r.lintas && r.surahAkhir)
 							return (
 								sum +
@@ -166,42 +184,20 @@ export const Route = createFileRoute("/api/export-pdf")({
 							);
 						return sum + calcHalaman(r.surah, r.ayatAwal, r.ayatAkhir);
 					}, 0);
-					const mutqinCount = recs.filter((r) => r.isMutqin).length;
 					const lastRec = recs.length > 0 ? recs[recs.length - 1] : null;
-					const currentJuz = lastRec
+					summaryJuz = lastRec
 						? lastRec.juz ||
 							calcJuz(lastRec.surah, lastRec.ayatAwal, lastRec.ayatAkhir)
+						: "-";
+					summaryTerakhir = lastRec
+						? lastRec.lintas && lastRec.surahAkhir
+							? `${surahRangeName(lastRec.surah, lastRec.surahAkhir)} ${lastRec.ayatAwal}–${lastRec.ayatAkhir}`
+							: `${surahName(lastRec.surah)} ${lastRec.ayatAwal}–${lastRec.ayatAkhir}`
 						: "-";
 
 					title = `Rapor — ${s.nama}`;
 					subtitle = `${halaqahName}`;
 					content = [
-						{
-							type: "h2",
-							text: `Rapor Hafalan — ${s.nama}`,
-						},
-						{
-							type: "h3",
-							text: `Halaqah: ${halaqahName}`,
-						},
-						{
-							type: "table",
-							style: "summary",
-							headers: ["Metrik", "Nilai"],
-							rows: [
-								["Total Setoran", `${recs.length}`],
-								["Total Ayat", `${totalAyat}`],
-								["Total Halaman", `${totalHalaman}`],
-								["Juz Saat Ini", currentJuz],
-								["Mutqin", `${mutqinCount}`],
-								[
-									"Metode",
-									s.metodeProgress === "juz" ? "Per Juz" : "Per Halaman",
-								],
-								["Mulai Hafalan", s.mulaiHafalan || "-"],
-							],
-						},
-						{ type: "divider" },
 						{ type: "h2", text: "Riwayat Setoran" },
 						{
 							type: "table",
@@ -212,9 +208,9 @@ export const Route = createFileRoute("/api/export-pdf")({
 								"Surah",
 								"Ayat",
 								"Juz",
-								"Hlm",
-								"Status",
-								"Mutqin",
+								"Halaman",
+								"Grade",
+								"Catatan",
 							],
 							rows: recs
 								.slice()
@@ -242,7 +238,7 @@ export const Route = createFileRoute("/api/export-pdf")({
 										juz,
 										`${halaman}`,
 										r.status,
-										r.isMutqin ? "Ya" : "",
+										r.catatan || "",
 									];
 								}),
 						},
@@ -330,8 +326,9 @@ export const Route = createFileRoute("/api/export-pdf")({
 									"Surah",
 									"Ayat",
 									"Juz",
-									"Hlm",
-									"Status",
+									"Halaman",
+									"Grade",
+									"Catatan",
 								],
 								rows: recs.map((r) => {
 									const isLintas = r.lintas && r.surahAkhir;
@@ -356,6 +353,7 @@ export const Route = createFileRoute("/api/export-pdf")({
 										juz,
 										`${halaman}`,
 										r.status,
+										r.catatan || "",
 									];
 								}),
 							});
@@ -371,10 +369,35 @@ export const Route = createFileRoute("/api/export-pdf")({
 				const outPath = join(tmpDir, "report.pdf");
 				const scriptPath = join(process.cwd(), "scripts", "generate-pdf.py");
 
+				// Determine period display
+				const monthStr = periode
+					? new Date(`${periode}-01`).toLocaleDateString("id-ID", {
+							month: "long",
+							year: "numeric",
+						})
+					: dateStr;
+
 				try {
 					writeFileSync(
 						contentPath,
-						JSON.stringify({ title, subtitle, date: dateStr, content }),
+						JSON.stringify({
+							title,
+							subtitle,
+							date: dateStr,
+							content,
+							schoolLogo,
+							schoolFoundationName,
+							schoolName,
+							guruName,
+							halaqahName,
+							periode: monthStr,
+							siswaName,
+							totalSetoran,
+							totalAyat: summaryTotalAyat,
+							totalHalaman: summaryTotalHalaman,
+							currentJuz: summaryJuz,
+							lastMemorization: summaryTerakhir,
+						}),
 					);
 
 					execSync(

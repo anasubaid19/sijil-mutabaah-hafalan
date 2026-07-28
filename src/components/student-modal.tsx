@@ -65,6 +65,8 @@ export function StudentModal({
 	setoranList,
 }: StudentModalProps) {
 	const [previewOpen, setPreviewOpen] = useState(false);
+	const defaultMonth = new Date().toISOString().slice(0, 7);
+	const [exportPeriode, setExportPeriode] = useState(defaultMonth);
 
 	if (!siswa) return null;
 
@@ -146,20 +148,35 @@ export function StudentModal({
 				</div>
 
 				{siswa && (
-					<button
-						type="button"
-						onClick={() => setPreviewOpen(true)}
-						className="mt-2 w-full rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
-					>
-						Export PDF
-					</button>
+					<div className="mt-2 space-y-2">
+						<label
+							htmlFor="siswa-export-periode"
+							className="text-xs text-muted-foreground"
+						>
+							Bulan / Periode
+						</label>
+						<input
+							id="siswa-export-periode"
+							type="month"
+							value={exportPeriode}
+							onChange={(e) => setExportPeriode(e.target.value)}
+							className="flex h-8 w-full rounded-md border border-input bg-transparent px-2 text-xs shadow-xs transition-colors"
+						/>
+						<button
+							type="button"
+							onClick={() => setPreviewOpen(true)}
+							className="w-full rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
+						>
+							Export PDF
+						</button>
+					</div>
 				)}
 			</DialogContent>
 
 			<PdfPreviewDialog
 				open={previewOpen}
 				onOpenChange={setPreviewOpen}
-				payload={{ type: "siswa", siswaId: siswa?.id }}
+				payload={{ type: "siswa", siswaId: siswa?.id, periode: exportPeriode }}
 				filename={`Rapor_${(siswa?.nama ?? "").replace(/\s+/g, "_")}.pdf`}
 			/>
 		</Dialog>

@@ -112,6 +112,8 @@ function LaporanPage() {
 	const [showAllStudents, setShowAllStudents] = useState(false);
 	const [riwayatPage, setRiwayatPage] = useState(1);
 	const RIWAYAT_PER_PAGE = 30;
+	const defaultMonth = new Date().toISOString().slice(0, 7);
+	const [exportPeriode, setExportPeriode] = useState(defaultMonth);
 
 	async function deleteSetoran(id: string) {
 		if (!confirm("Hapus setoran ini?")) return;
@@ -297,6 +299,21 @@ function LaporanPage() {
 							Export
 						</DropdownMenuTrigger>
 						<DropdownMenuContent align="end">
+							<div className="px-2 py-1.5">
+								<label
+									htmlFor="export-periode"
+									className="text-xs text-muted-foreground"
+								>
+									Bulan / Periode
+								</label>
+								<input
+									id="export-periode"
+									type="month"
+									value={exportPeriode}
+									onChange={(e) => setExportPeriode(e.target.value)}
+									className="mt-1 flex h-8 w-full rounded-md border border-input bg-transparent px-2 text-xs shadow-xs transition-colors"
+								/>
+							</div>
 							<DropdownMenuItem onClick={exportPDF}>Rekap PDF</DropdownMenuItem>
 							<DropdownMenuItem onClick={() => setPresensiExportOpen(true)}>
 								Presensi PDF
@@ -724,7 +741,7 @@ function LaporanPage() {
 			<PdfPreviewDialog
 				open={previewOpen}
 				onOpenChange={setPreviewOpen}
-				payload={{ type: "laporan" }}
+				payload={{ type: "laporan", periode: exportPeriode }}
 				filename={`Laporan_${new Date().toISOString().split("T")[0]}.pdf`}
 			/>
 

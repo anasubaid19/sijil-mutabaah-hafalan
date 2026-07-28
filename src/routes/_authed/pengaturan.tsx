@@ -55,6 +55,12 @@ function PengaturanPage() {
 	const [siswaTargetTo, setSiswaTargetTo] = useState("30");
 	const [editingSiswa, setEditingSiswa] = useState<string | null>(null);
 
+	// School profile
+	const [schoolLogo, setSchoolLogo] = useState("");
+	const [schoolFoundationName, setSchoolFoundationName] = useState("");
+	const [schoolName, setSchoolName] = useState("");
+	const [schoolSaving, setSchoolSaving] = useState(false);
+
 	useEffect(() => {
 		function onResize() {
 			setIsMobile(window.innerWidth < 768);
@@ -62,9 +68,10 @@ function PengaturanPage() {
 		window.addEventListener("resize", onResize);
 		async function load() {
 			try {
-				const [pRes, sRes] = await Promise.all([
+				const [pRes, sRes, scRes] = await Promise.all([
 					fetch("/api/user-profile"),
 					fetch("/api/siswa"),
+					fetch("/api/school-profile"),
 				]);
 				if (pRes.ok) {
 					const p = await pRes.json();
@@ -75,6 +82,12 @@ function PengaturanPage() {
 					}
 				}
 				if (sRes.ok) setSiswaList(await sRes.json());
+				if (scRes.ok) {
+					const sc = await scRes.json();
+					setSchoolLogo(sc.logo || "");
+					setSchoolFoundationName(sc.foundationName || "");
+					setSchoolName(sc.schoolName || "");
+				}
 			} catch {}
 			setLoading(false);
 		}
@@ -125,6 +138,42 @@ function PengaturanPage() {
 			setNewPassword("");
 			setConfirmPassword("");
 		}
+	}
+
+	async function saveSchoolProfile() {
+		setSchoolSaving(true);
+		try {
+			const res = await fetch("/api/school-profile", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({
+					logo: schoolLogo,
+					foundationName: schoolFoundationName,
+					schoolName,
+				}),
+			});
+			if (res.ok) toast.success("Profil sekolah tersimpan!");
+			else toast.error("Gagal menyimpan profil sekolah");
+		} catch {
+			toast.error("Gagal menyimpan profil sekolah");
+		}
+		setSchoolSaving(false);
+	}
+
+	function handleSchoolLogoUpload(e: React.ChangeEvent<HTMLInputElement>) {
+		const file = e.target.files?.[0];
+		if (!file) return;
+		if (file.size > 2 * 1024 * 1024) {
+			toast.error("Maksimal 2 MB");
+			return;
+		}
+		if (!["image/png", "image/jpeg", "image/svg+xml"].includes(file.type)) {
+			toast.error("Format: PNG, JPG, atau SVG");
+			return;
+		}
+		const reader = new FileReader();
+		reader.onload = () => setSchoolLogo(reader.result as string);
+		reader.readAsDataURL(file);
 	}
 
 	async function addSiswa(e: React.FormEvent) {
@@ -368,6 +417,90 @@ function PengaturanPage() {
 					Ganti Password
 				</Button>
 			</form>
+
+			{/* School Profile */}
+			<div className="space-y-4 rounded-2xl border bg-card p-5 shadow-xs">
+				<h3 className="text-lg font-semibold">Profil Sekolah</h3>
+				<p className="text-xs text-muted-foreground">
+					Konfigurasi identitas institusi untuk header PDF.
+				</p>
+				<div className="space-y-4">
+					<div className="space-y-2">
+						<label className="text-sm font-medium">Logo Sekolah</label>
+						{schoolLogo ? (
+							<div className="flex items-center gap-4">
+								<img
+									src={schoolLogo}
+									alt="Logo"
+									className="h-16 w-16 rounded-lg border object-contain"
+								/>
+								<div className="flex gap-2">
+									<label className="cursor-pointer rounded-md border border-input bg-background px-3 py-1.5 text-xs font-medium hover:bg-accent">
+										Ganti
+										<input
+											type="file"
+											accept="image/png,image/jpeg,image/svg+xml"
+											onChange={handleSchoolLogoUpload}
+											className="hidden"
+										/>
+									</label>
+									<button
+										type="button"
+										onClick={() => setSchoolLogo("")}
+										className="rounded-md border border-destructive/30 px-3 py-1.5 text-xs font-medium text-destructive hover:bg-destructive/10"
+									>
+										Hapus
+									</button>
+								</div>
+							</div>
+						) : (
+							<label className="flex cursor-pointer items-center justify-center rounded-lg border-2 border-dashed border-border bg-muted/30 px-4 py-6 text-xs text-muted-foreground hover:bg-muted/50">
+								<span>Klik untuk upload (PNG, JPG, SVG — maks 2 MB)</span>
+								<input
+									type="file"
+									accept="image/png,image/jpeg,image/svg+xml"
+									onChange={handleSchoolLogoUpload}
+									className="hidden"
+								/>
+							</label>
+						)}
+					</div>
+					<div className="space-y-2">
+						<label htmlFor="school-foundation" className="text-sm font-medium">
+							Nama Yayasan
+						</label>
+						<Input
+							id="school-foundation"
+							type="text"
+							value={schoolFoundationName}
+							onChange={(e) => setSchoolFoundationName(e.target.value)}
+							placeholder="Yayasan Pendidikan ..."
+						/>
+						<p className="text-xs text-muted-foreground">
+							Ditampilkan sebagai judul utama di header PDF.
+						</p>
+					</div>
+					<div className="space-y-2">
+						<label htmlFor="school-name" className="text-sm font-medium">
+							Nama Sekolah
+						</label>
+						<Input
+							id="school-name"
+							type="text"
+							value={schoolName}
+							onChange={(e) => setSchoolName(e.target.value)}
+							placeholder="SDIT / SMPIT / SMAIT ..."
+						/>
+						<p className="text-xs text-muted-foreground">
+							Ditampilkan di bawah nama yayasan. Jika yayasan kosong, nama
+							sekolah menjadi judul utama.
+						</p>
+					</div>
+					<Button onClick={saveSchoolProfile} disabled={schoolSaving}>
+						{schoolSaving ? "Menyimpan..." : "Simpan"}
+					</Button>
+				</div>
+			</div>
 
 			{isMobile && (
 				<>
