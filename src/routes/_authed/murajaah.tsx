@@ -662,6 +662,7 @@ function MurajaahPage() {
 				<ResizablePanelGroup
 					direction="horizontal"
 					className="gap-3"
+					style={{ height: "auto", overflow: "visible" }}
 					onLayout={savePanelSize}
 				>
 					<ResizablePanel defaultSize={100 - panelSize} minSize={30}>
