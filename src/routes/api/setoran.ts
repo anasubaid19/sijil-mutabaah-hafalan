@@ -75,6 +75,7 @@ export const Route = createFileRoute("/api/setoran")({
 					if (!owned)
 						return Response.json({ error: "Forbidden" }, { status: 403 });
 
+					const lintas = body.lintas === true;
 					const surahData = SURAH_DATA.find((s) => s.number === body.surah);
 					if (surahData) {
 						if (body.ayatAwal > surahData.ayatCount) {
@@ -85,13 +86,30 @@ export const Route = createFileRoute("/api/setoran")({
 								{ status: 400 },
 							);
 						}
-						if (body.ayatAkhir > surahData.ayatCount) {
+						// for lintas, validate ayatAkhir against end surah
+						const endSurahData = lintas
+							? SURAH_DATA.find((s) => s.number === body.surahAkhir)
+							: surahData;
+						if (endSurahData && body.ayatAkhir > endSurahData.ayatCount) {
 							return Response.json(
 								{
-									error: `Ayat akhir melebihi jumlah ayat ${surahData.name} (${surahData.ayatCount} ayat)`,
+									error: `Ayat akhir melebihi jumlah ayat ${endSurahData.name} (${endSurahData.ayatCount} ayat)`,
 								},
 								{ status: 400 },
 							);
+						}
+					}
+
+					// pre-compute juz range for lintas records
+					let juz = body.juz;
+					if (lintas && !juz) {
+						const sStart = SURAH_DATA.find((s) => s.number === body.surah);
+						const sEnd = SURAH_DATA.find((s) => s.number === body.surahAkhir);
+						if (sStart && sEnd) {
+							juz =
+								sStart.juzStart === sEnd.juzEnd
+									? `${sStart.juzStart}`
+									: `${sStart.juzStart}-${sEnd.juzEnd}`;
 						}
 					}
 
@@ -102,9 +120,11 @@ export const Route = createFileRoute("/api/setoran")({
 							type: body.type,
 							tanggal: body.tanggal,
 							surah: body.surah,
+							surahAkhir: lintas ? (body.surahAkhir ?? null) : null,
+							lintas,
 							ayatAwal: body.ayatAwal,
 							ayatAkhir: body.ayatAkhir,
-							juz: body.juz,
+							juz,
 							isMutqin: body.isMutqin ?? false,
 							status: body.status ?? "Tidak Lancar",
 							catatan: body.catatan,
@@ -172,6 +192,7 @@ export const Route = createFileRoute("/api/setoran")({
 					if (!owned)
 						return Response.json({ error: "Forbidden" }, { status: 403 });
 
+					const lintas = body.lintas === true;
 					const surahData = SURAH_DATA.find((s) => s.number === body.surah);
 					if (surahData) {
 						if (body.ayatAwal > surahData.ayatCount) {
@@ -182,13 +203,29 @@ export const Route = createFileRoute("/api/setoran")({
 								{ status: 400 },
 							);
 						}
-						if (body.ayatAkhir > surahData.ayatCount) {
+						const endSurahData = lintas
+							? SURAH_DATA.find((s) => s.number === body.surahAkhir)
+							: surahData;
+						if (endSurahData && body.ayatAkhir > endSurahData.ayatCount) {
 							return Response.json(
 								{
-									error: `Ayat akhir melebihi jumlah ayat ${surahData.name} (${surahData.ayatCount} ayat)`,
+									error: `Ayat akhir melebihi jumlah ayat ${endSurahData.name} (${endSurahData.ayatCount} ayat)`,
 								},
 								{ status: 400 },
 							);
+						}
+					}
+
+					// pre-compute juz range for lintas records
+					let juz = body.juz;
+					if (lintas && !juz) {
+						const sStart = SURAH_DATA.find((s) => s.number === body.surah);
+						const sEnd = SURAH_DATA.find((s) => s.number === body.surahAkhir);
+						if (sStart && sEnd) {
+							juz =
+								sStart.juzStart === sEnd.juzEnd
+									? `${sStart.juzStart}`
+									: `${sStart.juzStart}-${sEnd.juzEnd}`;
 						}
 					}
 
@@ -198,9 +235,11 @@ export const Route = createFileRoute("/api/setoran")({
 							type: body.type,
 							tanggal: body.tanggal,
 							surah: body.surah,
+							surahAkhir: lintas ? (body.surahAkhir ?? null) : null,
+							lintas,
 							ayatAwal: body.ayatAwal,
 							ayatAkhir: body.ayatAkhir,
-							juz: body.juz,
+							juz,
 							isMutqin: body.isMutqin,
 							status: body.status,
 							catatan: body.catatan,

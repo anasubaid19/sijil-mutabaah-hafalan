@@ -42,6 +42,8 @@ interface Setoran {
 	type: string;
 	tanggal: string;
 	surah: number;
+	surahAkhir?: number | null;
+	lintas?: boolean;
 	ayatAwal: number;
 	ayatAkhir: number;
 	status: string;
@@ -70,6 +72,23 @@ function getAvatarColors(n: string): [string, string] {
 			"#1a5c5c",
 		]
 	);
+}
+
+function surahDisplay(r: Setoran): string {
+	const startName =
+		SURAH_DATA.find((s) => s.number === r.surah)?.name ?? `#${r.surah}`;
+	if (!r.lintas || !r.surahAkhir) return startName;
+	const endName =
+		SURAH_DATA.find((s) => s.number === r.surahAkhir)?.name ??
+		`#${r.surahAkhir}`;
+	return `${startName} → ${endName}`;
+}
+
+function surahAyatDisplay(r: Setoran): string {
+	if (r.lintas && r.surahAkhir) {
+		return `${surahDisplay(r)} (${r.ayatAwal}–${r.ayatAkhir})`;
+	}
+	return `${surahDisplay(r)} (${r.ayatAwal}–${r.ayatAkhir})`;
 }
 
 export const Route = createFileRoute("/_authed/laporan")({
@@ -197,10 +216,9 @@ function LaporanPage() {
 		const siswaMap = Object.fromEntries(siswaList.map((s) => [s.id, s.nama]));
 		let csv = "Tanggal,Nama,Jenis,Surah,Ayat,Status,Catatan\n";
 		filteredSetoran.forEach((r) => {
-			const surahName =
-				SURAH_DATA.find((s) => s.number === r.surah)?.name ?? `#${r.surah}`;
+			const setoranText = surahAyatDisplay(r);
 			const cat = (r.catatan || "").replace(/"/g, '""');
-			csv += `${r.tanggal},"${siswaMap[r.siswaId] ?? "?"}",${r.type},"${surahName}","${r.ayatAwal}-${r.ayatAkhir}",${r.status},"${cat}"\n`;
+			csv += `${r.tanggal},"${siswaMap[r.siswaId] ?? "?"}",${r.type},"${setoranText}",${r.status},"${cat}"\n`;
 		});
 
 		const blob = new Blob([csv], { type: "text/csv" });
@@ -558,9 +576,6 @@ function LaporanPage() {
 								.map((r) => {
 									const siswaName =
 										siswaList.find((s) => s.id === r.siswaId)?.nama ?? "?";
-									const surahName =
-										SURAH_DATA.find((s) => s.number === r.surah)?.name ??
-										`#${r.surah}`;
 									return (
 										<div
 											key={r.id}
@@ -570,7 +585,7 @@ function LaporanPage() {
 												<div>
 													<p className="text-sm font-semibold">{siswaName}</p>
 													<p className="text-xs text-muted-foreground">
-														{surahName} ({r.ayatAwal}-{r.ayatAkhir})
+														{surahDisplay(r)} ({r.ayatAwal}–{r.ayatAkhir})
 													</p>
 												</div>
 												<div className="flex items-center gap-1.5">
@@ -631,9 +646,7 @@ function LaporanPage() {
 													{r.type}
 												</td>
 												<td className="py-2 pr-4">
-													{SURAH_DATA.find((s) => s.number === r.surah)?.name ??
-														`#${r.surah}`}{" "}
-													({r.ayatAwal}-{r.ayatAkhir})
+													{surahDisplay(r)} ({r.ayatAwal}–{r.ayatAkhir})
 												</td>
 												<td className="py-2 pr-4">
 													<span

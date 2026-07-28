@@ -450,42 +450,30 @@ function ZiyadahPage() {
 			setLoading(true);
 			const surahAData = findSurah(surahA);
 
-			const results: Response[] = [];
-			for (let sn = surahAData?.number ?? 0; sn <= endSurah.number; sn++) {
-				const sData = SURAH_DATA.find((x) => x.number === sn);
-				if (!sData) continue;
-
-				const isFirst = sn === surahAData?.number;
-				const isLast = sn === endSurah.number;
-
-				const res = await fetch("/api/setoran", {
-					method: "POST",
-					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify({
-						siswaId: selectedSiswa,
-						type: "Ziyadah",
-						tanggal,
-						surah: sn,
-						ayatAwal: isFirst ? Number.parseInt(dariAyat, 10) || 1 : 1,
-						ayatAkhir: isLast
-							? Number.parseInt(lintasSampaiAyat, 10) || 0
-							: sData.ayatCount,
-						status: gred,
-						catatan,
-					}),
-				});
-				results.push(res);
-			}
+			const res = await fetch("/api/setoran", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({
+					siswaId: selectedSiswa,
+					type: "Ziyadah",
+					tanggal,
+					surah: surahAData?.number ?? 0,
+					surahAkhir: endSurah.number,
+					lintas: true,
+					ayatAwal: Number.parseInt(dariAyat, 10) || 1,
+					ayatAkhir: Number.parseInt(lintasSampaiAyat, 10) || 0,
+					status: gred,
+					catatan,
+				}),
+			});
 
 			setLoading(false);
 
-			if (results.every((r) => r.ok)) {
-				toast.success(
-					`Ziyadah lintas surah tersimpan! (${results.length} surah)`,
-				);
+			if (res.ok) {
+				toast.success("Ziyadah lintas surah tersimpan!");
 				resetForm();
 			} else {
-				toast.error("Gagal menyimpan salah satu setoran");
+				toast.error("Gagal menyimpan");
 			}
 		} else {
 			if (!sampaiAyat) {

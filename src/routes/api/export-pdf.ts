@@ -23,6 +23,46 @@ function calcHalaman(
 	return Math.max(1, Math.ceil((ayatCovered / sData.ayatCount) * surahPages));
 }
 
+function calcLintasHalaman(
+	startSurah: number,
+	startAyat: number,
+	endSurah: number,
+	endAyat: number,
+): number {
+	let total = 0;
+	for (let sn = startSurah; sn <= endSurah; sn++) {
+		const sData = SURAH_DATA.find((x) => x.number === sn);
+		if (!sData) continue;
+		const isFirst = sn === startSurah;
+		const isLast = sn === endSurah;
+		const from = isFirst ? startAyat : 1;
+		const to = isLast ? endAyat : sData.ayatCount;
+		const covered = to - from + 1;
+		const pages = sData.pageEnd - sData.pageStart + 1;
+		total += Math.max(1, Math.ceil((covered / sData.ayatCount) * pages));
+	}
+	return total;
+}
+
+function calcLintasAyat(
+	startSurah: number,
+	startAyat: number,
+	endSurah: number,
+	endAyat: number,
+): number {
+	let total = 0;
+	for (let sn = startSurah; sn <= endSurah; sn++) {
+		const sData = SURAH_DATA.find((x) => x.number === sn);
+		if (!sData) continue;
+		const isFirst = sn === startSurah;
+		const isLast = sn === endSurah;
+		const from = isFirst ? startAyat : 1;
+		const to = isLast ? endAyat : sData.ayatCount;
+		total += to - from + 1;
+	}
+	return total;
+}
+
 function calcJuz(
 	surahNum: number,
 	ayatAwal: number,
@@ -42,6 +82,11 @@ function surahName(surahNum: number): string {
 	return (
 		SURAH_DATA.find((x) => x.number === surahNum)?.name || `Surah ${surahNum}`
 	);
+}
+
+function surahRangeName(start: number, end: number): string {
+	if (start === end) return surahName(start);
+	return `${surahName(start)} → ${surahName(end)}`;
 }
 
 export const Route = createFileRoute("/api/export-pdf")({
@@ -100,18 +145,32 @@ export const Route = createFileRoute("/api/export-pdf")({
 						return Response.json({ error: "Siswa not found" }, { status: 404 });
 
 					const recs = allSetoran.filter((r) => r.siswaId === siswaId);
-					const totalAyat = recs.reduce(
-						(sum, r) => sum + (r.ayatAkhir - r.ayatAwal + 1),
-						0,
-					);
-					const totalHalaman = recs.reduce(
-						(sum, r) => sum + calcHalaman(r.surah, r.ayatAwal, r.ayatAkhir),
-						0,
-					);
+					const totalAyat = recs.reduce((sum, r) => {
+						if (r.lintas && r.surahAkhir)
+							return (
+								sum +
+								calcLintasAyat(r.surah, r.ayatAwal, r.surahAkhir, r.ayatAkhir)
+							);
+						return sum + (r.ayatAkhir - r.ayatAwal + 1);
+					}, 0);
+					const totalHalaman = recs.reduce((sum, r) => {
+						if (r.lintas && r.surahAkhir)
+							return (
+								sum +
+								calcLintasHalaman(
+									r.surah,
+									r.ayatAwal,
+									r.surahAkhir,
+									r.ayatAkhir,
+								)
+							);
+						return sum + calcHalaman(r.surah, r.ayatAwal, r.ayatAkhir);
+					}, 0);
 					const mutqinCount = recs.filter((r) => r.isMutqin).length;
 					const lastRec = recs.length > 0 ? recs[recs.length - 1] : null;
 					const currentJuz = lastRec
-						? calcJuz(lastRec.surah, lastRec.ayatAwal, lastRec.ayatAkhir)
+						? lastRec.juz ||
+							calcJuz(lastRec.surah, lastRec.ayatAwal, lastRec.ayatAkhir)
 						: "-";
 
 					title = `Rapor — ${s.nama}`;
@@ -161,13 +220,25 @@ export const Route = createFileRoute("/api/export-pdf")({
 								.slice()
 								.reverse()
 								.map((r) => {
-									const halaman = calcHalaman(r.surah, r.ayatAwal, r.ayatAkhir);
-									const juz = calcJuz(r.surah, r.ayatAwal, r.ayatAkhir);
+									const isLintas = r.lintas && r.surahAkhir;
+									const halaman = isLintas
+										? calcLintasHalaman(
+												r.surah,
+												r.ayatAwal,
+												r.surahAkhir,
+												r.ayatAkhir,
+											)
+										: calcHalaman(r.surah, r.ayatAwal, r.ayatAkhir);
+									const juz =
+										r.juz || calcJuz(r.surah, r.ayatAwal, r.ayatAkhir);
+									const sName = isLintas
+										? surahRangeName(r.surah, r.surahAkhir)
+										: surahName(r.surah);
 									return [
 										r.tanggal,
 										r.type,
-										surahName(r.surah),
-										`${r.ayatAwal}-${r.ayatAkhir}`,
+										sName,
+										`${r.ayatAwal}–${r.ayatAkhir}`,
 										juz,
 										`${halaman}`,
 										r.status,
@@ -183,17 +254,32 @@ export const Route = createFileRoute("/api/export-pdf")({
 
 					const summaryRows = mySiswa.map((s) => {
 						const recs = allSetoran.filter((r) => r.siswaId === s.id);
-						const totalAyat = recs.reduce(
-							(sum, r) => sum + (r.ayatAkhir - r.ayatAwal + 1),
-							0,
-						);
-						const totalHalaman = recs.reduce(
-							(sum, r) => sum + calcHalaman(r.surah, r.ayatAwal, r.ayatAkhir),
-							0,
-						);
+						const totalAyat = recs.reduce((sum, r) => {
+							if (r.lintas && r.surahAkhir)
+								return (
+									sum +
+									calcLintasAyat(r.surah, r.ayatAwal, r.surahAkhir, r.ayatAkhir)
+								);
+							return sum + (r.ayatAkhir - r.ayatAwal + 1);
+						}, 0);
+						const totalHalaman = recs.reduce((sum, r) => {
+							if (r.lintas && r.surahAkhir)
+								return (
+									sum +
+									calcLintasHalaman(
+										r.surah,
+										r.ayatAwal,
+										r.surahAkhir,
+										r.ayatAkhir,
+									)
+								);
+							return sum + calcHalaman(r.surah, r.ayatAwal, r.ayatAkhir);
+						}, 0);
 						const lastRec = recs[recs.length - 1];
 						const lastAyat = lastRec
-							? `${surahName(lastRec.surah)} ${lastRec.ayatAwal}-${lastRec.ayatAkhir}`
+							? lastRec.lintas && lastRec.surahAkhir
+								? `${surahRangeName(lastRec.surah, lastRec.surahAkhir)} ${lastRec.ayatAwal}–${lastRec.ayatAkhir}`
+								: `${surahName(lastRec.surah)} ${lastRec.ayatAwal}–${lastRec.ayatAkhir}`
 							: "-";
 						return [
 							s.nama,
@@ -248,13 +334,25 @@ export const Route = createFileRoute("/api/export-pdf")({
 									"Status",
 								],
 								rows: recs.map((r) => {
-									const halaman = calcHalaman(r.surah, r.ayatAwal, r.ayatAkhir);
-									const juz = calcJuz(r.surah, r.ayatAwal, r.ayatAkhir);
+									const isLintas = r.lintas && r.surahAkhir;
+									const halaman = isLintas
+										? calcLintasHalaman(
+												r.surah,
+												r.ayatAwal,
+												r.surahAkhir,
+												r.ayatAkhir,
+											)
+										: calcHalaman(r.surah, r.ayatAwal, r.ayatAkhir);
+									const juz =
+										r.juz || calcJuz(r.surah, r.ayatAwal, r.ayatAkhir);
+									const sName = isLintas
+										? surahRangeName(r.surah, r.surahAkhir)
+										: surahName(r.surah);
 									return [
 										r.tanggal,
 										r.type,
-										surahName(r.surah),
-										`${r.ayatAwal}-${r.ayatAkhir}`,
+										sName,
+										`${r.ayatAwal}–${r.ayatAkhir}`,
 										juz,
 										`${halaman}`,
 										r.status,
