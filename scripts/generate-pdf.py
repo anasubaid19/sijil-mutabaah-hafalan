@@ -15,8 +15,9 @@ from reportlab.lib.styles import ParagraphStyle
 from reportlab.lib.enums import TA_LEFT, TA_CENTER, TA_RIGHT
 from reportlab.platypus import (
     SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle,
-    PageBreak, HRFlowable, Image, KeepTogether
+    PageBreak, HRFlowable, KeepTogether
 )
+from PIL import Image as PILImage
 
 PRIMARY   = "#2563eb"
 WHITE     = "#ffffff"
@@ -71,10 +72,7 @@ def decode_logo(logo_b64):
         else:
             b64data = logo_b64
         raw = base64.b64decode(b64data)
-        buf = BytesIO(raw)
-        img = Image(buf, width=28 * mm, height=28 * mm)
-        img.preserveAspectRatio = True
-        return img
+        return PILImage.open(BytesIO(raw))
     except Exception:
         return None
 
@@ -109,12 +107,15 @@ def render_school_header(doc, canvas, W, H):
     if has_logo:
         logo_img = decode_logo(logo)
         if logo_img:
-            lw = logo_img.drawWidth
+            logo_w, logo_h = logo_img.size
+            target_h = 24 * mm
+            scale = target_h / max(logo_h, 1)
+            draw_w = logo_w * scale
             canvas.drawInlineImage(
-                logo_img._img, left_x, H - 26 * mm,
-                width=lw, height=None,
+                logo_img, left_x, H - 27 * mm,
+                width=draw_w, height=target_h,
             )
-            left_x += lw + 6 * mm
+            left_x += draw_w + 6 * mm
         else:
             has_logo = False
 
