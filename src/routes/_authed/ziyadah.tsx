@@ -401,8 +401,9 @@ function ZiyadahPage() {
 							);
 							if (endSurah && last.ayatAkhir != null) {
 								if (last.ayatAkhir >= endSurah.ayatCount) {
+									const nextSurahNum = last.surahAkhir + 1;
 									const next = SURAH_DATA.find(
-										(s) => s.number === last.surahAkhir! + 1,
+										(s) => s.number === nextSurahNum,
 									);
 									if (next) {
 										setSurahA(next.name);
@@ -415,13 +416,10 @@ function ZiyadahPage() {
 							}
 						} else {
 							if (last.surah) {
-								const s = SURAH_DATA.find(
-									(s) => s.number === last.surah,
-								);
+								const s = SURAH_DATA.find((s) => s.number === last.surah);
 								if (s) setSurahA(s.name);
 							}
-							if (last.ayatAkhir)
-								setDariAyat(String(last.ayatAkhir + 1));
+							if (last.ayatAkhir) setDariAyat(String(last.ayatAkhir + 1));
 						}
 					}
 				},
