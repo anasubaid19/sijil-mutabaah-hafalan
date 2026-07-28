@@ -51,6 +51,340 @@ export const Route = createFileRoute("/_authed/murajaah")({
 	component: MurajaahPage,
 });
 
+interface FormBodyProps {
+	siswaList: Siswa[];
+	selectedSiswa: string;
+	setSelectedSiswa: (v: string) => void;
+	selectedSiswaData: Siswa | undefined;
+	tanggal: string;
+	setTanggal: (v: string) => void;
+	jenis: string;
+	setJenis: (v: string) => void;
+	surahA: string;
+	handleSurahAChange: (v: string) => void;
+	acA: Surah[];
+	setSurahA: (v: string) => void;
+	setAcA: (v: Surah[]) => void;
+	dariAyat: string;
+	setDariAyat: (v: string) => void;
+	dariAyatError: string;
+	setDariAyatError: (v: string) => void;
+	sampaiAyat: string;
+	setSampaiAyat: (v: string) => void;
+	sampaiAyatError: string;
+	setSampaiAyatError: (v: string) => void;
+	lintasMode: boolean;
+	setLintasMode: (v: boolean) => void;
+	lintasSurahEnd: string;
+	handleLintasSurahEndChange: (v: string) => void;
+	lintasAcEnd: Surah[];
+	selectLintasSurahEnd: (s: Surah) => void;
+	lintasSampaiAyat: string;
+	setLintasSampaiAyat: (v: string) => void;
+	lintasSampaiError: string;
+	setLintasSampaiError: (v: string) => void;
+	gred: string;
+	setGred: (v: string) => void;
+	catatan: string;
+	setCatatan: (v: string) => void;
+	loading: boolean;
+	handleSubmit: (e: React.FormEvent) => void;
+	mushafOpen: boolean;
+	setMushafOpen: (v: boolean) => void;
+	setMushafMobileOpen: (v: boolean) => void;
+}
+
+function FormBody(props: FormBodyProps) {
+	return (
+		<form
+			onSubmit={props.handleSubmit}
+			className="rounded-2xl border bg-card p-4 shadow-xs space-y-4"
+		>
+			<div className="grid gap-3 sm:grid-cols-2">
+				<div className="space-y-2">
+					<label className="text-sm font-medium">Siswa</label>
+					<select
+						value={props.selectedSiswa}
+						onChange={(e) => props.setSelectedSiswa(e.target.value)}
+						required
+						className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-xs transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring md:text-sm"
+					>
+						<option value="">Pilih siswa...</option>
+						{props.siswaList.map((s) => (
+							<option key={s.id} value={s.id}>
+								{s.nama}
+							</option>
+						))}
+					</select>
+				</div>
+				<div className="space-y-2">
+					<label className="text-sm font-medium">Tanggal</label>
+					<Input
+						type="date"
+						value={props.tanggal}
+						onChange={(e) => props.setTanggal(e.target.value)}
+						required
+					/>
+				</div>
+			</div>
+
+			{props.selectedSiswaData && (
+				<div className="flex items-center gap-3 rounded-xl bg-muted/50 px-4 py-2.5">
+					<div className="flex size-8 items-center justify-center rounded-lg bg-primary/15 text-primary">
+						<span className="text-sm font-bold">
+							{props.selectedSiswaData.nama.charAt(0)}
+						</span>
+					</div>
+					<div>
+						<p className="text-sm font-semibold">
+							{props.selectedSiswaData.nama}
+						</p>
+						<p className="text-xs text-muted-foreground">
+							{props.selectedSiswaData.hafalan} juz terhafal
+						</p>
+					</div>
+				</div>
+			)}
+
+			<div className="space-y-2">
+				<label className="text-sm font-medium">Jenis</label>
+				<div className="flex flex-wrap gap-2">
+					{JENIS_MURAJAAH.map((j) => (
+						<button
+							key={j}
+							type="button"
+							onClick={() => props.setJenis(j)}
+							className={`rounded-xl px-4 py-2 text-sm font-semibold transition-all ${
+								props.jenis === j
+									? "bg-primary text-primary-foreground"
+									: "bg-muted text-muted-foreground hover:bg-muted/80"
+							}`}
+						>
+							{j}
+						</button>
+					))}
+				</div>
+			</div>
+
+			<div
+				className={`grid gap-3 ${props.lintasMode ? "sm:grid-cols-2" : "sm:grid-cols-3"}`}
+			>
+				<div className="relative space-y-2">
+					<label className="text-sm font-medium">Surah</label>
+					<Input
+						type="text"
+						value={props.surahA}
+						onChange={(e) => props.handleSurahAChange(e.target.value)}
+						placeholder="Ketik nama surah..."
+						required
+					/>
+					{props.acA.length > 0 && (
+						<div className="absolute z-10 mt-1 w-full rounded-xl border bg-card shadow-lg">
+							{props.acA.map((s) => (
+								<button
+									key={s.number}
+									type="button"
+									onClick={() => {
+										props.setSurahA(s.name);
+										props.setAcA([]);
+									}}
+									className="flex w-full items-center justify-between px-4 py-2 text-sm hover:bg-muted/50 first:rounded-t-xl last:rounded-b-xl"
+								>
+									<span>{s.name}</span>
+									<span className="text-xs text-muted-foreground">
+										{s.ayatCount} ayat
+									</span>
+								</button>
+							))}
+						</div>
+					)}
+				</div>
+				<div className="space-y-2">
+					<label className="text-sm font-medium">Dari Ayat</label>
+					<Input
+						type="text"
+						value={props.dariAyat}
+						onChange={(e) => {
+							props.setDariAyat(e.target.value);
+							props.setDariAyatError("");
+						}}
+						onBlur={() => {
+							const err = validateAyat(props.surahA, props.dariAyat);
+							props.setDariAyatError(err ?? "");
+						}}
+						placeholder="Ayat awal"
+						required
+					/>
+					{props.dariAyatError && (
+						<p className="text-xs text-destructive">{props.dariAyatError}</p>
+					)}
+				</div>
+				{!props.lintasMode && (
+					<div className="space-y-2">
+						<label className="text-sm font-medium">Sampai Ayat</label>
+						<Input
+							type="text"
+							value={props.sampaiAyat}
+							onChange={(e) => {
+								props.setSampaiAyat(e.target.value);
+								props.setSampaiAyatError("");
+							}}
+							onBlur={() => {
+								const err = validateAyat(props.surahA, props.sampaiAyat);
+								props.setSampaiAyatError(err ?? "");
+							}}
+							placeholder="Ayat akhir"
+							required
+						/>
+						{props.sampaiAyatError && (
+							<p className="text-xs text-destructive">
+								{props.sampaiAyatError}
+							</p>
+						)}
+					</div>
+				)}
+			</div>
+
+			{props.lintasMode && (
+				<div className="rounded-xl bg-muted/30 p-3 border border-dashed border-primary/30">
+					<div className="grid gap-3 sm:grid-cols-2">
+						<div className="relative space-y-2">
+							<label className="text-sm font-medium text-primary">
+								Surah End
+							</label>
+							<Input
+								type="text"
+								value={props.lintasSurahEnd}
+								onChange={(e) =>
+									props.handleLintasSurahEndChange(e.target.value)
+								}
+								placeholder="Surah tujuan..."
+								required
+							/>
+							{props.lintasAcEnd.length > 0 && (
+								<div className="absolute z-10 mt-1 w-full rounded-xl border bg-card shadow-lg">
+									{props.lintasAcEnd.map((s) => (
+										<button
+											key={s.number}
+											type="button"
+											onClick={() => props.selectLintasSurahEnd(s)}
+											className="flex w-full items-center justify-between px-4 py-2 text-sm hover:bg-muted/50 first:rounded-t-xl last:rounded-b-xl"
+										>
+											<span>{s.name}</span>
+											<span className="text-xs text-muted-foreground">
+												{s.ayatCount} ayat
+											</span>
+										</button>
+									))}
+								</div>
+							)}
+						</div>
+						<div className="space-y-2">
+							<label className="text-sm font-medium text-primary">
+								Sampai Ayat
+							</label>
+							<Input
+								type="text"
+								value={props.lintasSampaiAyat}
+								onChange={(e) => {
+									props.setLintasSampaiAyat(e.target.value);
+									props.setLintasSampaiError("");
+								}}
+								onBlur={() => {
+									const err = validateAyat(
+										props.lintasSurahEnd,
+										props.lintasSampaiAyat,
+									);
+									props.setLintasSampaiError(err ?? "");
+								}}
+								placeholder="Ayat akhir surah tujuan"
+								required
+							/>
+							{props.lintasSampaiError && (
+								<p className="text-xs text-destructive">
+									{props.lintasSampaiError}
+								</p>
+							)}
+						</div>
+					</div>
+				</div>
+			)}
+
+			<div className="flex gap-2">
+				<Button
+					type="button"
+					variant="outline"
+					size="sm"
+					onClick={() =>
+						window.innerWidth >= 1024
+							? props.setMushafOpen(!props.mushafOpen)
+							: props.setMushafMobileOpen(true)
+					}
+				>
+					<HugeiconsIcon icon={BookOpen01Icon} className="w-4 h-4 mr-1.5" />
+					{props.mushafOpen ? "Tutup Mushaf" : "Buka Mushaf"}
+				</Button>
+				<Button
+					type="button"
+					variant={props.lintasMode ? "default" : "outline"}
+					size="sm"
+					onClick={() => {
+						props.setLintasMode(!props.lintasMode);
+						if (props.lintasMode) {
+							props.handleLintasSurahEndChange("");
+							props.setLintasSampaiAyat("");
+							props.setLintasSampaiError("");
+						}
+					}}
+				>
+					{props.lintasMode ? "✕ Tutup Lintas" : "Lintas Surah"}
+				</Button>
+			</div>
+
+			<div className="space-y-2">
+				<label className="text-sm font-medium">Penilaian</label>
+				<div className="flex flex-wrap gap-2">
+					{GRADES.map((g) => (
+						<button
+							key={g}
+							type="button"
+							onClick={() => props.setGred(g)}
+							className={`rounded-xl border px-4 py-2 text-sm font-semibold transition-all ${
+								props.gred === g
+									? GRADE_COLORS[g]
+									: "border-border text-muted-foreground hover:bg-muted/50"
+							}`}
+						>
+							{g}
+						</button>
+					))}
+				</div>
+			</div>
+
+			<div className="space-y-2">
+				<label className="text-sm font-medium">Catatan (opsional)</label>
+				<textarea
+					value={props.catatan}
+					onChange={(e) => props.setCatatan(e.target.value)}
+					placeholder="Catatan tambahan..."
+					rows={3}
+					className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-base shadow-xs placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring resize-none md:text-sm"
+				/>
+			</div>
+
+			<div className="sticky bottom-16 z-10 -mx-1 -mb-1 bg-card px-1 pb-1 pt-3">
+				<Button type="submit" disabled={props.loading} className="w-full">
+					{props.loading
+						? "Menyimpan..."
+						: props.lintasMode
+							? "Simpan 2 Setoran Lintas"
+							: "Simpan Murajaah"}
+				</Button>
+			</div>
+		</form>
+	);
+}
+
 function MurajaahPage() {
 	const [siswaList, setSiswaList] = useState<Siswa[]>([]);
 	const [selectedSiswa, setSelectedSiswa] = useState("");
@@ -262,7 +596,6 @@ function MurajaahPage() {
 		endSurah?: string,
 		endAyat?: number,
 	) {
-		console.log("[murajaah] handleMushafSelect", { surah, ayatAwal, ayatAkhir, endSurah, endAyat });
 		setSurahA(surah);
 		setDariAyat(String(ayatAwal));
 		if (endSurah) {
@@ -286,6 +619,49 @@ function MurajaahPage() {
 
 	const selectedSiswaData = siswaList.find((s) => s.id === selectedSiswa);
 
+	const formProps = {
+		siswaList,
+		selectedSiswa,
+		setSelectedSiswa,
+		selectedSiswaData,
+		tanggal,
+		setTanggal,
+		jenis,
+		setJenis,
+		surahA,
+		handleSurahAChange,
+		acA,
+		setSurahA,
+		setAcA,
+		dariAyat,
+		setDariAyat,
+		dariAyatError,
+		setDariAyatError,
+		sampaiAyat,
+		setSampaiAyat,
+		sampaiAyatError,
+		setSampaiAyatError,
+		lintasMode,
+		setLintasMode,
+		lintasSurahEnd,
+		handleLintasSurahEndChange,
+		lintasAcEnd,
+		selectLintasSurahEnd,
+		lintasSampaiAyat,
+		setLintasSampaiAyat,
+		lintasSampaiError,
+		setLintasSampaiError,
+		gred,
+		setGred,
+		catatan,
+		setCatatan,
+		loading,
+		handleSubmit,
+		mushafOpen,
+		setMushafOpen,
+		setMushafMobileOpen,
+	};
+
 	return (
 		<div className="mx-auto max-w-7xl space-y-4 pb-20 md:pb-6">
 			<div>
@@ -302,7 +678,7 @@ function MurajaahPage() {
 					onLayout={savePanelSize}
 				>
 					<ResizablePanel defaultSize={100 - panelSize} minSize={30}>
-						<FormBody />
+						<FormBody {...formProps} />
 					</ResizablePanel>
 					{mushafOpen && (
 						<>
@@ -323,7 +699,7 @@ function MurajaahPage() {
 			</div>
 
 			<div className="lg:hidden">
-				<FormBody />
+				<FormBody {...formProps} />
 			</div>
 
 			<Dialog open={mushafMobileOpen} onOpenChange={setMushafMobileOpen}>
@@ -343,286 +719,4 @@ function MurajaahPage() {
 			</Dialog>
 		</div>
 	);
-
-	function FormBody() {
-		return (
-			<form
-				onSubmit={handleSubmit}
-				className="rounded-2xl border bg-card p-4 shadow-xs space-y-4"
-			>
-				<div className="grid gap-3 sm:grid-cols-2">
-					<div className="space-y-2">
-						<label className="text-sm font-medium">Siswa</label>
-						<select
-							value={selectedSiswa}
-							onChange={(e) => setSelectedSiswa(e.target.value)}
-							required
-							className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-xs transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring md:text-sm"
-						>
-							<option value="">Pilih siswa...</option>
-							{siswaList.map((s) => (
-								<option key={s.id} value={s.id}>
-									{s.nama}
-								</option>
-							))}
-						</select>
-					</div>
-					<div className="space-y-2">
-						<label className="text-sm font-medium">Tanggal</label>
-						<Input
-							type="date"
-							value={tanggal}
-							onChange={(e) => setTanggal(e.target.value)}
-							required
-						/>
-					</div>
-				</div>
-
-				{selectedSiswaData && (
-					<div className="flex items-center gap-3 rounded-xl bg-muted/50 px-4 py-2.5">
-						<div className="flex size-8 items-center justify-center rounded-lg bg-primary/15 text-primary">
-							<span className="text-sm font-bold">
-								{selectedSiswaData.nama.charAt(0)}
-							</span>
-						</div>
-						<div>
-							<p className="text-sm font-semibold">{selectedSiswaData.nama}</p>
-							<p className="text-xs text-muted-foreground">
-								{selectedSiswaData.hafalan} juz terhafal
-							</p>
-						</div>
-					</div>
-				)}
-
-				<div className="space-y-2">
-					<label className="text-sm font-medium">Jenis</label>
-					<div className="flex flex-wrap gap-2">
-						{JENIS_MURAJAAH.map((j) => (
-							<button
-								key={j}
-								type="button"
-								onClick={() => setJenis(j)}
-								className={`rounded-xl px-4 py-2 text-sm font-semibold transition-all ${
-									jenis === j
-										? "bg-primary text-primary-foreground"
-										: "bg-muted text-muted-foreground hover:bg-muted/80"
-								}`}
-							>
-								{j}
-							</button>
-						))}
-					</div>
-				</div>
-
-				<div
-					className={`grid gap-3 ${lintasMode ? "sm:grid-cols-2" : "sm:grid-cols-3"}`}
-				>
-					<div className="relative space-y-2">
-						<label className="text-sm font-medium">Surah</label>
-						<Input
-							type="text"
-							value={surahA}
-							onChange={(e) => handleSurahAChange(e.target.value)}
-							placeholder="Ketik nama surah..."
-							required
-						/>
-						{acA.length > 0 && (
-							<div className="absolute z-10 mt-1 w-full rounded-xl border bg-card shadow-lg">
-								{acA.map((s) => (
-									<button
-										key={s.number}
-										type="button"
-										onClick={() => {
-											setSurahA(s.name);
-											setAcA([]);
-										}}
-										className="flex w-full items-center justify-between px-4 py-2 text-sm hover:bg-muted/50 first:rounded-t-xl last:rounded-b-xl"
-									>
-										<span>{s.name}</span>
-										<span className="text-xs text-muted-foreground">
-											{s.ayatCount} ayat
-										</span>
-									</button>
-								))}
-							</div>
-						)}
-					</div>
-					<div className="space-y-2">
-						<label className="text-sm font-medium">Dari Ayat</label>
-						<Input
-							type="text"
-							value={dariAyat}
-							onChange={(e) => {
-								setDariAyat(e.target.value);
-								setDariAyatError("");
-							}}
-							onBlur={() => {
-								const err = validateAyat(surahA, dariAyat);
-								setDariAyatError(err ?? "");
-							}}
-							placeholder="Ayat awal"
-							required
-						/>
-						{dariAyatError && (
-							<p className="text-xs text-destructive">{dariAyatError}</p>
-						)}
-					</div>
-					{!lintasMode && (
-						<div className="space-y-2">
-							<label className="text-sm font-medium">Sampai Ayat</label>
-							<Input
-								type="text"
-								value={sampaiAyat}
-								onChange={(e) => {
-									setSampaiAyat(e.target.value);
-									setSampaiAyatError("");
-								}}
-								onBlur={() => {
-									const err = validateAyat(surahA, sampaiAyat);
-									setSampaiAyatError(err ?? "");
-								}}
-								placeholder="Ayat akhir"
-								required
-							/>
-							{sampaiAyatError && (
-								<p className="text-xs text-destructive">{sampaiAyatError}</p>
-							)}
-						</div>
-					)}
-				</div>
-
-				{lintasMode && (
-					<div className="rounded-xl bg-muted/30 p-3 border border-dashed border-primary/30">
-						<div className="grid gap-3 sm:grid-cols-2">
-							<div className="relative space-y-2">
-								<label className="text-sm font-medium text-primary">
-									Surah End
-								</label>
-								<Input
-									type="text"
-									value={lintasSurahEnd}
-									onChange={(e) => handleLintasSurahEndChange(e.target.value)}
-									placeholder="Surah tujuan..."
-									required
-								/>
-								{lintasAcEnd.length > 0 && (
-									<div className="absolute z-10 mt-1 w-full rounded-xl border bg-card shadow-lg">
-										{lintasAcEnd.map((s) => (
-											<button
-												key={s.number}
-												type="button"
-												onClick={() => selectLintasSurahEnd(s)}
-												className="flex w-full items-center justify-between px-4 py-2 text-sm hover:bg-muted/50 first:rounded-t-xl last:rounded-b-xl"
-											>
-												<span>{s.name}</span>
-												<span className="text-xs text-muted-foreground">
-													{s.ayatCount} ayat
-												</span>
-											</button>
-										))}
-									</div>
-								)}
-							</div>
-							<div className="space-y-2">
-								<label className="text-sm font-medium text-primary">
-									Sampai Ayat
-								</label>
-								<Input
-									type="text"
-									value={lintasSampaiAyat}
-									onChange={(e) => {
-										setLintasSampaiAyat(e.target.value);
-										setLintasSampaiError("");
-									}}
-									onBlur={() => {
-										const err = validateAyat(lintasSurahEnd, lintasSampaiAyat);
-										setLintasSampaiError(err ?? "");
-									}}
-									placeholder="Ayat akhir surah tujuan"
-									required
-								/>
-								{lintasSampaiError && (
-									<p className="text-xs text-destructive">
-										{lintasSampaiError}
-									</p>
-								)}
-							</div>
-						</div>
-					</div>
-				)}
-
-				<div className="flex gap-2">
-					<Button
-						type="button"
-						variant="outline"
-						size="sm"
-						onClick={() =>
-							window.innerWidth >= 1024
-								? setMushafOpen(!mushafOpen)
-								: setMushafMobileOpen(true)
-						}
-					>
-						<HugeiconsIcon icon={BookOpen01Icon} className="w-4 h-4 mr-1.5" />
-						{mushafOpen ? "Tutup Mushaf" : "Buka Mushaf"}
-					</Button>
-					<Button
-						type="button"
-						variant={lintasMode ? "default" : "outline"}
-						size="sm"
-						onClick={() => {
-							setLintasMode(!lintasMode);
-							if (lintasMode) {
-								setLintasSurahEnd("");
-								setLintasSampaiAyat("");
-								setLintasSampaiError("");
-							}
-						}}
-					>
-						{lintasMode ? "✕ Tutup Lintas" : "Lintas Surah"}
-					</Button>
-				</div>
-
-				<div className="space-y-2">
-					<label className="text-sm font-medium">Penilaian</label>
-					<div className="flex flex-wrap gap-2">
-						{GRADES.map((g) => (
-							<button
-								key={g}
-								type="button"
-								onClick={() => setGred(g)}
-								className={`rounded-xl border px-4 py-2 text-sm font-semibold transition-all ${
-									gred === g
-										? GRADE_COLORS[g]
-										: "border-border text-muted-foreground hover:bg-muted/50"
-								}`}
-							>
-								{g}
-							</button>
-						))}
-					</div>
-				</div>
-
-				<div className="space-y-2">
-					<label className="text-sm font-medium">Catatan (opsional)</label>
-					<textarea
-						value={catatan}
-						onChange={(e) => setCatatan(e.target.value)}
-						placeholder="Catatan tambahan..."
-						rows={3}
-						className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-base shadow-xs placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring resize-none md:text-sm"
-					/>
-				</div>
-
-				<div className="sticky bottom-16 z-10 -mx-1 -mb-1 bg-card px-1 pb-1 pt-3">
-					<Button type="submit" disabled={loading} className="w-full">
-						{loading
-							? "Menyimpan..."
-							: lintasMode
-								? "Simpan 2 Setoran Lintas"
-								: "Simpan Murajaah"}
-					</Button>
-				</div>
-			</form>
-		);
-	}
 }
