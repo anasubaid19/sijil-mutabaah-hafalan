@@ -89,15 +89,14 @@ def render_school_header(doc, canvas, W, H):
     has_school = bool(school)
     has_any_text = has_foundation or has_school
 
+    header_h = 22 * mm
     if not has_logo and not has_any_text:
-        return
-
-    available = W - 2 * MARGIN
+        return None
 
     # Header background
     canvas.setFillColor(hex_to_color(GRAY_100))
     canvas.setStrokeColor(hex_to_color(GRAY_200))
-    canvas.rect(0, H - 30 * mm, W, 30 * mm, fill=1, stroke=1)
+    canvas.rect(0, H - header_h, W, header_h, fill=1, stroke=1)
 
     left_x = MARGIN
     right_x = W - MARGIN
@@ -108,11 +107,11 @@ def render_school_header(doc, canvas, W, H):
         logo_img = decode_logo(logo)
         if logo_img:
             logo_w, logo_h = logo_img.size
-            target_h = 24 * mm
+            target_h = 18 * mm
             scale = target_h / max(logo_h, 1)
             draw_w = logo_w * scale
             canvas.drawInlineImage(
-                logo_img, left_x, H - 27 * mm,
+                logo_img, left_x, H - 20 * mm,
                 width=draw_w, height=target_h,
             )
             left_x += draw_w + 6 * mm
@@ -121,52 +120,52 @@ def render_school_header(doc, canvas, W, H):
 
     # Text block
     text_x = left_x
-    text_center_x = (left_x + right_x) / 2
-
-    y = H - 8 * mm
+    y = H - 6 * mm
 
     if has_foundation and has_school:
-        canvas.setFont(FONT_B, 14)
+        canvas.setFont(FONT_B, 13)
         canvas.setFillColor(hex_to_color(GRAY_800))
         canvas.drawString(text_x, y, foundation)
-        y -= 7 * mm
-        canvas.setFont(FONT, 10)
+        y -= 5 * mm
+        canvas.setFont(FONT, 9)
         canvas.setFillColor(hex_to_color(GRAY_600))
         canvas.drawString(text_x, y, school)
-        y -= 7 * mm
+        y -= 5 * mm
     elif has_foundation:
-        canvas.setFont(FONT_B, 14)
+        canvas.setFont(FONT_B, 13)
         canvas.setFillColor(hex_to_color(GRAY_800))
         canvas.drawString(text_x, y, foundation)
-        y -= 7 * mm
+        y -= 5 * mm
     elif has_school:
-        canvas.setFont(FONT_B, 16)
+        canvas.setFont(FONT_B, 14)
         canvas.setFillColor(hex_to_color(GRAY_800))
         canvas.drawString(text_x, y, school)
-        y -= 7 * mm
+        y -= 5 * mm
 
     # "Laporan Hafalan Al-Qur'an"
-    canvas.setFont(FONT, 9)
+    canvas.setFont(FONT, 8)
     canvas.setFillColor(hex_to_color(GRAY_400))
     canvas.drawString(text_x, y, "Laporan Hafalan Al-Qur'an")
 
     # Period
     if periode:
-        y -= 4.5 * mm
-        canvas.setFont(FONT_O, 8)
+        y -= 4 * mm
+        canvas.setFont(FONT_O, 7)
         canvas.setFillColor(hex_to_color(GRAY_400))
         canvas.drawString(text_x, y, f"Periode: {periode}")
 
     # Right side — date
     if date_str:
-        canvas.setFont(FONT, 8)
+        canvas.setFont(FONT, 7)
         canvas.setFillColor(hex_to_color(GRAY_400))
-        canvas.drawRightString(right_x, H - 11 * mm, date_str)
+        canvas.drawRightString(right_x, H - 8 * mm, date_str)
+
+    return H - header_h
 
 
 # ─── Student Info Card ───────────────────────────────────────────────────────
 
-def render_student_info(doc, canvas, W, H):
+def build_student_info(doc):
     halaqah = getattr(doc, "_halaqah_name", "")
     guru = getattr(doc, "_guru_name", "")
     siswa = getattr(doc, "_siswa_name", "")
@@ -174,7 +173,7 @@ def render_student_info(doc, canvas, W, H):
     date_str = getattr(doc, "_pdf_date", "")
 
     if not halaqah and not guru and not siswa:
-        return
+        return None
 
     card_data = [
         [P("Nama Halaqah", size=8, bold=True, color=GRAY_600, align=TA_LEFT),
@@ -189,40 +188,39 @@ def render_student_info(doc, canvas, W, H):
         second_row.append(P("Nama Siswa", size=8, bold=True, color=GRAY_600, align=TA_LEFT))
         second_row.append(P(siswa, size=8, color=GRAY_800, align=TA_LEFT))
         kolom_tersisa -= 2
-    if periode:
-        second_row.append(P("Periode", size=8, bold=True, color=GRAY_600, align=TA_LEFT))
-        second_row.append(P(periode, size=8, color=GRAY_800, align=TA_LEFT))
+    if periode or date_str:
+        label = "Periode" if periode else "Tanggal"
+        val = periode if periode else date_str
+        second_row.append(P(label, size=8, bold=True, color=GRAY_600, align=TA_LEFT))
+        second_row.append(P(val, size=8, color=GRAY_800, align=TA_LEFT))
         kolom_tersisa -= 2
-    if kolom_tersisa == 4:
+    while kolom_tersisa > 0:
         second_row.append(P("", size=8, color=GRAY_800, align=TA_LEFT))
-        second_row.append(P("", size=8, color=GRAY_800, align=TA_LEFT))
-        second_row.append(P("", size=8, color=GRAY_800, align=TA_LEFT))
-        second_row.append(P("", size=8, color=GRAY_800, align=TA_LEFT))
+        kolom_tersisa -= 1
 
     card_data.append(second_row)
 
-    available = W - 2 * MARGIN - 4 * mm
+    available = PAGE_W - 2 * MARGIN - 4 * mm
     col_w = available / 4
 
     t = Table(card_data, colWidths=[col_w] * 4)
     t.setStyle(TableStyle([
         ("BACKGROUND", (0, 0), (-1, -1), hex_to_color(GRAY_50)),
         ("BOX", (0, 0), (-1, -1), 0.5, hex_to_color(GRAY_200)),
-        ("TOPPADDING", (0, 0), (-1, -1), 4),
-        ("BOTTOMPADDING", (0, 0), (-1, -1), 4),
+        ("TOPPADDING", (0, 0), (-1, -1), 3),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 3),
         ("LEFTPADDING", (0, 0), (-1, -1), 6),
         ("RIGHTPADDING", (0, 0), (-1, -1), 6),
         ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
         ("LINEAFTER", (1, 0), (1, -1), 0.5, hex_to_color(GRAY_200)),
         ("LINEAFTER", (2, 0), (2, 0), 0.5, hex_to_color(GRAY_200)),
     ]))
-    tw, th = t.wrap(available, H)
-    t.drawOn(canvas, MARGIN + 2 * mm, H - 30 * mm - th - 6 * mm)
+    return t
 
 
 # ─── Summary Cards ───────────────────────────────────────────────────────────
 
-def render_summary_cards(doc, canvas, W, H):
+def build_summary_cards(doc):
     total_setoran = getattr(doc, "_total_setoran", 0)
     total_ayat = getattr(doc, "_total_ayat", 0)
     total_halaman = getattr(doc, "_total_halaman", 0)
@@ -230,7 +228,7 @@ def render_summary_cards(doc, canvas, W, H):
     terakhir = getattr(doc, "_last_memorization", "-")
 
     if not total_setoran:
-        return
+        return None
 
     cards = [
         (total_setoran, "Setoran"),
@@ -240,7 +238,7 @@ def render_summary_cards(doc, canvas, W, H):
         (terakhir, "Terakhir"),
     ]
 
-    available = W - 2 * MARGIN
+    available = PAGE_W - 2 * MARGIN
     gap = 4 * mm
     n = len(cards)
     card_w = (available - gap * (n - 1)) / n
@@ -269,8 +267,7 @@ def render_summary_cards(doc, canvas, W, H):
         ("BOTTOMPADDING", (0, 0), (-1, -1), 2),
     ]
     outer.setStyle(TableStyle(style_cmds))
-    tw, th = outer.wrap(available, H)
-    outer.drawOn(canvas, MARGIN, H - 30 * mm - th * 3 - 16 * mm - 6 * mm)
+    return outer
 
 
 # ─── Table Builder ──────────────────────────────────────────────────────────
@@ -397,8 +394,6 @@ def _build_page_callbacks(orientation):
         canvas.saveState()
 
         render_school_header(doc, canvas, W, H)
-        render_student_info(doc, canvas, W, H)
-        render_summary_cards(doc, canvas, W, H)
 
         # Footer
         canvas.setFont(FONT, 7)
@@ -444,37 +439,16 @@ def generate_pdf(title, subtitle, date, content, out_path,
                  guru_name="", halaqah_name="", periode="",
                  siswa_name="", total_setoran=0, total_ayat=0,
                  total_halaman=0, current_juz="-", last_memorization="-"):
-    elements = build_body(content)
+    content_elements = build_body(content)
 
-    spacer_top = 30 * mm  # header height
-
-    # Account for school header + info card + summary cards
-    has_school = bool(school_logo or school_foundation or school_name)
-    has_student_info = bool(guru_name or halaqah_name or siswa_name)
-    has_summary = bool(total_setoran)
-
-    if has_school:
-        spacer_top += 30 * mm
-    if has_student_info:
-        spacer_top += 18 * mm
-    if has_summary:
-        spacer_top += 18 * mm
-
-    # Additional spacing for info card gap
-    if has_school and has_student_info:
-        spacer_top += 4 * mm
-
-    # Additional spacing between info card and summary
-    if has_student_info and has_summary:
-        spacer_top += 4 * mm
-
-    elements = [Spacer(1, spacer_top)] + elements
+    TOP_MARGIN = 14 * mm
+    BOTTOM_MARGIN = 14 * mm
 
     doc = SimpleDocTemplate(
         out_path,
         pagesize=A4,
-        topMargin=20 * mm,
-        bottomMargin=20 * mm,
+        topMargin=TOP_MARGIN,
+        bottomMargin=BOTTOM_MARGIN,
         leftMargin=MARGIN,
         rightMargin=MARGIN,
         title=title,
@@ -495,6 +469,25 @@ def generate_pdf(title, subtitle, date, content, out_path,
     doc._total_halaman = total_halaman
     doc._current_juz = current_juz
     doc._last_memorization = last_memorization
+
+    has_school = bool(school_logo or school_foundation or school_name)
+    GAP = 8 * mm
+    HEADER_H = 22 * mm
+
+    elements = []
+    elements.append(Spacer(1, HEADER_H if has_school else 4 * mm))
+
+    info = build_student_info(doc)
+    if info:
+        elements.append(info)
+        elements.append(Spacer(1, GAP))
+
+    summary = build_summary_cards(doc)
+    if summary:
+        elements.append(summary)
+        elements.append(Spacer(1, GAP))
+
+    elements += content_elements
 
     on_first, on_later = _build_page_callbacks(A4)
     doc.build(elements, onFirstPage=on_first, onLaterPages=on_later)
