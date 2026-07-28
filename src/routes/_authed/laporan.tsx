@@ -94,6 +94,15 @@ function LaporanPage() {
 	const [riwayatPage, setRiwayatPage] = useState(1);
 	const RIWAYAT_PER_PAGE = 30;
 
+	async function deleteSetoran(id: string) {
+		if (!confirm("Hapus setoran ini?")) return;
+		const res = await fetch(`/api/setoran?id=${id}`, { method: "DELETE" });
+		if (res.ok) {
+			toast.success("Setoran dihapus");
+			setSetoranList((prev) => prev.filter((s) => s.id !== id));
+		}
+	}
+
 	useEffect(() => {
 		async function load() {
 			try {
@@ -564,13 +573,23 @@ function LaporanPage() {
 														{surahName} ({r.ayatAwal}-{r.ayatAkhir})
 													</p>
 												</div>
-												<span
-													className={`rounded-full px-2 py-0.5 text-[0.65rem] font-semibold ${
-														STATUS_COLORS[r.status] ?? ""
-													}`}
-												>
-													{r.status}
-												</span>
+												<div className="flex items-center gap-1.5">
+													<span
+														className={`rounded-full px-2 py-0.5 text-[0.65rem] font-semibold ${
+															STATUS_COLORS[r.status] ?? ""
+														}`}
+													>
+														{r.status}
+													</span>
+													<button
+														type="button"
+														onClick={() => deleteSetoran(r.id)}
+														className="rounded-full p-0.5 text-muted-foreground/50 transition-colors hover:bg-destructive/10 hover:text-destructive"
+														title="Hapus"
+													>
+														✕
+													</button>
+												</div>
 											</div>
 											<div className="mt-2 flex items-center justify-between">
 												<span className="text-xs font-bold text-primary">
@@ -593,7 +612,8 @@ function LaporanPage() {
 										<th className="pb-2 pr-4">Siswa</th>
 										<th className="pb-2 pr-4">Jenis</th>
 										<th className="pb-2 pr-4">Setoran</th>
-										<th className="pb-2">Status</th>
+										<th className="pb-2 pr-4">Status</th>
+										<th className="pb-2" />
 									</tr>
 								</thead>
 								<tbody>
@@ -615,7 +635,7 @@ function LaporanPage() {
 														`#${r.surah}`}{" "}
 													({r.ayatAwal}-{r.ayatAkhir})
 												</td>
-												<td className="py-2">
+												<td className="py-2 pr-4">
 													<span
 														className={`rounded-full px-2 py-0.5 text-xs font-semibold ${
 															STATUS_COLORS[r.status] ?? ""
@@ -623,6 +643,16 @@ function LaporanPage() {
 													>
 														{r.status}
 													</span>
+												</td>
+												<td className="py-2">
+													<button
+														type="button"
+														onClick={() => deleteSetoran(r.id)}
+														className="rounded p-1 text-xs text-muted-foreground/50 transition-colors hover:bg-destructive/10 hover:text-destructive"
+														title="Hapus"
+													>
+														✕
+													</button>
 												</td>
 											</tr>
 										))}
