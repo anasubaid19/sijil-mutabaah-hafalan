@@ -498,40 +498,39 @@ function MurajaahPage() {
 			setLoading(true);
 			const surahAData = findSurah(surahA);
 
-			const res1 = await fetch("/api/setoran", {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({
-					siswaId: selectedSiswa,
-					type: jenis,
-					tanggal,
-					surah: surahAData?.number ?? 0,
-					ayatAwal: Number.parseInt(dariAyat, 10) || 0,
-					ayatAkhir: surahAData?.ayatCount ?? 0,
-					status: gred,
-					catatan,
-				}),
-			});
+			const results: Response[] = [];
+			for (let sn = surahAData?.number ?? 0; sn <= endSurah.number; sn++) {
+				const sData = SURAH_DATA.find((x) => x.number === sn);
+				if (!sData) continue;
 
-			const res2 = await fetch("/api/setoran", {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({
-					siswaId: selectedSiswa,
-					type: jenis,
-					tanggal,
-					surah: endSurah.number,
-					ayatAwal: 1,
-					ayatAkhir: Number.parseInt(lintasSampaiAyat, 10) || 0,
-					status: gred,
-					catatan,
-				}),
-			});
+				const isFirst = sn === surahAData?.number;
+				const isLast = sn === endSurah.number;
+
+				const res = await fetch("/api/setoran", {
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify({
+						siswaId: selectedSiswa,
+						type: jenis,
+						tanggal,
+						surah: sn,
+						ayatAwal: isFirst ? Number.parseInt(dariAyat, 10) || 1 : 1,
+						ayatAkhir: isLast
+							? Number.parseInt(lintasSampaiAyat, 10) || 0
+							: sData.ayatCount,
+						status: gred,
+						catatan,
+					}),
+				});
+				results.push(res);
+			}
 
 			setLoading(false);
 
-			if (res1.ok && res2.ok) {
-				toast.success("Murajaah lintas surah tersimpan!");
+			if (results.every((r) => r.ok)) {
+				toast.success(
+					`Murajaah lintas surah tersimpan! (${results.length} surah)`,
+				);
 				resetForm();
 			} else {
 				toast.error("Gagal menyimpan salah satu setoran");
