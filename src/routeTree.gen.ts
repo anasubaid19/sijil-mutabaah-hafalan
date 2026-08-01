@@ -24,11 +24,13 @@ import { Route as AuthedPresensiRouteImport } from './routes/_authed/presensi'
 import { Route as AuthedZiyadahRouteImport } from './routes/_authed/ziyadah'
 import { Route as ApiAdminConfigRouteImport } from './routes/api/admin-config'
 import { Route as ApiAdminStatsRouteImport } from './routes/api/admin-stats'
+import { Route as ApiBugReportRouteImport } from './routes/api/bug-report'
 import { Route as ApiExportPdfRouteImport } from './routes/api/export-pdf'
 import { Route as ApiExportPresensiRouteImport } from './routes/api/export-presensi'
 import { Route as ApiParentAuthRouteImport } from './routes/api/parent-auth'
 import { Route as ApiParentDataRouteImport } from './routes/api/parent-data'
 import { Route as ApiPresensiRouteImport } from './routes/api/presensi'
+import { Route as ApiSchoolProfileRouteImport } from './routes/api/school-profile'
 import { Route as ApiSetoranRouteImport } from './routes/api/setoran'
 import { Route as ApiSiswaRouteImport } from './routes/api/siswa'
 import { Route as ApiSurahRouteImport } from './routes/api/surah'
@@ -110,6 +112,11 @@ const ApiAdminStatsRoute = ApiAdminStatsRouteImport.update({
   path: '/api/admin-stats',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiBugReportRoute = ApiBugReportRouteImport.update({
+  id: '/api/bug-report',
+  path: '/api/bug-report',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiExportPdfRoute = ApiExportPdfRouteImport.update({
   id: '/api/export-pdf',
   path: '/api/export-pdf',
@@ -133,6 +140,11 @@ const ApiParentDataRoute = ApiParentDataRouteImport.update({
 const ApiPresensiRoute = ApiPresensiRouteImport.update({
   id: '/api/presensi',
   path: '/api/presensi',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiSchoolProfileRoute = ApiSchoolProfileRouteImport.update({
+  id: '/api/school-profile',
+  path: '/api/school-profile',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiSetoranRoute = ApiSetoranRouteImport.update({
@@ -181,11 +193,13 @@ export interface FileRoutesByFullPath {
   '/ziyadah': typeof AuthedZiyadahRoute
   '/api/admin-config': typeof ApiAdminConfigRoute
   '/api/admin-stats': typeof ApiAdminStatsRoute
+  '/api/bug-report': typeof ApiBugReportRoute
   '/api/export-pdf': typeof ApiExportPdfRoute
   '/api/export-presensi': typeof ApiExportPresensiRoute
   '/api/parent-auth': typeof ApiParentAuthRoute
   '/api/parent-data': typeof ApiParentDataRoute
   '/api/presensi': typeof ApiPresensiRoute
+  '/api/school-profile': typeof ApiSchoolProfileRoute
   '/api/setoran': typeof ApiSetoranRoute
   '/api/siswa': typeof ApiSiswaRoute
   '/api/surah': typeof ApiSurahRoute
@@ -208,11 +222,13 @@ export interface FileRoutesByTo {
   '/ziyadah': typeof AuthedZiyadahRoute
   '/api/admin-config': typeof ApiAdminConfigRoute
   '/api/admin-stats': typeof ApiAdminStatsRoute
+  '/api/bug-report': typeof ApiBugReportRoute
   '/api/export-pdf': typeof ApiExportPdfRoute
   '/api/export-presensi': typeof ApiExportPresensiRoute
   '/api/parent-auth': typeof ApiParentAuthRoute
   '/api/parent-data': typeof ApiParentDataRoute
   '/api/presensi': typeof ApiPresensiRoute
+  '/api/school-profile': typeof ApiSchoolProfileRoute
   '/api/setoran': typeof ApiSetoranRoute
   '/api/siswa': typeof ApiSiswaRoute
   '/api/surah': typeof ApiSurahRoute
@@ -237,11 +253,13 @@ export interface FileRoutesById {
   '/_authed/ziyadah': typeof AuthedZiyadahRoute
   '/api/admin-config': typeof ApiAdminConfigRoute
   '/api/admin-stats': typeof ApiAdminStatsRoute
+  '/api/bug-report': typeof ApiBugReportRoute
   '/api/export-pdf': typeof ApiExportPdfRoute
   '/api/export-presensi': typeof ApiExportPresensiRoute
   '/api/parent-auth': typeof ApiParentAuthRoute
   '/api/parent-data': typeof ApiParentDataRoute
   '/api/presensi': typeof ApiPresensiRoute
+  '/api/school-profile': typeof ApiSchoolProfileRoute
   '/api/setoran': typeof ApiSetoranRoute
   '/api/siswa': typeof ApiSiswaRoute
   '/api/surah': typeof ApiSurahRoute
@@ -266,11 +284,13 @@ export interface FileRouteTypes {
     | '/ziyadah'
     | '/api/admin-config'
     | '/api/admin-stats'
+    | '/api/bug-report'
     | '/api/export-pdf'
     | '/api/export-presensi'
     | '/api/parent-auth'
     | '/api/parent-data'
     | '/api/presensi'
+    | '/api/school-profile'
     | '/api/setoran'
     | '/api/siswa'
     | '/api/surah'
@@ -293,11 +313,13 @@ export interface FileRouteTypes {
     | '/ziyadah'
     | '/api/admin-config'
     | '/api/admin-stats'
+    | '/api/bug-report'
     | '/api/export-pdf'
     | '/api/export-presensi'
     | '/api/parent-auth'
     | '/api/parent-data'
     | '/api/presensi'
+    | '/api/school-profile'
     | '/api/setoran'
     | '/api/siswa'
     | '/api/surah'
@@ -321,11 +343,13 @@ export interface FileRouteTypes {
     | '/_authed/ziyadah'
     | '/api/admin-config'
     | '/api/admin-stats'
+    | '/api/bug-report'
     | '/api/export-pdf'
     | '/api/export-presensi'
     | '/api/parent-auth'
     | '/api/parent-data'
     | '/api/presensi'
+    | '/api/school-profile'
     | '/api/setoran'
     | '/api/siswa'
     | '/api/surah'
@@ -342,11 +366,13 @@ export interface RootRouteChildren {
   RegisterRoute: typeof RegisterRoute
   ApiAdminConfigRoute: typeof ApiAdminConfigRoute
   ApiAdminStatsRoute: typeof ApiAdminStatsRoute
+  ApiBugReportRoute: typeof ApiBugReportRoute
   ApiExportPdfRoute: typeof ApiExportPdfRoute
   ApiExportPresensiRoute: typeof ApiExportPresensiRoute
   ApiParentAuthRoute: typeof ApiParentAuthRoute
   ApiParentDataRoute: typeof ApiParentDataRoute
   ApiPresensiRoute: typeof ApiPresensiRoute
+  ApiSchoolProfileRoute: typeof ApiSchoolProfileRoute
   ApiSetoranRoute: typeof ApiSetoranRoute
   ApiSiswaRoute: typeof ApiSiswaRoute
   ApiSurahRoute: typeof ApiSurahRoute
@@ -462,6 +488,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAdminStatsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/bug-report': {
+      id: '/api/bug-report'
+      path: '/api/bug-report'
+      fullPath: '/api/bug-report'
+      preLoaderRoute: typeof ApiBugReportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/export-pdf': {
       id: '/api/export-pdf'
       path: '/api/export-pdf'
@@ -495,6 +528,13 @@ declare module '@tanstack/react-router' {
       path: '/api/presensi'
       fullPath: '/api/presensi'
       preLoaderRoute: typeof ApiPresensiRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/school-profile': {
+      id: '/api/school-profile'
+      path: '/api/school-profile'
+      fullPath: '/api/school-profile'
+      preLoaderRoute: typeof ApiSchoolProfileRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/setoran': {
@@ -575,11 +615,13 @@ const rootRouteChildren: RootRouteChildren = {
   RegisterRoute: RegisterRoute,
   ApiAdminConfigRoute: ApiAdminConfigRoute,
   ApiAdminStatsRoute: ApiAdminStatsRoute,
+  ApiBugReportRoute: ApiBugReportRoute,
   ApiExportPdfRoute: ApiExportPdfRoute,
   ApiExportPresensiRoute: ApiExportPresensiRoute,
   ApiParentAuthRoute: ApiParentAuthRoute,
   ApiParentDataRoute: ApiParentDataRoute,
   ApiPresensiRoute: ApiPresensiRoute,
+  ApiSchoolProfileRoute: ApiSchoolProfileRoute,
   ApiSetoranRoute: ApiSetoranRoute,
   ApiSiswaRoute: ApiSiswaRoute,
   ApiSurahRoute: ApiSurahRoute,

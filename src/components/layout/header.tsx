@@ -1,6 +1,8 @@
-import { LogOut, PanelLeftOpen } from "@hugeicons/core-free-icons";
+import { Bug, LogOut, PanelLeftOpen } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { useNavigate } from "@tanstack/react-router";
+import { useState } from "react";
+import { ReportDialog } from "@/components/report-dialog";
 import { ToggleTheme } from "@/components/toggle-theme";
 import { Button } from "@/components/ui/button";
 import { useSidebar } from "@/components/ui/sidebar";
@@ -13,6 +15,7 @@ interface HeaderProps {
 export function Header({ title }: HeaderProps) {
 	const { toggleSidebar } = useSidebar();
 	const navigate = useNavigate();
+	const [reportOpen, setReportOpen] = useState(false);
 
 	async function handleLogout() {
 		await authClient.signOut();
@@ -44,12 +47,21 @@ export function Header({ title }: HeaderProps) {
 				<Button
 					variant="ghost"
 					size="icon-sm"
+					onClick={() => setReportOpen(true)}
+					aria-label="Laporkan Masalah"
+				>
+					<HugeiconsIcon icon={Bug} strokeWidth={1.8} />
+				</Button>
+				<Button
+					variant="ghost"
+					size="icon-sm"
 					onClick={handleLogout}
 					tooltip="Keluar"
 				>
 					<HugeiconsIcon icon={LogOut} strokeWidth={1.8} />
 				</Button>
 			</div>
+			<ReportDialog open={reportOpen} onOpenChange={setReportOpen} />
 		</header>
 	);
 }
