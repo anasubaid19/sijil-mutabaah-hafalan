@@ -1,10 +1,12 @@
 import { toast } from "sonner";
 import type { Siswa } from "@/components/student-dialog";
+import { Button } from "@/components/ui/button";
 
 interface StudentListProps {
 	siswaList: Siswa[];
 	onEdit: (s: Siswa) => void;
 	onDelete: (id: string) => void;
+	onAdd?: () => void;
 }
 
 function copyToClipboard(text: string) {
@@ -12,12 +14,25 @@ function copyToClipboard(text: string) {
 	toast.success("Disalin ke clipboard!");
 }
 
-export function StudentList({ siswaList, onEdit, onDelete }: StudentListProps) {
+export function StudentList({
+	siswaList,
+	onEdit,
+	onDelete,
+	onAdd,
+}: StudentListProps) {
 	if (siswaList.length === 0) {
 		return (
-			<p className="py-4 text-center text-sm text-muted-foreground">
-				Belum ada siswa
-			</p>
+			<div className="flex flex-col items-center gap-2 py-8 text-center">
+				<p className="text-sm font-medium text-foreground">Belum ada siswa</p>
+				<p className="max-w-xs text-xs text-muted-foreground">
+					Tambahkan siswa pertama untuk mulai mencatat target hafalan mereka.
+				</p>
+				{onAdd && (
+					<Button className="pointer-coarse:min-h-11" onClick={onAdd}>
+						Tambah Siswa
+					</Button>
+				)}
+			</div>
 		);
 	}
 
@@ -47,14 +62,14 @@ export function StudentList({ siswaList, onEdit, onDelete }: StudentListProps) {
 								<button
 									type="button"
 									onClick={() => onEdit(s)}
-									className="rounded-lg px-3 py-1 text-xs font-semibold text-primary hover:bg-primary/10"
+									className="pointer-coarse:min-h-11 rounded-lg px-3 py-1 text-xs font-semibold text-primary hover:bg-primary/10"
 								>
 									Edit
 								</button>
 								<button
 									type="button"
 									onClick={() => onDelete(s.id)}
-									className="rounded-lg px-3 py-1 text-xs font-semibold text-red-600 hover:bg-red-500/10"
+									className="pointer-coarse:min-h-11 rounded-lg px-3 py-1 text-xs font-semibold text-red-600 hover:bg-red-500/10"
 								>
 									Hapus
 								</button>
@@ -73,7 +88,7 @@ export function StudentList({ siswaList, onEdit, onDelete }: StudentListProps) {
 								<button
 									type="button"
 									onClick={() => s.studentId && copyToClipboard(s.studentId)}
-									className="ml-auto text-primary hover:underline"
+									className="pointer-coarse:min-h-11 ml-auto text-primary hover:underline"
 								>
 									Salin
 								</button>

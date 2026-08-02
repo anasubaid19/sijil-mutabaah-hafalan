@@ -1,10 +1,11 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { type Siswa, StudentDialog } from "@/components/student-dialog";
 import { StudentList } from "@/components/student-list";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { UnsavedChangesGuard } from "@/components/unsaved-changes";
 
 interface UserProfile {
 	id: string;
@@ -18,6 +19,7 @@ export const Route = createFileRoute("/_authed/manajemen-data")({
 });
 
 function ManajemenDataPage() {
+	const navigate = useNavigate();
 	const [profile, setProfile] = useState<UserProfile | null>(null);
 	const [siswaList, setSiswaList] = useState<Siswa[]>([]);
 	const [loading, setLoading] = useState(true);
@@ -101,6 +103,10 @@ function ManajemenDataPage() {
 		setDialogOpen(true);
 	}
 
+	const profileDirty =
+		nama !== (profile?.nama ?? "") ||
+		halaqahName !== (profile?.halaqahName ?? "");
+
 	if (loading) {
 		return (
 			<div className="flex items-center justify-center py-20">
@@ -118,6 +124,12 @@ function ManajemenDataPage() {
 						<span className="font-semibold text-foreground">Pengaturan</span>{" "}
 						untuk mengelola data di perangkat mobile.
 					</p>
+					<Button
+						className="mt-4"
+						onClick={() => navigate({ to: "/pengaturan" })}
+					>
+						Buka Pengaturan
+					</Button>
 				</div>
 			) : (
 				<>
@@ -149,7 +161,17 @@ function ManajemenDataPage() {
 									placeholder="Contoh: Halaqah Putra A"
 								/>
 							</div>
-							<Button type="submit">Simpan</Button>
+							<div className="flex items-center gap-3">
+								<Button type="submit" disabled={!profileDirty}>
+									Simpan
+								</Button>
+								{profileDirty && (
+									<span className="flex items-center gap-1.5 text-xs text-amber-600">
+										<span className="size-1.5 rounded-full bg-amber-500" />
+										Belum disimpan
+									</span>
+								)}
+							</div>
 						</form>
 					</section>
 
@@ -175,7 +197,17 @@ function ManajemenDataPage() {
 									required
 								/>
 							</div>
-							<Button type="submit">Simpan Profil</Button>
+							<div className="flex items-center gap-3">
+								<Button type="submit" disabled={!profileDirty}>
+									Simpan Profil
+								</Button>
+								{profileDirty && (
+									<span className="flex items-center gap-1.5 text-xs text-amber-600">
+										<span className="size-1.5 rounded-full bg-amber-500" />
+										Belum disimpan
+									</span>
+								)}
+							</div>
 						</form>
 					</section>
 
@@ -194,6 +226,7 @@ function ManajemenDataPage() {
 							siswaList={siswaList}
 							onEdit={openEditSiswa}
 							onDelete={deleteSiswa}
+							onAdd={openAddSiswa}
 						/>
 					</section>
 				</>
@@ -205,6 +238,7 @@ function ManajemenDataPage() {
 				editingSiswa={editingSiswa}
 				onSaved={refreshSiswa}
 			/>
+			<UnsavedChangesGuard dirty={profileDirty} />
 		</div>
 	);
 }

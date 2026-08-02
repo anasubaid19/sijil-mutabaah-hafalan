@@ -12,6 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { UnsavedChangesGuard } from "@/components/unsaved-changes";
 import { authClient } from "@/lib/auth/auth-client";
 
 interface UserProfile {
@@ -54,6 +55,7 @@ function SectionTitle({
 
 interface ProfileSectionProps {
 	compact?: boolean;
+	dirty: boolean;
 	nama: string;
 	setNama: (v: string) => void;
 	halaqahName: string;
@@ -63,6 +65,7 @@ interface ProfileSectionProps {
 
 function ProfileSection({
 	compact,
+	dirty,
 	nama,
 	setNama,
 	halaqahName,
@@ -90,9 +93,21 @@ function ProfileSection({
 							placeholder="Contoh: Halaqah Putra A"
 						/>
 					</div>
-					<Button type="submit" size={compact ? "sm" : "default"}>
-						Simpan
-					</Button>
+					<div className="flex items-center gap-3">
+						<Button
+							type="submit"
+							size={compact ? "sm" : "default"}
+							disabled={!dirty}
+						>
+							Simpan
+						</Button>
+						{dirty && (
+							<span className="flex items-center gap-1.5 text-xs text-amber-600">
+								<span className="size-1.5 rounded-full bg-amber-500" />
+								Belum disimpan
+							</span>
+						)}
+					</div>
 				</form>
 			</section>
 
@@ -116,9 +131,21 @@ function ProfileSection({
 							required
 						/>
 					</div>
-					<Button type="submit" size={compact ? "sm" : "default"}>
-						Simpan Profil
-					</Button>
+					<div className="flex items-center gap-3">
+						<Button
+							type="submit"
+							size={compact ? "sm" : "default"}
+							disabled={!dirty}
+						>
+							Simpan Profil
+						</Button>
+						{dirty && (
+							<span className="flex items-center gap-1.5 text-xs text-amber-600">
+								<span className="size-1.5 rounded-full bg-amber-500" />
+								Belum disimpan
+							</span>
+						)}
+					</div>
 				</form>
 			</section>
 		</>
@@ -127,6 +154,7 @@ function ProfileSection({
 
 interface SchoolSectionProps {
 	compact?: boolean;
+	dirty: boolean;
 	schoolLogo: string;
 	setSchoolLogo: (v: string) => void;
 	schoolFoundationName: string;
@@ -156,24 +184,38 @@ function PdfHeaderPreview({
 		);
 	}
 	return (
-		<div className="flex items-center gap-3 rounded-lg border bg-background px-4 py-3">
-			{logo && (
-				<img
-					src={logo}
-					alt="Logo sekolah"
-					className="h-12 w-12 shrink-0 rounded border object-contain"
-				/>
-			)}
-			<div className="min-w-0">
-				{foundation && (
-					<p className="truncate text-base font-semibold">{foundation}</p>
+		<div className="overflow-hidden rounded-lg border bg-background shadow-sm">
+			<div className="flex items-center gap-3 border-b border-gray-200 bg-gray-100 px-4 py-3">
+				{logo && (
+					<img
+						src={logo}
+						alt="Logo sekolah"
+						className="h-12 w-12 shrink-0 rounded border bg-white object-contain"
+					/>
 				)}
-				{school && (
-					<p className="truncate text-sm text-muted-foreground">{school}</p>
-				)}
-				<p className="mt-0.5 text-[10px] tracking-wide text-muted-foreground/70">
-					LAPORAN HAFALAN AL-QUR'AN
+				<div className="min-w-0 flex-1">
+					{foundation && (
+						<p className="truncate text-[13px] leading-tight font-bold text-gray-800">
+							{foundation}
+						</p>
+					)}
+					{school && (
+						<p className="truncate text-[11px] leading-tight text-gray-600">
+							{school}
+						</p>
+					)}
+					<p className="mt-0.5 text-[9px] tracking-wide text-gray-400">
+						Laporan Hafalan Al-Qur'an
+					</p>
+				</div>
+				<p className="hidden shrink-0 text-[8px] text-gray-400 sm:block">
+					{new Date().toLocaleDateString("id-ID")}
 				</p>
+			</div>
+			<div className="space-y-1.5 px-4 py-3">
+				<div className="h-1.5 w-2/3 rounded bg-gray-100" />
+				<div className="h-1.5 w-full rounded bg-gray-100" />
+				<div className="h-1.5 w-3/4 rounded bg-gray-100" />
 			</div>
 		</div>
 	);
@@ -181,6 +223,7 @@ function PdfHeaderPreview({
 
 function SchoolSection({
 	compact,
+	dirty,
 	schoolLogo,
 	setSchoolLogo,
 	schoolFoundationName,
@@ -275,13 +318,21 @@ function SchoolSection({
 						Ditampilkan di bawah nama yayasan.
 					</p>
 				</div>
-				<Button
-					onClick={saveSchoolProfile}
-					disabled={schoolSaving}
-					size={compact ? "sm" : "default"}
-				>
-					{schoolSaving ? "Menyimpan..." : "Simpan"}
-				</Button>
+				<div className="flex items-center gap-3">
+					<Button
+						onClick={saveSchoolProfile}
+						disabled={!dirty || schoolSaving}
+						size={compact ? "sm" : "default"}
+					>
+						{schoolSaving ? "Menyimpan..." : "Simpan"}
+					</Button>
+					{dirty && (
+						<span className="flex items-center gap-1.5 text-xs text-amber-600">
+							<span className="size-1.5 rounded-full bg-amber-500" />
+							Belum disimpan
+						</span>
+					)}
+				</div>
 			</div>
 		</section>
 	);
@@ -371,12 +422,24 @@ interface BackupSectionProps {
 	compact?: boolean;
 	exportJSON: () => void;
 	importJSON: (e: React.ChangeEvent<HTMLInputElement>) => void;
+	lastBackup: string | null;
+}
+
+function formatBackupDate(iso: string) {
+	return new Date(iso).toLocaleString("id-ID", {
+		day: "numeric",
+		month: "short",
+		year: "numeric",
+		hour: "2-digit",
+		minute: "2-digit",
+	});
 }
 
 function BackupSection({
 	compact,
 	exportJSON,
 	importJSON,
+	lastBackup,
 }: BackupSectionProps) {
 	return (
 		<section className="space-y-4 rounded-2xl border bg-card p-5 shadow-xs">
@@ -403,10 +466,17 @@ function BackupSection({
 					/>
 				</label>
 			</div>
-			<p className="text-xs text-muted-foreground">
-				Backup menyimpan profil dan daftar siswa. Riwayat setoran tersimpan di
-				database.
-			</p>
+			<div className="space-y-1">
+				<p className="text-xs text-muted-foreground">
+					{lastBackup
+						? `Backup terakhir: ${formatBackupDate(lastBackup)}`
+						: "Belum pernah membuat backup."}
+				</p>
+				<p className="text-xs text-muted-foreground">
+					Backup menyimpan profil dan daftar siswa. Riwayat setoran tersimpan di
+					database.
+				</p>
+			</div>
 		</section>
 	);
 }
@@ -444,6 +514,9 @@ function DangerZoneSection({
 	siswaList: Siswa[];
 	onClearAll: () => void;
 }) {
+	const [confirmText, setConfirmText] = useState("");
+	const enabled =
+		confirmText.trim().toUpperCase() === "HAPUS" && siswaList.length > 0;
 	return (
 		<section className="space-y-4 rounded-2xl border border-destructive/30 bg-card p-5 shadow-xs">
 			<SectionTitle
@@ -451,9 +524,26 @@ function DangerZoneSection({
 				description="Hapus semua siswa dan data. Tindakan ini tidak dapat dibatalkan."
 				compact={compact}
 			/>
+			<div className="space-y-2">
+				<label htmlFor="danger-confirm" className="text-sm font-medium">
+					Ketik <span className="font-mono font-semibold">HAPUS</span> untuk
+					konfirmasi
+				</label>
+				<Input
+					id="danger-confirm"
+					type="text"
+					value={confirmText}
+					onChange={(e) => setConfirmText(e.target.value)}
+					placeholder="HAPUS"
+					autoComplete="off"
+					spellCheck={false}
+					className="max-w-xs uppercase"
+				/>
+			</div>
 			<Button
 				variant="destructive"
 				size={compact ? "sm" : "default"}
+				disabled={!enabled}
 				onClick={onClearAll}
 			>
 				Hapus Semua Siswa
@@ -496,6 +586,19 @@ function PengaturanPage() {
 	const [schoolName, setSchoolName] = useState("");
 	const [schoolSaving, setSchoolSaving] = useState(false);
 
+	// Baseline for unsaved-changes detection
+	const [savedSchool, setSavedSchool] = useState({
+		logo: "",
+		foundationName: "",
+		schoolName: "",
+	});
+
+	// Backup history
+	const [lastBackup, setLastBackup] = useState<string | null>(null);
+
+	// Accordion state persisted across navigation (mobile)
+	const [accordionValue, setAccordionValue] = useState<string[]>([]);
+
 	useEffect(() => {
 		function onResize() {
 			setIsMobile(window.innerWidth < 768);
@@ -522,7 +625,15 @@ function PengaturanPage() {
 					setSchoolLogo(sc.logo || "");
 					setSchoolFoundationName(sc.foundationName || "");
 					setSchoolName(sc.schoolName || "");
+					setSavedSchool({
+						logo: sc.logo || "",
+						foundationName: sc.foundationName || "",
+						schoolName: sc.schoolName || "",
+					});
 				}
+				setLastBackup(localStorage.getItem("sijil_last_backup"));
+				const savedAccordion = localStorage.getItem("sijil_accordion_open");
+				setAccordionValue(savedAccordion ? [savedAccordion] : []);
 			} catch {}
 			setLoading(false);
 		}
@@ -587,8 +698,14 @@ function PengaturanPage() {
 					schoolName,
 				}),
 			});
-			if (res.ok) toast.success("Profil sekolah tersimpan!");
-			else toast.error("Gagal menyimpan profil sekolah");
+			if (res.ok) {
+				toast.success("Profil sekolah tersimpan!");
+				setSavedSchool({
+					logo: schoolLogo,
+					foundationName: schoolFoundationName,
+					schoolName,
+				});
+			} else toast.error("Gagal menyimpan profil sekolah");
 		} catch {
 			toast.error("Gagal menyimpan profil sekolah");
 		}
@@ -650,6 +767,11 @@ function PengaturanPage() {
 		a.download = `Backup_Sijil_${new Date().toISOString().split("T")[0]}.json`;
 		a.click();
 		URL.revokeObjectURL(url);
+		// ponytail: last-backup tracked per browser via localStorage; move to
+		// server if cross-device visibility matters.
+		const now = new Date().toISOString();
+		localStorage.setItem("sijil_last_backup", now);
+		setLastBackup(now);
 		toast.success("Backup diekspor!");
 	}
 
@@ -687,7 +809,6 @@ function PengaturanPage() {
 	}
 
 	function clearAllSiswa() {
-		if (!confirm("Yakin ingin menghapus semua siswa?")) return;
 		(async () => {
 			let failed = 0;
 			for (const s of siswaList) {
@@ -716,7 +837,17 @@ function PengaturanPage() {
 		);
 	}
 
+	const profileDirty =
+		nama !== (profile?.nama ?? "") ||
+		halaqahName !== (profile?.halaqahName ?? "");
+
+	const schoolDirty =
+		schoolLogo !== savedSchool.logo ||
+		schoolFoundationName !== savedSchool.foundationName ||
+		schoolName !== savedSchool.schoolName;
+
 	const profileSectionProps = {
+		dirty: profileDirty,
 		nama,
 		setNama,
 		halaqahName,
@@ -724,6 +855,7 @@ function PengaturanPage() {
 		saveProfile,
 	};
 	const schoolSectionProps = {
+		dirty: schoolDirty,
 		schoolLogo,
 		setSchoolLogo,
 		schoolFoundationName,
@@ -746,6 +878,7 @@ function PengaturanPage() {
 	const backupSectionProps = {
 		exportJSON,
 		importJSON,
+		lastBackup,
 	};
 
 	// Manajemen Data content (halaqah + profil + kelola siswa) — mobile only;
@@ -768,6 +901,7 @@ function PengaturanPage() {
 					siswaList={siswaList}
 					onEdit={openEditSiswa}
 					onDelete={deleteSiswa}
+					onAdd={openAddSiswa}
 				/>
 			</section>
 		</div>
@@ -803,28 +937,38 @@ function PengaturanPage() {
 			</div>
 
 			{isMobile ? (
-				<Accordion>
-					<AccordionItem>
+				<Accordion
+					value={accordionValue}
+					onValueChange={(value) => {
+						const next = Array.isArray(value) ? value[0] : undefined;
+						setAccordionValue(Array.isArray(value) ? value : []);
+						// ponytail: accordion state per browser via localStorage;
+						// resets when the stored value is closed.
+						if (next) localStorage.setItem("sijil_accordion_open", next);
+						else localStorage.removeItem("sijil_accordion_open");
+					}}
+				>
+					<AccordionItem value="manajemen-data">
 						<AccordionTrigger>Manajemen Data</AccordionTrigger>
 						<AccordionContent>{manajemenDataContent()}</AccordionContent>
 					</AccordionItem>
-					<AccordionItem>
+					<AccordionItem value="sekolah">
 						<AccordionTrigger>Profil Sekolah</AccordionTrigger>
 						<AccordionContent>{profilSekolahContent(true)}</AccordionContent>
 					</AccordionItem>
-					<AccordionItem>
+					<AccordionItem value="akun">
 						<AccordionTrigger>Akun</AccordionTrigger>
 						<AccordionContent>{akunContent(true)}</AccordionContent>
 					</AccordionItem>
-					<AccordionItem>
+					<AccordionItem value="backup">
 						<AccordionTrigger>Backup & Restore</AccordionTrigger>
 						<AccordionContent>{backupContent(true)}</AccordionContent>
 					</AccordionItem>
-					<AccordionItem>
+					<AccordionItem value="tutorial">
 						<AccordionTrigger>Tutorial</AccordionTrigger>
 						<AccordionContent>{tutorialContent(true)}</AccordionContent>
 					</AccordionItem>
-					<AccordionItem>
+					<AccordionItem value="zonabahaya">
 						<AccordionTrigger>Zona Bahaya</AccordionTrigger>
 						<AccordionContent>{zonabahayaContent(true)}</AccordionContent>
 					</AccordionItem>
@@ -863,6 +1007,7 @@ function PengaturanPage() {
 				editingSiswa={editingSiswa}
 				onSaved={refreshSiswa}
 			/>
+			<UnsavedChangesGuard dirty={profileDirty || schoolDirty} />
 		</div>
 	);
 }

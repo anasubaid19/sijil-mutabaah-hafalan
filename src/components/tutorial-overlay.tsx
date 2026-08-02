@@ -1,12 +1,37 @@
-import { Cancel } from "@hugeicons/core-free-icons";
+import {
+	AndroidIcon,
+	AppleIcon,
+	Cancel,
+	Monitor,
+} from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 const GAP = 20;
 const CALLOUT_W = 300;
 const MIN_CALLOUT_H = 160;
 
-const STEPS = [
+type Platform = "android" | "ios" | "desktop";
+
+type Step = {
+	title: string;
+	text: string;
+	navId: string | null;
+	mobileNavId?: string | null;
+	variant?: "spotlight" | "center" | "completion";
+	platform?: Platform;
+	installSteps?: string[];
+};
+
+type Placement = {
+	side: "right" | "bottom" | "top" | "left" | "bottom-sheet" | "center";
+	x: number;
+	y: number;
+};
+
+type Viewport = { top: number; bottom: number; w: number };
+
+const BASE_STEPS: Step[] = [
 	{
 		title: "Selamat Datang!",
 		text: "Ini adalah Dashboard untuk melihat ringkasan hafalan siswa.",
@@ -24,26 +49,71 @@ const STEPS = [
 	},
 	{
 		title: "Laporan",
-		text: "Lihat laporan lengkap dan statistik hafalan.",
+		text: "Lihat laporan lengkap dan statistik hafalan. Di HP, buka menu Lainnya di bawah.",
 		navId: "nav-laporan",
+		mobileNavId: "nav-lainnya",
 	},
 	{
 		title: "Manajemen Data",
-		text: "Kelola data siswa dan update profil musyrif kapan saja di sini.",
+		text: "Kelola data siswa dan update profil musyrif kapan saja. Di HP, buka menu Lainnya di bawah.",
 		navId: "nav-manajemen",
+		mobileNavId: "nav-lainnya",
 	},
-	{
-		title: "Selesai!",
-		text: "Tutorial selesai! Jelajahi aplikasi dan kelola data kapan saja di Manajemen Data.",
-		navId: null,
-	},
-] as const;
+];
 
-type Placement = {
-	side: "right" | "bottom" | "top" | "left" | "bottom-sheet" | "center";
-	x: number;
-	y: number;
+const INSTALL_TEXT: Record<Platform, { intro: string; steps: string[] }> = {
+	android: {
+		intro:
+			"Pasang Sijil Mutaba'ah sebagai aplikasi agar bisa dibuka langsung seperti aplikasi biasa.",
+		steps: [
+			"Ketuk ikon ⋮ (tiga titik) di kanan atas Chrome.",
+			'Pilih "Install app" atau "Tambahkan ke layar utama".',
+			'Ketuk "Install" untuk konfirmasi.',
+		],
+	},
+	ios: {
+		intro:
+			"Pasang Sijil Mutaba'ah sebagai aplikasi agar bisa dibuka langsung dari Layar Utama.",
+		steps: [
+			"Ketuk tombol Bagikan (kotak dengan panah ke atas).",
+			'Gulir ke bawah, pilih "Tambahkan ke Layar Utama".',
+			'Ketuk "Tambah" di pojok kanan atas.',
+		],
+	},
+	desktop: {
+		intro:
+			"Pasang Sijil Mutaba'ah sebagai aplikasi agar bisa dibuka lewat ikon desktop.",
+		steps: [
+			"Klik ikon install (monitor dengan panah) di ujung kanan bilah alamat.",
+			'Jika tidak muncul, buka menu ⋮ lalu pilih "Instal Sijil Mutaba\'ah".',
+			'Klik "Instal" untuk konfirmasi.',
+		],
+	},
 };
+
+const COMPLETION_STEP: Step = {
+	title: "Tutorial Selesai!",
+	text: "Selamat! Anda sudah siap menggunakan Sijil Mutaba'ah.",
+	navId: null,
+	variant: "completion",
+};
+
+function detectPlatform(): Platform {
+	const ua = navigator.userAgent;
+	const isIOS =
+		/iPad|iPhone|iPod/.test(ua) ||
+		(navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+	if (isIOS) return "ios";
+	if (/Android/.test(ua)) return "android";
+	return "desktop";
+}
+
+function isStandalone(): boolean {
+	return (
+		window.matchMedia?.("(display-mode: standalone)").matches ||
+		(navigator as unknown as { standalone?: boolean }).standalone === true
+	);
+}
 
 function getTargetRect(navId: string | null): DOMRect | null {
 	if (!navId) return null;
@@ -51,72 +121,86 @@ function getTargetRect(navId: string | null): DOMRect | null {
 	return el ? el.getBoundingClientRect() : null;
 }
 
+function getViewport(): Viewport {
+	const w = window.innerWidth;
+	let top = 0;
+	let bottom = window.innerHeight;
+	if (window.visualViewport) {
+		top = window.visualViewport.offsetTop;
+		bottom = top + window.visualViewport.height;
+	}
+	const nav = document.querySelector("[data-bottom-nav]");
+	const navRect = nav?.getBoundingClientRect();
+	const navTop =
+		navRect && navRect.width > 0 && navRect.height > 0
+			? navRect.top
+			: undefined;
+	if (navTop !== undefined && navTop < bottom - 8) bottom = navTop;
+	top = Math.min(top + 8, bottom - MIN_CALLOUT_H);
+	bottom = Math.max(bottom - 8, top + MIN_CALLOUT_H);
+	return { top, bottom, w };
+}
+
 function calcPlacement(
 	target: DOMRect | null,
+	vp: Viewport,
 	isMobile: boolean,
+	cardH = MIN_CALLOUT_H,
 ): Placement | null {
-	const w = window.innerWidth;
-	const h = window.innerHeight;
-
-	if (isMobile) {
-		return {
-			side: "bottom-sheet",
-			x: 0,
-			y: 0,
-		};
-	}
+	const cw = isMobile ? Math.min(CALLOUT_W, vp.w - 24) : CALLOUT_W;
+	const h = vp.bottom - vp.top;
 
 	if (!target) {
 		return {
 			side: "center",
-			x: (w - CALLOUT_W) / 2,
-			y: Math.max(40, (h - MIN_CALLOUT_H) / 2),
+			x: Math.max(12, (vp.w - cw) / 2),
+			y: Math.max(vp.top, vp.top + (h - cardH) / 2),
 		};
 	}
 
-	const spaceRight = w - target.right - GAP;
-	const spaceBelow = h - target.bottom - GAP;
-	const spaceAbove = target.top - GAP;
+	const spaceRight = vp.w - target.right - GAP;
+	const spaceBelow = vp.bottom - target.bottom - GAP;
+	const spaceAbove = target.top - vp.top - GAP;
 	const spaceLeft = target.left - GAP;
 	const targetCX = target.left + target.width / 2;
+	const clampY = (y: number) =>
+		Math.min(Math.max(y, vp.top), vp.bottom - cardH);
+	const clampX = (x: number) =>
+		Math.min(Math.max(x, 12), Math.max(12, vp.w - cw - 12));
 
-	if (spaceRight >= CALLOUT_W) {
+	if (spaceRight >= cw) {
 		return {
 			side: "right",
 			x: target.right + GAP,
-			y: Math.max(12, Math.min(target.top - 10, h - MIN_CALLOUT_H - 12)),
+			y: clampY(target.top - 10),
 		};
 	}
 
-	if (spaceBelow >= MIN_CALLOUT_H) {
+	if (spaceBelow >= cardH) {
 		return {
 			side: "bottom",
-			x: Math.max(12, Math.min(targetCX - CALLOUT_W / 2, w - CALLOUT_W - 12)),
-			y: target.bottom + GAP,
+			x: clampX(targetCX - cw / 2),
+			y: clampY(target.bottom + GAP),
 		};
 	}
 
-	if (spaceAbove >= MIN_CALLOUT_H) {
+	if (spaceAbove >= cardH) {
 		return {
 			side: "top",
-			x: Math.max(12, Math.min(targetCX - CALLOUT_W / 2, w - CALLOUT_W - 12)),
-			y: target.top - GAP - MIN_CALLOUT_H,
+			x: clampX(targetCX - cw / 2),
+			y: clampY(target.top - GAP - cardH),
 		};
 	}
 
-	if (spaceLeft >= CALLOUT_W) {
+	if (spaceLeft >= cw) {
 		return {
 			side: "left",
-			x: target.left - GAP - CALLOUT_W,
-			y: Math.max(12, Math.min(target.top - 10, h - MIN_CALLOUT_H - 12)),
+			x: target.left - GAP - cw,
+			y: clampY(target.top - 10),
 		};
 	}
 
-	return {
-		side: "bottom-sheet",
-		x: 0,
-		y: 0,
-	};
+	return { side: "bottom-sheet", x: 0, y: 0 };
 }
 
 function arrowStyle(side: Placement["side"]): React.CSSProperties | null {
@@ -159,6 +243,77 @@ function arrowStyle(side: Placement["side"]): React.CSSProperties | null {
 	return null;
 }
 
+function waitForEl(navId: string): Promise<Element | null> {
+	return new Promise((resolve) => {
+		let retries = 0;
+		function poll() {
+			const el = document.querySelector(`[data-nav-id="${navId}"]`);
+			if (el || retries > 10) return resolve(el);
+			retries++;
+			requestAnimationFrame(poll);
+		}
+		poll();
+	});
+}
+
+function waitForScrollEnd(): Promise<void> {
+	return new Promise((resolve) => {
+		let done = false;
+		const finish = () => {
+			if (!done) {
+				done = true;
+				resolve();
+			}
+		};
+		if (typeof window.onscrollend !== "undefined") {
+			window.addEventListener("scrollend", finish, { once: true });
+		} else {
+			let lastY = window.scrollY;
+			let stable = 0;
+			const iv = setInterval(() => {
+				if (window.scrollY === lastY) {
+					if (++stable >= 3) {
+						clearInterval(iv);
+						finish();
+					}
+				} else {
+					stable = 0;
+					lastY = window.scrollY;
+				}
+			}, 80);
+		}
+		setTimeout(finish, 800);
+	});
+}
+
+async function ensureVisible(el: Element): Promise<void> {
+	const vp = getViewport();
+	const r = el.getBoundingClientRect();
+	if (r.top >= vp.top && r.bottom <= vp.bottom) return;
+	const y0 = window.scrollY;
+	el.scrollIntoView({ behavior: "smooth", block: "center" });
+	// ponytail: fixed nav targets never scroll the window, so bail out once
+	// it's clear no scroll started instead of waiting on scrollend.
+	await new Promise<void>((resolve) => {
+		const check = () => {
+			if (window.scrollY !== y0) {
+				waitForScrollEnd().then(resolve);
+			} else {
+				setTimeout(() => {
+					window.scrollY !== y0 ? waitForScrollEnd().then(resolve) : resolve();
+				}, 60);
+			}
+		};
+		requestAnimationFrame(check);
+	});
+}
+
+const PLATFORM_ICON: Record<Platform, typeof AndroidIcon> = {
+	android: AndroidIcon,
+	ios: AppleIcon,
+	desktop: Monitor,
+};
+
 export function TutorialOverlay({ onFinish }: { onFinish: () => void }) {
 	const [step, setStep] = useState(0);
 	const [target, setTarget] = useState<DOMRect | null>(null);
@@ -166,77 +321,142 @@ export function TutorialOverlay({ onFinish }: { onFinish: () => void }) {
 	const [isMobile, setIsMobile] = useState(
 		typeof window !== "undefined" && window.innerWidth < 768,
 	);
+	const [viewport, setViewport] = useState<Viewport>(() =>
+		typeof window !== "undefined" ? getViewport() : { top: 0, bottom: 0, w: 0 },
+	);
+	const [platform] = useState<Platform>(() =>
+		typeof navigator !== "undefined" ? detectPlatform() : "desktop",
+	);
+	const [standalone] = useState(
+		() => typeof window !== "undefined" && isStandalone(),
+	);
+	const [cardH, setCardH] = useState(MIN_CALLOUT_H);
+	const cardRef = useRef<HTMLDivElement | null>(null);
+
 	const stepRef = useRef(step);
 	stepRef.current = step;
 
-	const current = STEPS[step];
+	const steps = useMemo<Step[]>(() => {
+		if (standalone) return [...BASE_STEPS, COMPLETION_STEP];
+		return [
+			...BASE_STEPS,
+			{
+				title: "Install sebagai Aplikasi",
+				text: INSTALL_TEXT[platform].intro,
+				navId: null,
+				variant: "center",
+				platform,
+			},
+			{
+				title: "Cara Install",
+				text: "Ikuti langkah-langkah di bawah sesuai perangkat Anda.",
+				navId: null,
+				variant: "center",
+				platform,
+				installSteps: INSTALL_TEXT[platform].steps,
+			},
+			COMPLETION_STEP,
+		];
+	}, [platform, standalone]);
+
+	const stepsRef = useRef(steps);
+	stepsRef.current = steps;
+
+	const current = steps[step];
 	const placement = calcPlacement(
-		current.navId !== null ? target : null,
+		current?.navId !== null ? target : null,
+		viewport,
 		isMobile,
+		cardH,
 	);
-	const showSpotlight = !isMobile && target !== null && current.navId !== null;
-	const showBackdrop = isMobile || (!showSpotlight && current.navId !== null);
+	const isCompletion = current?.variant === "completion";
+	const showSpotlight = target !== null && current?.navId != null;
+	const showBackdrop = !isCompletion;
+	const arrowDir = arrowStyle(placement?.side ?? "center");
 
 	useEffect(() => {
-		function onResize() {
-			setIsMobile(window.innerWidth < 768);
-			const id = STEPS[stepRef.current]?.navId;
-			if (id) setTarget(getTargetRect(id));
+		function refresh() {
+			const mobile = window.innerWidth < 768;
+			setIsMobile(mobile);
+			setViewport(getViewport());
+			const s = stepsRef.current[stepRef.current];
+			const id = s?.navId
+				? mobile
+					? (s.mobileNavId ?? s.navId)
+					: s.navId
+				: null;
+			setTarget(getTargetRect(id));
 		}
-		window.addEventListener("resize", onResize);
-		return () => window.removeEventListener("resize", onResize);
+		refresh();
+		window.addEventListener("resize", refresh);
+		window.visualViewport?.addEventListener("resize", refresh);
+		window.visualViewport?.addEventListener("scroll", refresh);
+		return () => {
+			window.removeEventListener("resize", refresh);
+			window.visualViewport?.removeEventListener("resize", refresh);
+			window.visualViewport?.removeEventListener("scroll", refresh);
+		};
 	}, []);
 
 	useEffect(() => {
-		const id = current?.navId;
-		let retries = 0;
 		setAnim("out");
-
-		const t1 = setTimeout(() => {
-			function tryFind() {
-				const rect = getTargetRect(id);
-				if (rect || !id || retries > 10) {
-					setTarget(rect);
-					setAnim("in");
+		const t1 = setTimeout(async () => {
+			const s = steps[step];
+			const id = s?.navId ?? null;
+			if (!id) {
+				setTarget(null);
+			} else {
+				const resolveId = window.innerWidth < 768 ? (s.mobileNavId ?? id) : id;
+				const el = await waitForEl(resolveId);
+				if (el) {
+					await ensureVisible(el);
+					setTarget(el.getBoundingClientRect());
 				} else {
-					retries++;
-					requestAnimationFrame(tryFind);
+					setTarget(null);
 				}
 			}
-			if (id && !isMobile) {
-				tryFind();
-			} else {
-				setTarget(null);
-				setAnim("in");
-			}
+			setCardH(cardRef.current?.offsetHeight ?? MIN_CALLOUT_H);
+			setViewport(getViewport());
+			setAnim("in");
 		}, 220);
-
 		return () => clearTimeout(t1);
-	}, [current?.navId, isMobile]);
+	}, [step, steps]);
+
+	useEffect(() => {
+		if (steps[step]?.variant === "completion") {
+			localStorage.setItem("sijil_tutorial_done", "1");
+		}
+	}, [step, steps]);
 
 	function next() {
-		if (step < STEPS.length - 1) {
+		if (step < steps.length - 1) {
 			setStep(step + 1);
 		} else {
-			localStorage.setItem("sijil_tutorial_done", "1");
-			onFinish();
+			finish();
 		}
 	}
 
-	function done() {
+	function finish() {
 		localStorage.setItem("sijil_tutorial_done", "1");
 		onFinish();
 	}
 
-	const arrowDir = arrowStyle(placement?.side ?? "");
+	function restart() {
+		localStorage.removeItem("sijil_tutorial_done");
+		setStep(0);
+	}
+
+	const isSheet = placement?.side === "bottom-sheet";
 
 	return (
 		<div className="fixed inset-0 z-[9999]">
-			{/* Backdrop */}
+			{/* Backdrop / tap-to-advance */}
 			{showBackdrop && (
 				<button
 					type="button"
-					className="absolute inset-0 bg-black/45 z-[1]"
+					className={`absolute inset-0 z-[1] ${
+						showSpotlight ? "" : "bg-black/45"
+					}`}
 					aria-label="Lanjutkan tutorial"
 					onClick={next}
 					onKeyDown={(e) => {
@@ -245,7 +465,7 @@ export function TutorialOverlay({ onFinish }: { onFinish: () => void }) {
 				/>
 			)}
 
-			{/* Desktop: spotlight with box-shadow cutout */}
+			{/* Spotlight with box-shadow cutout */}
 			{showSpotlight && target && (
 				<div
 					className="absolute pointer-events-none"
@@ -262,7 +482,7 @@ export function TutorialOverlay({ onFinish }: { onFinish: () => void }) {
 				/>
 			)}
 
-			{/* Desktop: glow ring */}
+			{/* Glow ring */}
 			{showSpotlight && target && (
 				<div
 					className="absolute pointer-events-none"
@@ -282,28 +502,22 @@ export function TutorialOverlay({ onFinish }: { onFinish: () => void }) {
 			)}
 
 			{/* Callout card */}
-			{placement && (
+			{placement && current && (
 				<div
+					ref={cardRef}
 					className={`absolute z-[4] max-w-[300px] w-[calc(100vw-24px)] rounded-2xl border bg-card p-5 shadow-xl transition-all duration-300 ease-out ${
 						anim === "in"
 							? "opacity-100 translate-y-0"
 							: "opacity-0 translate-y-2"
 					}`}
 					style={{
-						left: isMobile ? 12 : placement.x,
-						top:
-							isMobile || placement.side === "bottom-sheet"
-								? "auto"
-								: placement.y,
-						bottom: isMobile || placement.side === "bottom-sheet" ? 24 : "auto",
-						borderRadius:
-							isMobile || placement.side === "bottom-sheet"
-								? "var(--radius) var(--radius) var(--radius) var(--radius)"
-								: undefined,
+						left: isSheet ? 12 : placement.x,
+						top: isSheet ? "auto" : placement.y,
+						bottom: isSheet ? 24 : "auto",
 					}}
 				>
-					{/* Pointer arrow (desktop only) */}
-					{!isMobile && arrowDir && (
+					{/* Pointer arrow */}
+					{arrowDir && (
 						<div
 							className="absolute"
 							style={{
@@ -314,41 +528,98 @@ export function TutorialOverlay({ onFinish }: { onFinish: () => void }) {
 						/>
 					)}
 
-					{/* Close */}
-					<button
-						type="button"
-						onClick={done}
-						className="absolute right-3 top-3 text-muted-foreground/40 hover:text-muted-foreground transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
-					>
-						<HugeiconsIcon icon={Cancel} className="w-4 h-4" />
-					</button>
-
-					{/* Step counter */}
-					<p className="mb-1 text-xs font-medium text-primary">
-						Langkah {step + 1} dari {STEPS.length}
-					</p>
-					<h3 className="mb-1 text-base font-semibold">{current?.title}</h3>
-					<p className="mb-4 text-sm leading-relaxed text-muted-foreground">
-						{current?.text}
-					</p>
-
-					{/* Buttons */}
-					<div className="flex items-center justify-between">
+					{!isCompletion && (
 						<button
 							type="button"
-							onClick={done}
-							className="text-xs text-muted-foreground/40 hover:text-muted-foreground transition-colors min-h-[44px] px-2"
+							onClick={finish}
+							className="absolute right-3 top-3 text-muted-foreground/40 hover:text-muted-foreground transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
 						>
-							Skip tutorial
+							<HugeiconsIcon icon={Cancel} className="w-4 h-4" />
 						</button>
-						<button
-							type="button"
-							onClick={next}
-							className="rounded-xl bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors min-h-[44px]"
-						>
-							{step < STEPS.length - 1 ? "Selanjutnya" : "Selesai"}
-						</button>
-					</div>
+					)}
+
+					{isCompletion ? (
+						<div className="flex flex-col items-center text-center">
+							<div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 text-3xl">
+								🎉
+							</div>
+							<h3 className="mb-1 text-base font-semibold">{current.title}</h3>
+							<p className="mb-5 text-sm leading-relaxed text-muted-foreground">
+								{current.text}
+							</p>
+							<button
+								type="button"
+								onClick={finish}
+								className="w-full rounded-xl bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors min-h-[44px]"
+							>
+								Mulai Menggunakan Aplikasi
+							</button>
+							<button
+								type="button"
+								onClick={restart}
+								className="mt-1 text-xs text-muted-foreground/40 hover:text-muted-foreground transition-colors min-h-[44px] px-2"
+							>
+								Mulai Ulang Tutorial
+							</button>
+						</div>
+					) : (
+						<>
+							{/* Step counter */}
+							<p className="mb-1 text-xs font-medium text-primary">
+								Langkah {step + 1} dari {steps.length}
+							</p>
+
+							{current.platform && (
+								<div className="mb-3 flex justify-center">
+									<div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+										<HugeiconsIcon
+											icon={PLATFORM_ICON[current.platform]}
+											className="size-6"
+										/>
+									</div>
+								</div>
+							)}
+
+							<h3 className="mb-1 text-base font-semibold">{current.title}</h3>
+							<p className="mb-4 text-sm leading-relaxed text-muted-foreground">
+								{current.text}
+							</p>
+
+							{current.installSteps && (
+								<ol className="mb-4 space-y-2">
+									{current.installSteps.map((s, i) => (
+										<li
+											key={s}
+											className="flex gap-2 text-sm text-muted-foreground"
+										>
+											<span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/10 text-[11px] font-semibold text-primary">
+												{i + 1}
+											</span>
+											<span className="leading-relaxed">{s}</span>
+										</li>
+									))}
+								</ol>
+							)}
+
+							{/* Buttons */}
+							<div className="flex items-center justify-between">
+								<button
+									type="button"
+									onClick={finish}
+									className="text-xs text-muted-foreground/40 hover:text-muted-foreground transition-colors min-h-[44px] px-2"
+								>
+									Skip tutorial
+								</button>
+								<button
+									type="button"
+									onClick={next}
+									className="rounded-xl bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors min-h-[44px]"
+								>
+									{step < steps.length - 1 ? "Selanjutnya" : "Selesai"}
+								</button>
+							</div>
+						</>
+					)}
 				</div>
 			)}
 		</div>

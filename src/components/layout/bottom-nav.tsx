@@ -21,10 +21,20 @@ import {
 import { authClient } from "@/lib/auth/auth-client";
 
 const MAIN_TABS = [
-	{ to: "/dashboard", label: "Beranda", icon: Home },
-	{ to: "/ziyadah", label: "Ziyadah", icon: BookOpen },
-	{ to: "/murajaah", label: "Murajaah", icon: ChartBarIncreasingIcon },
-	{ to: "/presensi", label: "Presensi", icon: CalendarCheck },
+	{ to: "/dashboard", label: "Beranda", icon: Home, navId: "nav-dashboard" },
+	{ to: "/ziyadah", label: "Ziyadah", icon: BookOpen, navId: "nav-ziyadah" },
+	{
+		to: "/murajaah",
+		label: "Murajaah",
+		icon: ChartBarIncreasingIcon,
+		navId: "nav-murajaah",
+	},
+	{
+		to: "/presensi",
+		label: "Presensi",
+		icon: CalendarCheck,
+		navId: "nav-presensi",
+	},
 ];
 
 const SECONDARY_ITEMS = [
@@ -44,7 +54,10 @@ export function BottomNav() {
 
 	return (
 		<>
-			<nav className="fixed inset-x-0 bottom-0 z-50 pb-[env(safe-area-inset-bottom)] md:hidden">
+			<nav
+				className="fixed inset-x-0 bottom-0 z-50 pb-[env(safe-area-inset-bottom)] md:hidden"
+				data-bottom-nav
+			>
 				<div className="mx-3 mb-2 flex items-center justify-around rounded-2xl border bg-background/95 shadow-lg backdrop-blur-sm">
 					{MAIN_TABS.map((item) => {
 						const active = isActive(item.to);
@@ -52,6 +65,7 @@ export function BottomNav() {
 							<Link
 								key={item.to}
 								to={item.to}
+								data-nav-id={item.navId}
 								className={`flex flex-1 flex-col items-center gap-0.5 py-2 min-h-[48px] transition-all duration-200 ${
 									active ? "text-primary" : "text-muted-foreground"
 								}`}
@@ -82,6 +96,7 @@ export function BottomNav() {
 					<button
 						type="button"
 						onClick={() => setOpen(true)}
+						data-nav-id="nav-lainnya"
 						className={`flex flex-1 flex-col items-center gap-0.5 py-2 min-h-[48px] transition-all duration-200 ${
 							lainnyaActive ? "text-primary" : "text-muted-foreground"
 						}`}
