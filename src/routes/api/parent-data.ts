@@ -2,7 +2,7 @@ import crypto from "node:crypto";
 import { createFileRoute } from "@tanstack/react-router";
 import { eq } from "drizzle-orm";
 import { db } from "@/lib/db";
-import { presensi, setoran, siswa } from "@/lib/db/schema";
+import { presensi, setoran, siswa, userProfile } from "@/lib/db/schema";
 
 const SECRET =
 	process.env.BETTER_AUTH_SECRET || "sijil-parent-session-fallback";
@@ -46,6 +46,17 @@ export const Route = createFileRoute("/api/parent-data")({
 				if (!siswaData)
 					return Response.json({ error: "Siswa not found" }, { status: 404 });
 
+				const [musyrifData] = siswaData.musyrifId
+					? await db
+							.select({
+								nama: userProfile.nama,
+								halaqahName: userProfile.halaqahName,
+							})
+							.from(userProfile)
+							.where(eq(userProfile.id, siswaData.musyrifId))
+							.limit(1)
+					: [];
+
 				const setoranRows = await db
 					.select()
 					.from(setoran)
@@ -64,6 +75,9 @@ export const Route = createFileRoute("/api/parent-data")({
 						hafalan: siswaData.hafalan,
 						target: siswaData.target,
 					},
+					musyrif: musyrifData
+						? { nama: musyrifData.nama, halaqahName: musyrifData.halaqahName }
+						: null,
 					setoran: setoranRows,
 					presensi: presensiRows,
 				});
