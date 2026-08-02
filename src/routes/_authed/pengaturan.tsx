@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { authClient } from "@/lib/auth/auth-client";
 import { SURAH_DATA } from "@/lib/surah-data";
 
@@ -856,471 +857,493 @@ function PengaturanPage() {
 					</AccordionItem>
 				</Accordion>
 			) : (
-				<>
-					{/* Nama Halaqah */}
-					<form
-						onSubmit={saveProfile}
-						className="space-y-4 rounded-2xl border bg-card p-5 shadow-xs"
-					>
-						<h3 className="text-lg font-semibold">Nama Halaqah</h3>
-						<div className="space-y-2">
-							<label htmlFor="halaqah-name" className="text-sm font-medium">
-								Nama Halaqah / Grup
-							</label>
-							<Input
-								id="halaqah-name"
-								type="text"
-								value={halaqahName}
-								onChange={(e) => setHalaqahName(e.target.value)}
-								placeholder="Contoh: Halaqah Putra A"
-							/>
-						</div>
-						<Button type="submit">Simpan</Button>
-					</form>
+				<Tabs defaultValue="manajemen">
+					<TabsList className="h-auto w-full">
+						<TabsTrigger value="manajemen">Manajemen Data</TabsTrigger>
+						<TabsTrigger value="sekolah">Profil Sekolah</TabsTrigger>
+						<TabsTrigger value="tutorial">Tutorial</TabsTrigger>
+						<TabsTrigger value="lainnya">Lainnya</TabsTrigger>
+					</TabsList>
 
-					{/* Profile */}
-					<form
-						onSubmit={saveProfile}
-						className="space-y-4 rounded-2xl border bg-card p-5 shadow-xs"
-					>
-						<h3 className="text-lg font-semibold">Profil Ustadz/Ustadzah</h3>
-						<div className="space-y-2">
-							<label htmlFor="profile-nama" className="text-sm font-medium">
-								Nama
-							</label>
-							<Input
-								id="profile-nama"
-								type="text"
-								value={nama}
-								onChange={(e) => setNama(e.target.value)}
-								placeholder="Nama lengkap"
-								required
-							/>
-						</div>
-						<Button type="submit">Simpan Profil</Button>
-					</form>
-
-					{/* Change Password */}
-					<form
-						onSubmit={changePassword}
-						className="space-y-4 rounded-2xl border bg-card p-5 shadow-xs"
-					>
-						<h3 className="text-lg font-semibold">Ganti Password</h3>
-						<div className="space-y-2">
-							<label htmlFor="current-password" className="text-sm font-medium">
-								Password Saat Ini
-							</label>
-							<Input
-								id="current-password"
-								type="password"
-								value={currentPassword}
-								onChange={(e) => setCurrentPassword(e.target.value)}
-								placeholder="Password lama"
-								required
-							/>
-						</div>
-						<div className="space-y-2">
-							<label htmlFor="new-password" className="text-sm font-medium">
-								Password Baru
-							</label>
-							<Input
-								id="new-password"
-								type="password"
-								value={newPassword}
-								onChange={(e) => setNewPassword(e.target.value)}
-								placeholder="Minimal 8 karakter"
-								minLength={8}
-							/>
-						</div>
-						<div className="space-y-2">
-							<label htmlFor="confirm-password" className="text-sm font-medium">
-								Konfirmasi Password
-							</label>
-							<Input
-								id="confirm-password"
-								type="password"
-								value={confirmPassword}
-								onChange={(e) => setConfirmPassword(e.target.value)}
-								placeholder="Ulangi password baru"
-								minLength={8}
-							/>
-						</div>
-						<Button type="submit" variant="outline">
-							Ganti Password
-						</Button>
-					</form>
-
-					{/* School Profile */}
-					<div className="space-y-4 rounded-2xl border bg-card p-5 shadow-xs">
-						<h3 className="text-lg font-semibold">Profil Sekolah</h3>
-						<p className="text-xs text-muted-foreground">
-							Konfigurasi identitas institusi untuk header PDF.
-						</p>
-						<div className="space-y-4">
+					<TabsContent value="manajemen" className="space-y-6">
+						{/* Nama Halaqah */}
+						<form
+							onSubmit={saveProfile}
+							className="space-y-4 rounded-2xl border bg-card p-5 shadow-xs"
+						>
+							<h3 className="text-lg font-semibold">Nama Halaqah</h3>
 							<div className="space-y-2">
-								<label className="text-sm font-medium">Logo Sekolah</label>
-								{schoolLogo ? (
-									<div className="flex items-center gap-4">
-										<img
-											src={schoolLogo}
-											alt="Logo"
-											className="h-16 w-16 rounded-lg border object-contain"
-										/>
-										<div className="flex gap-2">
-											<label className="cursor-pointer rounded-md border border-input bg-background px-3 py-1.5 text-xs font-medium hover:bg-accent">
-												Ganti
-												<input
-													type="file"
-													accept="image/png,image/jpeg,image/svg+xml"
-													onChange={handleSchoolLogoUpload}
-													className="hidden"
-												/>
-											</label>
-											<button
-												type="button"
-												onClick={() => setSchoolLogo("")}
-												className="rounded-md border border-destructive/30 px-3 py-1.5 text-xs font-medium text-destructive hover:bg-destructive/10"
-											>
-												Hapus
-											</button>
-										</div>
-									</div>
-								) : (
-									<label className="flex cursor-pointer items-center justify-center rounded-lg border-2 border-dashed border-border bg-muted/30 px-4 py-6 text-xs text-muted-foreground hover:bg-muted/50">
-										<span>Klik untuk upload (PNG, JPG, SVG — maks 2 MB)</span>
-										<input
-											type="file"
-											accept="image/png,image/jpeg,image/svg+xml"
-											onChange={handleSchoolLogoUpload}
-											className="hidden"
-										/>
-									</label>
-								)}
-							</div>
-							<div className="space-y-2">
-								<label
-									htmlFor="school-foundation"
-									className="text-sm font-medium"
-								>
-									Nama Yayasan
+								<label htmlFor="halaqah-name" className="text-sm font-medium">
+									Nama Halaqah / Grup
 								</label>
 								<Input
-									id="school-foundation"
+									id="halaqah-name"
 									type="text"
-									value={schoolFoundationName}
-									onChange={(e) => setSchoolFoundationName(e.target.value)}
-									placeholder="Yayasan Pendidikan ..."
+									value={halaqahName}
+									onChange={(e) => setHalaqahName(e.target.value)}
+									placeholder="Contoh: Halaqah Putra A"
 								/>
-								<p className="text-xs text-muted-foreground">
-									Ditampilkan sebagai judul utama di header PDF.
-								</p>
 							</div>
-							<div className="space-y-2">
-								<label htmlFor="school-name" className="text-sm font-medium">
-									Nama Sekolah
-								</label>
-								<Input
-									id="school-name"
-									type="text"
-									value={schoolName}
-									onChange={(e) => setSchoolName(e.target.value)}
-									placeholder="SDIT / SMPIT / SMAIT ..."
-								/>
-								<p className="text-xs text-muted-foreground">
-									Ditampilkan di bawah nama yayasan. Jika yayasan kosong, nama
-									sekolah menjadi judul utama.
-								</p>
-							</div>
-							<Button onClick={saveSchoolProfile} disabled={schoolSaving}>
-								{schoolSaving ? "Menyimpan..." : "Simpan"}
-							</Button>
-						</div>
-					</div>
-
-					{/* Siswa Management */}
-					<div className="space-y-4 rounded-2xl border bg-card p-5 shadow-xs">
-						<h3 className="text-lg font-semibold">Kelola Siswa</h3>
-
-						<form onSubmit={addSiswa} className="space-y-3">
-							<div className="grid gap-3 sm:grid-cols-3">
-								<div className="space-y-1">
-									<label htmlFor="siswa-nama" className="text-sm font-medium">
-										Nama
-									</label>
-									<Input
-										id="siswa-nama"
-										type="text"
-										value={siswaNama}
-										onChange={(e) => setSiswaNama(e.target.value)}
-										placeholder="Nama siswa"
-										required
-									/>
-								</div>
-								<div className="space-y-1">
-									<label htmlFor="siswa-umur" className="text-sm font-medium">
-										Umur
-									</label>
-									<Input
-										id="siswa-umur"
-										type="number"
-										value={siswaUmur}
-										onChange={(e) => setSiswaUmur(e.target.value)}
-										placeholder="7"
-									/>
-								</div>
-								<div className="space-y-1">
-									<label htmlFor="siswa-metode" className="text-sm font-medium">
-										Metode
-									</label>
-									<select
-										id="siswa-metode"
-										value={siswaMetode}
-										onChange={(e) => {
-											const v = e.target.value as "juz" | "surah";
-											setSiswaMetode(v);
-											setSiswaTargetFrom(v === "juz" ? "1" : "1");
-											setSiswaTargetTo(v === "juz" ? "30" : "114");
-										}}
-										className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-xs transition-colors md:text-sm"
-									>
-										<option value="juz">Per Juz</option>
-										<option value="surah">Per Surah</option>
-									</select>
-								</div>
-							</div>
-							<div className="grid gap-3 sm:grid-cols-2">
-								<div className="space-y-1">
-									<label
-										htmlFor="siswa-target-from"
-										className="text-sm font-medium"
-									>
-										{siswaMetode === "juz" ? "Mulai Juz" : "Mulai Surah"}
-									</label>
-									{siswaMetode === "juz" ? (
-										<select
-											id="siswa-target-from"
-											value={siswaTargetFrom}
-											onChange={(e) => setSiswaTargetFrom(e.target.value)}
-											className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-xs transition-colors md:text-sm"
-										>
-											{Array.from({ length: 30 }, (_, i) => (
-												<option key={i + 1} value={i + 1}>
-													Juz {i + 1}
-												</option>
-											))}
-										</select>
-									) : (
-										<select
-											id="siswa-target-from"
-											value={siswaTargetFrom}
-											onChange={(e) => setSiswaTargetFrom(e.target.value)}
-											className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-xs transition-colors md:text-sm"
-										>
-											{SURAH_DATA.map((s) => (
-												<option key={s.number} value={s.number}>
-													{s.number}. {s.name}
-												</option>
-											))}
-										</select>
-									)}
-								</div>
-								<div className="space-y-1">
-									<label
-										htmlFor="siswa-target-to"
-										className="text-sm font-medium"
-									>
-										{siswaMetode === "juz" ? "Sampai Juz" : "Sampai Surah"}
-									</label>
-									{siswaMetode === "juz" ? (
-										<select
-											id="siswa-target-to"
-											value={siswaTargetTo}
-											onChange={(e) => setSiswaTargetTo(e.target.value)}
-											className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-xs transition-colors md:text-sm"
-										>
-											{Array.from({ length: 30 }, (_, i) => (
-												<option key={i + 1} value={i + 1}>
-													Juz {i + 1}
-												</option>
-											))}
-										</select>
-									) : (
-										<select
-											id="siswa-target-to"
-											value={siswaTargetTo}
-											onChange={(e) => setSiswaTargetTo(e.target.value)}
-											className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-xs transition-colors md:text-sm"
-										>
-											{SURAH_DATA.map((s) => (
-												<option key={s.number} value={s.number}>
-													{s.number}. {s.name}
-												</option>
-											))}
-										</select>
-									)}
-								</div>
-							</div>
-							<div className="flex gap-2">
-								<Button type="submit">
-									{editingSiswa ? "Update" : "Tambah Siswa"}
-								</Button>
-								{editingSiswa && (
-									<Button
-										type="button"
-										variant="outline"
-										onClick={() => {
-											setEditingSiswa(null);
-											setSiswaNama("");
-											setSiswaUmur("");
-											setSiswaMetode("juz");
-											setSiswaTargetFrom("1");
-											setSiswaTargetTo("30");
-										}}
-									>
-										Batal
-									</Button>
-								)}
-							</div>
+							<Button type="submit">Simpan</Button>
 						</form>
+						{/* Profile */}
+						<form
+							onSubmit={saveProfile}
+							className="space-y-4 rounded-2xl border bg-card p-5 shadow-xs"
+						>
+							<h3 className="text-lg font-semibold">Profil Ustadz/Ustadzah</h3>
+							<div className="space-y-2">
+								<label htmlFor="profile-nama" className="text-sm font-medium">
+									Nama
+								</label>
+								<Input
+									id="profile-nama"
+									type="text"
+									value={nama}
+									onChange={(e) => setNama(e.target.value)}
+									placeholder="Nama lengkap"
+									required
+								/>
+							</div>
+							<Button type="submit">Simpan Profil</Button>
+						</form>
+						{/* Siswa Management */}
+						<div className="space-y-4 rounded-2xl border bg-card p-5 shadow-xs">
+							<h3 className="text-lg font-semibold">Kelola Siswa</h3>
 
-						{/* Siswa List */}
-						{siswaList.length > 0 ? (
-							<div className="space-y-2 border-t border-border pt-4">
-								{siswaList.map((s) => (
-									<div
-										key={s.id}
-										className="space-y-2 rounded-xl bg-muted/50 px-4 py-3"
-									>
-										<div className="flex items-center justify-between">
-											<div>
-												<p className="text-sm font-semibold">{s.nama}</p>
-												<p className="text-xs text-muted-foreground">
-													{s.hafalan}/{s.target}{" "}
-													{s.metodeProgress === "surah" ? "surah" : "juz"}
-													{s.mulaiHafalan ? ` (dari ${s.mulaiHafalan})` : ""}
-													{s.umur ? ` · ${s.umur} tahun` : ""}
-												</p>
+							<form onSubmit={addSiswa} className="space-y-3">
+								<div className="grid gap-3 sm:grid-cols-3">
+									<div className="space-y-1">
+										<label htmlFor="siswa-nama" className="text-sm font-medium">
+											Nama
+										</label>
+										<Input
+											id="siswa-nama"
+											type="text"
+											value={siswaNama}
+											onChange={(e) => setSiswaNama(e.target.value)}
+											placeholder="Nama siswa"
+											required
+										/>
+									</div>
+									<div className="space-y-1">
+										<label htmlFor="siswa-umur" className="text-sm font-medium">
+											Umur
+										</label>
+										<Input
+											id="siswa-umur"
+											type="number"
+											value={siswaUmur}
+											onChange={(e) => setSiswaUmur(e.target.value)}
+											placeholder="7"
+										/>
+									</div>
+									<div className="space-y-1">
+										<label
+											htmlFor="siswa-metode"
+											className="text-sm font-medium"
+										>
+											Metode
+										</label>
+										<select
+											id="siswa-metode"
+											value={siswaMetode}
+											onChange={(e) => {
+												const v = e.target.value as "juz" | "surah";
+												setSiswaMetode(v);
+												setSiswaTargetFrom(v === "juz" ? "1" : "1");
+												setSiswaTargetTo(v === "juz" ? "30" : "114");
+											}}
+											className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-xs transition-colors md:text-sm"
+										>
+											<option value="juz">Per Juz</option>
+											<option value="surah">Per Surah</option>
+										</select>
+									</div>
+								</div>
+								<div className="grid gap-3 sm:grid-cols-2">
+									<div className="space-y-1">
+										<label
+											htmlFor="siswa-target-from"
+											className="text-sm font-medium"
+										>
+											{siswaMetode === "juz" ? "Mulai Juz" : "Mulai Surah"}
+										</label>
+										{siswaMetode === "juz" ? (
+											<select
+												id="siswa-target-from"
+												value={siswaTargetFrom}
+												onChange={(e) => setSiswaTargetFrom(e.target.value)}
+												className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-xs transition-colors md:text-sm"
+											>
+												{Array.from({ length: 30 }, (_, i) => (
+													<option key={i + 1} value={i + 1}>
+														Juz {i + 1}
+													</option>
+												))}
+											</select>
+										) : (
+											<select
+												id="siswa-target-from"
+												value={siswaTargetFrom}
+												onChange={(e) => setSiswaTargetFrom(e.target.value)}
+												className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-xs transition-colors md:text-sm"
+											>
+												{SURAH_DATA.map((s) => (
+													<option key={s.number} value={s.number}>
+														{s.number}. {s.name}
+													</option>
+												))}
+											</select>
+										)}
+									</div>
+									<div className="space-y-1">
+										<label
+											htmlFor="siswa-target-to"
+											className="text-sm font-medium"
+										>
+											{siswaMetode === "juz" ? "Sampai Juz" : "Sampai Surah"}
+										</label>
+										{siswaMetode === "juz" ? (
+											<select
+												id="siswa-target-to"
+												value={siswaTargetTo}
+												onChange={(e) => setSiswaTargetTo(e.target.value)}
+												className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-xs transition-colors md:text-sm"
+											>
+												{Array.from({ length: 30 }, (_, i) => (
+													<option key={i + 1} value={i + 1}>
+														Juz {i + 1}
+													</option>
+												))}
+											</select>
+										) : (
+											<select
+												id="siswa-target-to"
+												value={siswaTargetTo}
+												onChange={(e) => setSiswaTargetTo(e.target.value)}
+												className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-xs transition-colors md:text-sm"
+											>
+												{SURAH_DATA.map((s) => (
+													<option key={s.number} value={s.number}>
+														{s.number}. {s.name}
+													</option>
+												))}
+											</select>
+										)}
+									</div>
+								</div>
+								<div className="flex gap-2">
+									<Button type="submit">
+										{editingSiswa ? "Update" : "Tambah Siswa"}
+									</Button>
+									{editingSiswa && (
+										<Button
+											type="button"
+											variant="outline"
+											onClick={() => {
+												setEditingSiswa(null);
+												setSiswaNama("");
+												setSiswaUmur("");
+												setSiswaMetode("juz");
+												setSiswaTargetFrom("1");
+												setSiswaTargetTo("30");
+											}}
+										>
+											Batal
+										</Button>
+									)}
+								</div>
+							</form>
+
+							{/* Siswa List */}
+							{siswaList.length > 0 ? (
+								<div className="space-y-2 border-t border-border pt-4">
+									{siswaList.map((s) => (
+										<div
+											key={s.id}
+											className="space-y-2 rounded-xl bg-muted/50 px-4 py-3"
+										>
+											<div className="flex items-center justify-between">
+												<div>
+													<p className="text-sm font-semibold">{s.nama}</p>
+													<p className="text-xs text-muted-foreground">
+														{s.hafalan}/{s.target}{" "}
+														{s.metodeProgress === "surah" ? "surah" : "juz"}
+														{s.mulaiHafalan ? ` (dari ${s.mulaiHafalan})` : ""}
+														{s.umur ? ` · ${s.umur} tahun` : ""}
+													</p>
+												</div>
+												<div className="flex gap-1">
+													<button
+														type="button"
+														onClick={() => editSiswa(s)}
+														className="rounded-lg px-3 py-1 text-xs font-semibold text-primary hover:bg-primary/10"
+													>
+														Edit
+													</button>
+													<button
+														type="button"
+														onClick={() => deleteSiswa(s.id)}
+														className="rounded-lg px-3 py-1 text-xs font-semibold text-red-600 hover:bg-red-500/10"
+													>
+														Hapus
+													</button>
+												</div>
 											</div>
-											<div className="flex gap-1">
+											{s.studentId && (
+												<div className="flex items-center gap-2 rounded-lg bg-background px-3 py-2 text-xs">
+													<span className="text-muted-foreground">ID:</span>
+													<code className="font-mono font-semibold">
+														{s.studentId}
+													</code>
+													<button
+														type="button"
+														onClick={() => {
+															if (s.studentId) copyToClipboard(s.studentId);
+														}}
+														className="ml-auto text-primary hover:underline"
+													>
+														Salin
+													</button>
+												</div>
+											)}
+										</div>
+									))}
+								</div>
+							) : (
+								<p className="py-4 text-center text-sm text-muted-foreground">
+									Belum ada siswa
+								</p>
+							)}
+						</div>
+					</TabsContent>
+
+					<TabsContent value="sekolah" className="space-y-6">
+						{/* School Profile */}
+						<div className="space-y-4 rounded-2xl border bg-card p-5 shadow-xs">
+							<h3 className="text-lg font-semibold">Profil Sekolah</h3>
+							<p className="text-xs text-muted-foreground">
+								Konfigurasi identitas institusi untuk header PDF.
+							</p>
+							<div className="space-y-4">
+								<div className="space-y-2">
+									<label className="text-sm font-medium">Logo Sekolah</label>
+									{schoolLogo ? (
+										<div className="flex items-center gap-4">
+											<img
+												src={schoolLogo}
+												alt="Logo"
+												className="h-16 w-16 rounded-lg border object-contain"
+											/>
+											<div className="flex gap-2">
+												<label className="cursor-pointer rounded-md border border-input bg-background px-3 py-1.5 text-xs font-medium hover:bg-accent">
+													Ganti
+													<input
+														type="file"
+														accept="image/png,image/jpeg,image/svg+xml"
+														onChange={handleSchoolLogoUpload}
+														className="hidden"
+													/>
+												</label>
 												<button
 													type="button"
-													onClick={() => editSiswa(s)}
-													className="rounded-lg px-3 py-1 text-xs font-semibold text-primary hover:bg-primary/10"
-												>
-													Edit
-												</button>
-												<button
-													type="button"
-													onClick={() => deleteSiswa(s.id)}
-													className="rounded-lg px-3 py-1 text-xs font-semibold text-red-600 hover:bg-red-500/10"
+													onClick={() => setSchoolLogo("")}
+													className="rounded-md border border-destructive/30 px-3 py-1.5 text-xs font-medium text-destructive hover:bg-destructive/10"
 												>
 													Hapus
 												</button>
 											</div>
 										</div>
-										{s.studentId && (
-											<div className="flex items-center gap-2 rounded-lg bg-background px-3 py-2 text-xs">
-												<span className="text-muted-foreground">ID:</span>
-												<code className="font-mono font-semibold">
-													{s.studentId}
-												</code>
-												<button
-													type="button"
-													onClick={() => {
-														if (s.studentId) copyToClipboard(s.studentId);
-													}}
-													className="ml-auto text-primary hover:underline"
-												>
-													Salin
-												</button>
-											</div>
-										)}
-									</div>
-								))}
+									) : (
+										<label className="flex cursor-pointer items-center justify-center rounded-lg border-2 border-dashed border-border bg-muted/30 px-4 py-6 text-xs text-muted-foreground hover:bg-muted/50">
+											<span>Klik untuk upload (PNG, JPG, SVG — maks 2 MB)</span>
+											<input
+												type="file"
+												accept="image/png,image/jpeg,image/svg+xml"
+												onChange={handleSchoolLogoUpload}
+												className="hidden"
+											/>
+										</label>
+									)}
+								</div>
+								<div className="space-y-2">
+									<label
+										htmlFor="school-foundation"
+										className="text-sm font-medium"
+									>
+										Nama Yayasan
+									</label>
+									<Input
+										id="school-foundation"
+										type="text"
+										value={schoolFoundationName}
+										onChange={(e) => setSchoolFoundationName(e.target.value)}
+										placeholder="Yayasan Pendidikan ..."
+									/>
+									<p className="text-xs text-muted-foreground">
+										Ditampilkan sebagai judul utama di header PDF.
+									</p>
+								</div>
+								<div className="space-y-2">
+									<label htmlFor="school-name" className="text-sm font-medium">
+										Nama Sekolah
+									</label>
+									<Input
+										id="school-name"
+										type="text"
+										value={schoolName}
+										onChange={(e) => setSchoolName(e.target.value)}
+										placeholder="SDIT / SMPIT / SMAIT ..."
+									/>
+									<p className="text-xs text-muted-foreground">
+										Ditampilkan di bawah nama yayasan. Jika yayasan kosong, nama
+										sekolah menjadi judul utama.
+									</p>
+								</div>
+								<Button onClick={saveSchoolProfile} disabled={schoolSaving}>
+									{schoolSaving ? "Menyimpan..." : "Simpan"}
+								</Button>
 							</div>
-						) : (
-							<p className="py-4 text-center text-sm text-muted-foreground">
-								Belum ada siswa
-							</p>
-						)}
-					</div>
-
-					{/* Tutorial */}
-					<div className="space-y-4 rounded-2xl border bg-card p-5 shadow-xs">
-						<h3 className="text-lg font-semibold">Tutorial</h3>
-						<p className="text-xs text-muted-foreground">
-							Lihat kembali panduan penggunaan aplikasi.
-						</p>
-						<Button
-							variant="outline"
-							onClick={() => {
-								localStorage.removeItem("sijil_tutorial_done");
-								window.dispatchEvent(new CustomEvent("sijil-restart-tutorial"));
-								navigate({ to: "/dashboard" });
-							}}
-						>
-							Mulai Ulang Tutorial
-						</Button>
-					</div>
-
-					{/* Backup & Import */}
-					<div className="space-y-4 rounded-2xl border bg-card p-5 shadow-xs">
-						<h3 className="text-lg font-semibold">Backup & Import</h3>
-						<div className="flex gap-3">
-							<Button variant="outline" onClick={exportJSON}>
-								Export JSON
-							</Button>
-							<label className="inline-flex items-center justify-center gap-2 rounded-md border border-input bg-background px-4 py-2 text-sm font-medium shadow-xs hover:bg-accent hover:text-accent-foreground cursor-pointer">
-								Import JSON
-								<input
-									type="file"
-									accept=".json"
-									onChange={importJSON}
-									className="hidden"
-								/>
-							</label>
 						</div>
-						<p className="text-xs text-muted-foreground">
-							Backup menyimpan profil dan daftar siswa. Riwayat setoran
-							tersimpan di database.
-						</p>
-					</div>
+					</TabsContent>
 
-					{/* Danger Zone */}
-					<div className="space-y-4 rounded-2xl border border-destructive/30 bg-card p-5 shadow-xs">
-						<h3 className="text-lg font-semibold text-destructive">
-							Zona Bahaya
-						</h3>
-						<p className="text-xs text-muted-foreground">
-							Hapus semua siswa dan data. Tindakan ini tidak dapat dibatalkan.
-						</p>
-						<Button
-							variant="destructive"
-							onClick={async () => {
-								if (!confirm("Yakin ingin menghapus semua siswa?")) return;
-								let failed = 0;
-								for (const s of siswaList) {
-									const res = await fetch(`/api/siswa?id=${s.id}`, {
-										method: "DELETE",
-									});
-									if (!res.ok) failed++;
-								}
-								if (failed === 0) {
-									setSiswaList([]);
-									toast.success("Semua siswa dihapus");
-								} else {
-									const sRes = await fetch("/api/siswa");
-									if (sRes.ok) setSiswaList(await sRes.json());
-									toast.error(
-										`${failed} siswa gagal dihapus (hapus data setoran terlebih dahulu)`,
+					<TabsContent value="tutorial" className="space-y-6">
+						{/* Tutorial */}
+						<div className="space-y-4 rounded-2xl border bg-card p-5 shadow-xs">
+							<h3 className="text-lg font-semibold">Tutorial</h3>
+							<p className="text-xs text-muted-foreground">
+								Lihat kembali panduan penggunaan aplikasi.
+							</p>
+							<Button
+								variant="outline"
+								onClick={() => {
+									localStorage.removeItem("sijil_tutorial_done");
+									window.dispatchEvent(
+										new CustomEvent("sijil-restart-tutorial"),
 									);
-								}
-							}}
+									navigate({ to: "/dashboard" });
+								}}
+							>
+								Mulai Ulang Tutorial
+							</Button>
+						</div>
+					</TabsContent>
+
+					<TabsContent value="lainnya" className="space-y-6">
+						{/* Change Password */}
+						<form
+							onSubmit={changePassword}
+							className="space-y-4 rounded-2xl border bg-card p-5 shadow-xs"
 						>
-							Hapus Semua Siswa
-						</Button>
-					</div>
-				</>
+							<h3 className="text-lg font-semibold">Ganti Password</h3>
+							<div className="space-y-2">
+								<label
+									htmlFor="current-password"
+									className="text-sm font-medium"
+								>
+									Password Saat Ini
+								</label>
+								<Input
+									id="current-password"
+									type="password"
+									value={currentPassword}
+									onChange={(e) => setCurrentPassword(e.target.value)}
+									placeholder="Password lama"
+									required
+								/>
+							</div>
+							<div className="space-y-2">
+								<label htmlFor="new-password" className="text-sm font-medium">
+									Password Baru
+								</label>
+								<Input
+									id="new-password"
+									type="password"
+									value={newPassword}
+									onChange={(e) => setNewPassword(e.target.value)}
+									placeholder="Minimal 8 karakter"
+									minLength={8}
+								/>
+							</div>
+							<div className="space-y-2">
+								<label
+									htmlFor="confirm-password"
+									className="text-sm font-medium"
+								>
+									Konfirmasi Password
+								</label>
+								<Input
+									id="confirm-password"
+									type="password"
+									value={confirmPassword}
+									onChange={(e) => setConfirmPassword(e.target.value)}
+									placeholder="Ulangi password baru"
+									minLength={8}
+								/>
+							</div>
+							<Button type="submit" variant="outline">
+								Ganti Password
+							</Button>
+						</form>
+						{/* Backup & Import */}
+						<div className="space-y-4 rounded-2xl border bg-card p-5 shadow-xs">
+							<h3 className="text-lg font-semibold">Backup & Import</h3>
+							<div className="flex gap-3">
+								<Button variant="outline" onClick={exportJSON}>
+									Export JSON
+								</Button>
+								<label className="inline-flex items-center justify-center gap-2 rounded-md border border-input bg-background px-4 py-2 text-sm font-medium shadow-xs hover:bg-accent hover:text-accent-foreground cursor-pointer">
+									Import JSON
+									<input
+										type="file"
+										accept=".json"
+										onChange={importJSON}
+										className="hidden"
+									/>
+								</label>
+							</div>
+							<p className="text-xs text-muted-foreground">
+								Backup menyimpan profil dan daftar siswa. Riwayat setoran
+								tersimpan di database.
+							</p>
+						</div>
+						{/* Danger Zone */}
+						<div className="space-y-4 rounded-2xl border border-destructive/30 bg-card p-5 shadow-xs">
+							<h3 className="text-lg font-semibold text-destructive">
+								Zona Bahaya
+							</h3>
+							<p className="text-xs text-muted-foreground">
+								Hapus semua siswa dan data. Tindakan ini tidak dapat dibatalkan.
+							</p>
+							<Button
+								variant="destructive"
+								onClick={async () => {
+									if (!confirm("Yakin ingin menghapus semua siswa?")) return;
+									let failed = 0;
+									for (const s of siswaList) {
+										const res = await fetch(`/api/siswa?id=${s.id}`, {
+											method: "DELETE",
+										});
+										if (!res.ok) failed++;
+									}
+									if (failed === 0) {
+										setSiswaList([]);
+										toast.success("Semua siswa dihapus");
+									} else {
+										const sRes = await fetch("/api/siswa");
+										if (sRes.ok) setSiswaList(await sRes.json());
+										toast.error(
+											`${failed} siswa gagal dihapus (hapus data setoran terlebih dahulu)`,
+										);
+									}
+								}}
+							>
+								Hapus Semua Siswa
+							</Button>
+						</div>
+					</TabsContent>
+				</Tabs>
 			)}
 		</div>
 	);
