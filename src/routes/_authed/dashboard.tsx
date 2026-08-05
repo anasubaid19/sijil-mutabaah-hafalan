@@ -108,6 +108,11 @@ function DashboardPage() {
 	const [isMobile, setIsMobile] = useState(
 		typeof window !== "undefined" && window.innerWidth < 768,
 	);
+	const [reducedMotion, setReducedMotion] = useState(
+		() =>
+			typeof window !== "undefined" &&
+			window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+	);
 
 	const today = todayStr();
 
@@ -134,6 +139,14 @@ function DashboardPage() {
 		}
 		window.addEventListener("resize", onResize);
 		return () => window.removeEventListener("resize", onResize);
+	}, []);
+
+	useEffect(() => {
+		const media = window.matchMedia("(prefers-reduced-motion: reduce)");
+		const update = () => setReducedMotion(media.matches);
+		update();
+		media.addEventListener("change", update);
+		return () => media.removeEventListener("change", update);
 	}, []);
 
 	const todayPresensiMap = new Map(presensiList.map((p) => [p.siswaId, p]));
@@ -378,7 +391,7 @@ function DashboardPage() {
 													onClick={() => handlePresensiChange(s.id, st)}
 													aria-label={`Tandai ${s.nama}: ${st}`}
 													aria-pressed={current === st}
-													className={`rounded-md px-2 py-1.5 text-xs font-semibold transition-all duration-150 min-h-[44px] min-w-[44px] focus-visible:ring-2 focus-visible:ring-ring ${
+													className={`rounded-md px-2 py-1.5 text-xs font-semibold min-h-[44px] min-w-[44px] focus-visible:ring-2 focus-visible:ring-ring ${
 														current === st ? CHIP_ACTIVE[st] : CHIP_COLORS[st]
 													}`}
 												>
@@ -488,6 +501,7 @@ function DashboardPage() {
 								chartType={chartType}
 								chartData={chartData}
 								height={220}
+								reducedMotion={reducedMotion}
 							/>
 						) : (
 							<div className="flex flex-col items-center gap-2 py-10">
@@ -566,6 +580,7 @@ function DashboardPage() {
 								chartType={chartType}
 								chartData={chartData}
 								height={200}
+								reducedMotion={reducedMotion}
 							/>
 						) : (
 							<p className="py-8 text-center text-sm text-muted-foreground">
@@ -760,15 +775,17 @@ function ChartBlock({
 	chartType,
 	chartData,
 	height,
+	reducedMotion,
 }: {
 	chartType: "bar" | "line";
 	chartData: { day: string; ziyadah: number; murajaah: number }[];
 	height: number;
+	reducedMotion: boolean;
 }) {
 	if (chartType === "bar") {
 		return (
 			<ResponsiveContainer width="100%" height={height}>
-				<BarChart data={chartData} animationDuration={400}>
+				<BarChart data={chartData}>
 					<CartesianGrid
 						strokeDasharray="3 3"
 						className="[stroke:var(--border)]"
@@ -789,12 +806,18 @@ function ChartBlock({
 						name="Ziyadah"
 						fill="var(--chart-1)"
 						radius={[4, 4, 0, 0]}
+						isAnimationActive={!reducedMotion}
+						animationDuration={200}
+						animationEasing="cubic-bezier(0.23,1,0.32,1)"
 					/>
 					<Bar
 						dataKey="murajaah"
 						name="Murajaah"
 						fill="var(--chart-2)"
 						radius={[4, 4, 0, 0]}
+						isAnimationActive={!reducedMotion}
+						animationDuration={200}
+						animationEasing="cubic-bezier(0.23,1,0.32,1)"
 					/>
 				</BarChart>
 			</ResponsiveContainer>
@@ -802,7 +825,7 @@ function ChartBlock({
 	}
 	return (
 		<ResponsiveContainer width="100%" height={height}>
-			<LineChart data={chartData} animationDuration={400}>
+			<LineChart data={chartData}>
 				<CartesianGrid
 					strokeDasharray="3 3"
 					className="[stroke:var(--border)]"
@@ -825,6 +848,9 @@ function ChartBlock({
 					stroke="var(--chart-1)"
 					strokeWidth={2}
 					dot={{ fill: "var(--chart-1)", r: 4 }}
+					isAnimationActive={!reducedMotion}
+					animationDuration={200}
+					animationEasing="cubic-bezier(0.23,1,0.32,1)"
 				/>
 				<Line
 					type="monotone"
@@ -833,6 +859,9 @@ function ChartBlock({
 					stroke="var(--chart-2)"
 					strokeWidth={2}
 					dot={{ fill: "var(--chart-2)", r: 4 }}
+					isAnimationActive={!reducedMotion}
+					animationDuration={200}
+					animationEasing="cubic-bezier(0.23,1,0.32,1)"
 				/>
 			</LineChart>
 		</ResponsiveContainer>

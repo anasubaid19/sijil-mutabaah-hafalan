@@ -77,9 +77,7 @@ export function BottomNav() {
 								>
 									<HugeiconsIcon
 										icon={item.icon}
-										className={`transition-[width,height] duration-200 ${
-											active ? "size-[18px]" : "size-5"
-										}`}
+										className="size-5"
 										strokeWidth={active ? 2 : 1.8}
 									/>
 								</div>

@@ -399,27 +399,35 @@ export function TutorialOverlay({ onFinish }: { onFinish: () => void }) {
 	}, []);
 
 	useEffect(() => {
+		let cancelled = false;
 		setAnim("out");
 		const t1 = setTimeout(async () => {
 			const s = steps[step];
 			const id = s?.navId ?? null;
+			if (cancelled) return;
 			if (!id) {
 				setTarget(null);
 			} else {
 				const resolveId = window.innerWidth < 768 ? (s.mobileNavId ?? id) : id;
 				const el = await waitForEl(resolveId);
+				if (cancelled) return;
 				if (el) {
 					await ensureVisible(el);
+					if (cancelled) return;
 					setTarget(el.getBoundingClientRect());
 				} else {
 					setTarget(null);
 				}
 			}
+			if (cancelled) return;
 			setCardH(cardRef.current?.offsetHeight ?? MIN_CALLOUT_H);
 			setViewport(getViewport());
 			setAnim("in");
 		}, 220);
-		return () => clearTimeout(t1);
+		return () => {
+			cancelled = true;
+			clearTimeout(t1);
+		};
 	}, [step, steps]);
 
 	useEffect(() => {

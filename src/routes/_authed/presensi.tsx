@@ -258,7 +258,7 @@ function PresensiPage() {
 											type="button"
 											key={st}
 											onClick={() => handlePresensiChange(s.id, st)}
-											className={`rounded-md px-2.5 py-1.5 text-xs font-semibold transition-all duration-150 min-h-[44px] min-w-[44px] focus-visible:ring-2 focus-visible:ring-ring ${
+											className={`rounded-md px-2.5 py-1.5 text-xs font-semibold min-h-[44px] min-w-[44px] focus-visible:ring-2 focus-visible:ring-ring ${
 												current === st ? CHIP_ACTIVE[st] : CHIP_COLORS[st]
 											}`}
 										>
