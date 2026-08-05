@@ -66,25 +66,25 @@ export function BottomNav() {
 								key={item.to}
 								to={item.to}
 								data-nav-id={item.navId}
-								className={`flex flex-1 flex-col items-center gap-0.5 py-2 min-h-[48px] transition-all duration-200 ${
+								className={`flex flex-1 flex-col items-center gap-0.5 py-2 min-h-[48px] transition-colors duration-200 ${
 									active ? "text-primary" : "text-muted-foreground"
 								}`}
 							>
 								<div
-									className={`flex items-center justify-center rounded-full transition-all duration-200 ${
+									className={`flex items-center justify-center rounded-full transition-colors duration-200 ${
 										active ? "bg-primary/10 p-1.5" : "p-1.5"
 									}`}
 								>
 									<HugeiconsIcon
 										icon={item.icon}
-										className={`transition-all duration-200 ${
+										className={`transition-[width,height] duration-200 ${
 											active ? "size-[18px]" : "size-5"
 										}`}
 										strokeWidth={active ? 2 : 1.8}
 									/>
 								</div>
 								<span
-									className={`text-[0.6rem] font-semibold uppercase tracking-wider transition-colors duration-200 ${
+									className={`text-xs font-semibold uppercase tracking-wider transition-colors duration-200 ${
 										active ? "text-primary" : ""
 									}`}
 								>
@@ -97,12 +97,12 @@ export function BottomNav() {
 						type="button"
 						onClick={() => setOpen(true)}
 						data-nav-id="nav-lainnya"
-						className={`flex flex-1 flex-col items-center gap-0.5 py-2 min-h-[48px] transition-all duration-200 ${
+						className={`flex flex-1 flex-col items-center gap-0.5 py-2 min-h-[48px] transition-colors duration-200 ${
 							lainnyaActive ? "text-primary" : "text-muted-foreground"
 						}`}
 					>
 						<div
-							className={`flex items-center justify-center rounded-full transition-all duration-200 p-1.5 ${
+							className={`flex items-center justify-center rounded-full transition-colors duration-200 p-1.5 ${
 								lainnyaActive ? "bg-primary/10" : ""
 							}`}
 						>
@@ -112,7 +112,7 @@ export function BottomNav() {
 								strokeWidth={1.8}
 							/>
 						</div>
-						<span className="text-[0.6rem] font-semibold uppercase tracking-wider transition-colors duration-200">
+						<span className="text-xs font-semibold uppercase tracking-wider transition-colors duration-200">
 							Lainnya
 						</span>
 					</button>

@@ -20,6 +20,16 @@ import {
 	YAxis,
 } from "recharts";
 import { MushafPanel } from "@/components/mushaf-panel";
+import {
+	AlertDialog,
+	AlertDialogAction,
+	AlertDialogCancel,
+	AlertDialogContent,
+	AlertDialogDescription,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { calcProgress, getSurahName } from "@/lib/progress";
 
@@ -60,7 +70,7 @@ const CHIP_COLORS: Record<PresensiStatus, string> = {
 	Hadir:
 		"bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 ring-emerald-500/30",
 	Izin: "bg-blue-500/15 text-blue-700 dark:text-blue-400 ring-blue-500/30",
-	Sakit: "bg-amber-500/15 text-amber-700 dark:text-amber-400 ring-amber-500/30",
+	Sakit: "bg-amber-500/15 text-amber-800 dark:text-amber-400 ring-amber-500/30",
 	Alpha: "bg-red-500/15 text-red-700 dark:text-red-400 ring-red-500/30",
 };
 
@@ -73,7 +83,7 @@ const CHIP_ACTIVE: Record<PresensiStatus, string> = {
 
 const STATUS_COLORS: Record<string, string> = {
 	Lancar: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400",
-	"Mulai Lancar": "bg-amber-500/15 text-amber-700 dark:text-amber-400",
+	"Mulai Lancar": "bg-amber-500/15 text-amber-800 dark:text-amber-400",
 	"Tidak Lancar": "bg-red-500/15 text-red-700 dark:text-red-400",
 };
 
@@ -93,6 +103,8 @@ function DashboardPage() {
 	const [mushafOpen, setMushafOpen] = useState(false);
 	const [chartType, setChartType] = useState<"bar" | "line">("bar");
 	const [chartRange, setChartRange] = useState<"week" | "month">("week");
+	const [resetOpen, setResetOpen] = useState(false);
+	const [announce, setAnnounce] = useState("");
 	const [isMobile, setIsMobile] = useState(
 		typeof window !== "undefined" && window.innerWidth < 768,
 	);
@@ -153,10 +165,12 @@ function DashboardPage() {
 	const handlePresensiChange = useCallback(
 		async (siswaId: string, status: PresensiStatus) => {
 			const existing = todayPresensiMap.get(siswaId);
+			const nama = siswaList.find((s) => s.id === siswaId)?.nama;
 
 			if (existing && existing.status === status) {
 				await fetch(`/api/presensi?id=${existing.id}`, { method: "DELETE" });
 				setPresensiList((prev) => prev.filter((p) => p.siswaId !== siswaId));
+				setAnnounce(`Presensi ${nama} dihapus`);
 				return;
 			}
 
@@ -170,6 +184,7 @@ function DashboardPage() {
 					setPresensiList((prev) =>
 						prev.map((p) => (p.siswaId === siswaId ? { ...p, status } : p)),
 					);
+					setAnnounce(`${nama}: ${status}`);
 				}
 			} else {
 				const res = await fetch("/api/presensi", {
@@ -180,10 +195,11 @@ function DashboardPage() {
 				if (res.ok) {
 					const row = await res.json();
 					setPresensiList((prev) => [...prev, row]);
+					setAnnounce(`${nama}: ${status}`);
 				}
 			}
 		},
-		[today, todayPresensiMap],
+		[today, todayPresensiMap, siswaList],
 	);
 
 	const markAllPresent = useCallback(async () => {
@@ -295,10 +311,17 @@ function DashboardPage() {
 						<Button variant="outline" size="sm" onClick={markAllPresent}>
 							Semua Hadir
 						</Button>
-						<Button variant="outline" size="sm" onClick={resetPresensi}>
+						<Button
+							variant="outline"
+							size="sm"
+							onClick={() => setResetOpen(true)}
+						>
 							Reset
 						</Button>
 					</div>
+				</div>
+				<div role="status" aria-live="polite" className="sr-only">
+					{announce}
 				</div>
 				{/* Summary bar */}
 				<div className="mb-3 flex items-center gap-4 rounded-xl bg-muted/50 px-4 py-2.5">
@@ -316,7 +339,7 @@ function DashboardPage() {
 						{hadirCount}/{siswaList.length} Hadir
 					</span>
 				</div>
-				<div className="mb-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-[0.7rem] text-muted-foreground">
+				<div className="mb-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
 					<span className="inline-flex items-center gap-1">
 						<span className="inline-block size-2 rounded-sm bg-emerald-500" />H
 						= Hadir
@@ -353,6 +376,8 @@ function DashboardPage() {
 													type="button"
 													key={st}
 													onClick={() => handlePresensiChange(s.id, st)}
+													aria-label={`Tandai ${s.nama}: ${st}`}
+													aria-pressed={current === st}
 													className={`rounded-md px-2 py-1.5 text-xs font-semibold transition-all duration-150 min-h-[44px] min-w-[44px] focus-visible:ring-2 focus-visible:ring-ring ${
 														current === st ? CHIP_ACTIVE[st] : CHIP_COLORS[st]
 													}`}
@@ -413,6 +438,7 @@ function DashboardPage() {
 										key={key}
 										type="button"
 										onClick={() => setChartRange(key)}
+										aria-pressed={chartRange === key}
 										className={`rounded-md px-3 py-1 text-xs font-medium transition-colors ${
 											chartRange === key
 												? "bg-background text-foreground shadow-sm"
@@ -434,6 +460,7 @@ function DashboardPage() {
 										key={key}
 										type="button"
 										onClick={() => setChartType(key)}
+										aria-pressed={chartType === key}
 										className={`rounded-md px-3 py-1 text-xs font-medium transition-colors ${
 											chartType === key
 												? "bg-background text-foreground shadow-sm"
@@ -446,13 +473,13 @@ function DashboardPage() {
 							</div>
 						</div>
 						{/* Legend — compact pills */}
-						<div className="flex items-center justify-center gap-4 text-[0.65rem] font-medium">
+						<div className="flex items-center justify-center gap-4 text-xs font-medium">
 							<span className="inline-flex items-center gap-1.5">
-								<span className="size-2 rounded-full bg-[#2563eb]" />
+								<span className="size-2 rounded-full bg-[var(--chart-1)]" />
 								Ziyadah
 							</span>
 							<span className="inline-flex items-center gap-1.5">
-								<span className="size-2 rounded-full bg-[#f59e0b]" />
+								<span className="size-2 rounded-full bg-[var(--chart-2)]" />
 								Murajaah
 							</span>
 						</div>
@@ -499,6 +526,7 @@ function DashboardPage() {
 											key={key}
 											type="button"
 											onClick={() => setChartRange(key)}
+											aria-pressed={chartRange === key}
 											className={`rounded-md px-3 py-1 text-xs font-medium transition-colors ${
 												chartRange === key
 													? "bg-background text-foreground shadow-sm"
@@ -520,6 +548,7 @@ function DashboardPage() {
 											key={key}
 											type="button"
 											onClick={() => setChartType(key)}
+											aria-pressed={chartType === key}
 											className={`rounded-md px-3 py-1 text-xs font-medium transition-colors ${
 												chartType === key
 													? "bg-background text-foreground shadow-sm"
@@ -651,7 +680,7 @@ function DashboardPage() {
 									<div key={item.siswa.id} className="space-y-1.5">
 										<div className="flex items-center justify-between">
 											<div className="flex items-center gap-2">
-												<span className="flex size-5 items-center justify-center rounded-full bg-muted text-[0.6rem] font-bold text-muted-foreground">
+												<span className="flex size-5 items-center justify-center rounded-full bg-muted text-xs font-bold text-muted-foreground">
 													{i + 1}
 												</span>
 												<span className="text-sm font-semibold">
@@ -696,6 +725,33 @@ function DashboardPage() {
 					</p>
 				)}
 			</div>
+
+			{/* Reset confirmation */}
+			<AlertDialog open={resetOpen} onOpenChange={setResetOpen}>
+				<AlertDialogContent size="sm">
+					<AlertDialogHeader>
+						<AlertDialogTitle>Hapus semua presensi hari ini?</AlertDialogTitle>
+						<AlertDialogDescription>
+							Status kehadiran {fmtDate(today)} untuk semua siswa akan dihapus
+							dan tidak dapat dipulihkan.
+						</AlertDialogDescription>
+					</AlertDialogHeader>
+					<AlertDialogFooter>
+						<AlertDialogCancel onClick={() => setResetOpen(false)}>
+							Batal
+						</AlertDialogCancel>
+						<AlertDialogAction
+							variant="destructive"
+							onClick={() => {
+								setResetOpen(false);
+								resetPresensi();
+							}}
+						>
+							Hapus presensi
+						</AlertDialogAction>
+					</AlertDialogFooter>
+				</AlertDialogContent>
+			</AlertDialog>
 		</div>
 	);
 }
@@ -731,13 +787,13 @@ function ChartBlock({
 					<Bar
 						dataKey="ziyadah"
 						name="Ziyadah"
-						fill="#2563eb"
+						fill="var(--chart-1)"
 						radius={[4, 4, 0, 0]}
 					/>
 					<Bar
 						dataKey="murajaah"
 						name="Murajaah"
-						fill="#f59e0b"
+						fill="var(--chart-2)"
 						radius={[4, 4, 0, 0]}
 					/>
 				</BarChart>
@@ -766,17 +822,17 @@ function ChartBlock({
 					type="monotone"
 					dataKey="ziyadah"
 					name="Ziyadah"
-					stroke="#2563eb"
+					stroke="var(--chart-1)"
 					strokeWidth={2}
-					dot={{ fill: "#2563eb", r: 4 }}
+					dot={{ fill: "var(--chart-1)", r: 4 }}
 				/>
 				<Line
 					type="monotone"
 					dataKey="murajaah"
 					name="Murajaah"
-					stroke="#f59e0b"
+					stroke="var(--chart-2)"
 					strokeWidth={2}
-					dot={{ fill: "#f59e0b", r: 4 }}
+					dot={{ fill: "var(--chart-2)", r: 4 }}
 				/>
 			</LineChart>
 		</ResponsiveContainer>
@@ -806,9 +862,7 @@ function StatCard({
 			<div>
 				<p className="text-xs text-muted-foreground">{label}</p>
 				<p className="text-2xl font-bold tracking-tight">{value}</p>
-				{sub && (
-					<p className="mt-0.5 text-[0.65rem] text-muted-foreground">{sub}</p>
-				)}
+				{sub && <p className="mt-0.5 text-xs text-muted-foreground">{sub}</p>}
 			</div>
 		</div>
 	);

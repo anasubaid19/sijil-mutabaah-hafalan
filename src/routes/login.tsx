@@ -85,9 +85,14 @@ function LoginPage() {
 				</div>
 
 				{/* Tab Switcher */}
-				<div className="flex rounded-xl bg-muted p-1">
+				<div
+					className="flex rounded-xl bg-muted p-1"
+					role="group"
+					aria-label="Jenis akun"
+				>
 					<button
 						type="button"
+						aria-pressed={tab === "ustadz"}
 						onClick={() => {
 							setTab("ustadz");
 							setError("");
@@ -102,6 +107,7 @@ function LoginPage() {
 					</button>
 					<button
 						type="button"
+						aria-pressed={tab === "orangtua"}
 						onClick={() => {
 							setTab("orangtua");
 							setError("");
@@ -120,7 +126,11 @@ function LoginPage() {
 				{tab === "ustadz" && (
 					<form onSubmit={handleUstadzLogin} className="space-y-4">
 						{error && (
-							<div className="rounded-xl bg-destructive/10 px-4 py-3 text-sm text-destructive">
+							<div
+								id="login-error"
+								role="alert"
+								className="rounded-xl bg-destructive/10 px-4 py-3 text-sm text-destructive"
+							>
 								{error}
 							</div>
 						)}
@@ -135,6 +145,8 @@ function LoginPage() {
 								placeholder="Masukkan username"
 								value={username}
 								onChange={(e) => setUsername(e.target.value)}
+								aria-invalid={Boolean(error)}
+								aria-describedby={error ? "login-error" : undefined}
 								required
 							/>
 						</div>
@@ -149,6 +161,8 @@ function LoginPage() {
 								placeholder="••••••••"
 								value={password}
 								onChange={(e) => setPassword(e.target.value)}
+								aria-invalid={Boolean(error)}
+								aria-describedby={error ? "login-error" : undefined}
 								required
 							/>
 						</div>
@@ -163,26 +177,32 @@ function LoginPage() {
 				{tab === "orangtua" && (
 					<form onSubmit={handleOrangTuaLogin} className="space-y-4">
 						{error && (
-							<div className="rounded-xl bg-destructive/10 px-4 py-3 text-sm text-destructive">
+							<div
+								id="login-error"
+								role="alert"
+								className="rounded-xl bg-destructive/10 px-4 py-3 text-sm text-destructive"
+							>
 								{error}
 							</div>
 						)}
 
-				<div className="space-y-2">
-						<label htmlFor="studentId" className="text-sm font-medium">
-							ID Siswa
-						</label>
-						<Input
-							id="studentId"
-							type="text"
-							placeholder="Masukkan ID siswa dari ustadz"
-							value={studentId}
-							onChange={(e) => setStudentId(e.target.value)}
-							required
-						/>
-					</div>
+						<div className="space-y-2">
+							<label htmlFor="studentId" className="text-sm font-medium">
+								ID Siswa
+							</label>
+							<Input
+								id="studentId"
+								type="text"
+								placeholder="Masukkan ID siswa dari ustadz"
+								value={studentId}
+								onChange={(e) => setStudentId(e.target.value)}
+								aria-invalid={Boolean(error)}
+								aria-describedby={error ? "login-error" : undefined}
+								required
+							/>
+						</div>
 
-					<Button type="submit" disabled={loading} className="w-full">
+						<Button type="submit" disabled={loading} className="w-full">
 							{loading ? "Masuk..." : "Masuk"}
 						</Button>
 					</form>

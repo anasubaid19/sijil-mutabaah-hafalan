@@ -78,7 +78,7 @@ export function AppSidebar() {
 							<span className="text-sm font-semibold leading-tight">
 								Sijil Mutaba'ah
 							</span>
-							<span className="text-[0.65rem] leading-tight text-muted-foreground">
+							<span className="text-xs leading-tight text-muted-foreground">
 								Tahsin & Hifz Tracker
 							</span>
 						</div>
@@ -87,7 +87,7 @@ export function AppSidebar() {
 
 				<SidebarContent>
 					<SidebarGroup>
-						<SidebarGroupLabel className="text-[10px] font-semibold uppercase tracking-wider">
+						<SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider">
 							Navigasi
 						</SidebarGroupLabel>
 						<SidebarGroupContent>
@@ -110,7 +110,7 @@ export function AppSidebar() {
 					</SidebarGroup>
 
 					<SidebarGroup>
-						<SidebarGroupLabel className="text-[10px] font-semibold uppercase tracking-wider">
+						<SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider">
 							Lainnya
 						</SidebarGroupLabel>
 						<SidebarGroupContent>

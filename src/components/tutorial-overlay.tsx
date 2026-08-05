@@ -608,7 +608,7 @@ export function TutorialOverlay({ onFinish }: { onFinish: () => void }) {
 									onClick={finish}
 									className="text-xs text-muted-foreground/40 hover:text-muted-foreground transition-colors min-h-[44px] px-2"
 								>
-									Skip tutorial
+									Lewati tutorial
 								</button>
 								<button
 									type="button"

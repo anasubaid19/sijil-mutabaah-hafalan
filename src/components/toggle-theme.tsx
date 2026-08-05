@@ -25,12 +25,13 @@ export function ToggleTheme() {
 			variant="ghost"
 			size="icon-sm"
 			onClick={() => setTheme(isDark ? "light" : "dark")}
-			tooltip={isDark ? "Mode Terang" : "Mode Gelap"}
+			aria-label={isDark ? "Ganti ke mode terang" : "Ganti ke mode gelap"}
 		>
 			<HugeiconsIcon
 				icon={isDark ? Day : Dark}
 				className="size-4 transition-transform duration-300 rotate-0"
 				strokeWidth={1.8}
+				aria-hidden
 			/>
 		</Button>
 	);

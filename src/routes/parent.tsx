@@ -52,7 +52,7 @@ const STATUS_COLORS: Record<string, string> = {
 	Lancar:
 		"bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/30",
 	"Mulai Lancar":
-		"bg-amber-500/15 text-amber-700 dark:text-amber-400 border-amber-500/30",
+		"bg-amber-500/15 text-amber-800 dark:text-amber-400 border-amber-500/30",
 	"Tidak Lancar":
 		"bg-red-500/15 text-red-700 dark:text-red-400 border-red-500/30",
 };
@@ -214,7 +214,7 @@ function ParentDashboard() {
 								</div>
 								<p className="mt-2.5 text-xs text-muted-foreground">
 									{lastUpdated
-										? `Terakhir diperbarui ${lastUpdated}`
+										? `Terakhir diperbarui ${formatDate(lastUpdated)}`
 										: "Belum ada hafalan yang tercatat."}
 								</p>
 							</div>
@@ -240,7 +240,7 @@ function ParentDashboard() {
 												</p>
 												<p className="text-xs text-muted-foreground">
 													Ayat {lastSetoran.ayatAwal}–{lastSetoran.ayatAkhir} ·{" "}
-													{lastSetoran.tanggal}
+													{formatDate(lastSetoran.tanggal)}
 												</p>
 											</div>
 										</div>
@@ -354,7 +354,7 @@ function ParentDashboard() {
 																	</p>
 																	<p className="text-xs text-muted-foreground">
 																		Ayat {s.ayatAwal}–{s.ayatAkhir} ·{" "}
-																		{s.tanggal}
+																		{formatDate(s.tanggal)}
 																	</p>
 																</div>
 															</div>
@@ -414,7 +414,7 @@ function ParentDashboard() {
 					<footer className="mt-8 border-t pt-6 text-center">
 						<p className="text-xs text-muted-foreground">
 							{lastUpdated
-								? `Data terakhir diperbarui: ${lastUpdated}`
+								? `Data terakhir diperbarui: ${formatDate(lastUpdated)}`
 								: "Belum ada data untuk ditampilkan."}
 						</p>
 						<p className="mt-1 text-xs font-medium text-foreground/70">
@@ -425,4 +425,12 @@ function ParentDashboard() {
 			</div>
 		</div>
 	);
+}
+
+function formatDate(date: string) {
+	return new Date(`${date}T00:00:00`).toLocaleDateString("id-ID", {
+		day: "numeric",
+		month: "short",
+		year: "numeric",
+	});
 }

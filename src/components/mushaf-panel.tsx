@@ -479,8 +479,9 @@ export function MushafPanel({
 					else if (e.key === "Enter" || e.key === " ")
 						handleSvgClick(e as unknown as React.MouseEvent<HTMLDivElement>);
 				}}
-				role="application"
-				tabIndex={mode === "input" ? 0 : undefined}
+				role="region"
+				aria-label="Teks Al-Quran"
+				tabIndex={0}
 				className={`px-3 py-3 overflow-auto ${mode === "input" ? "cursor-pointer" : ""}`}
 				style={{ maxHeight: `${(zoom / 100) * 70}vh` }}
 			>

@@ -31,8 +31,9 @@ export function Header({ title }: HeaderProps) {
 					size="icon-sm"
 					className="hidden md:flex"
 					onClick={toggleSidebar}
+					aria-label="Sembunyikan atau tampilkan menu samping"
 				>
-					<HugeiconsIcon icon={PanelLeftOpen} strokeWidth={2} />
+					<HugeiconsIcon icon={PanelLeftOpen} strokeWidth={2} aria-hidden />
 				</Button>
 				{/* Logo — visible only on mobile (sidebar hidden) */}
 				<img
@@ -50,15 +51,15 @@ export function Header({ title }: HeaderProps) {
 					onClick={() => setReportOpen(true)}
 					aria-label="Laporkan Masalah"
 				>
-					<HugeiconsIcon icon={Bug} strokeWidth={1.8} />
+					<HugeiconsIcon icon={Bug} strokeWidth={1.8} aria-hidden />
 				</Button>
 				<Button
 					variant="ghost"
 					size="icon-sm"
 					onClick={handleLogout}
-					tooltip="Keluar"
+					aria-label="Keluar"
 				>
-					<HugeiconsIcon icon={LogOut} strokeWidth={1.8} />
+					<HugeiconsIcon icon={LogOut} strokeWidth={1.8} aria-hidden />
 				</Button>
 			</div>
 			<ReportDialog open={reportOpen} onOpenChange={setReportOpen} />
