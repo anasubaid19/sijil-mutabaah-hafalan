@@ -67,8 +67,8 @@ const INSTALL_TEXT: Record<Platform, { intro: string; steps: string[] }> = {
 			"Pasang Sijil Mutaba'ah sebagai aplikasi agar bisa dibuka langsung seperti aplikasi biasa.",
 		steps: [
 			"Ketuk ikon ⋮ (tiga titik) di kanan atas Chrome.",
-			'Pilih "Install app" atau "Tambahkan ke layar utama".',
-			'Ketuk "Install" untuk konfirmasi.',
+			'Pilih "Instal aplikasi" atau "Tambahkan ke layar utama".',
+			'Ketuk "Instal" untuk konfirmasi.',
 		],
 	},
 	ios: {
@@ -84,7 +84,7 @@ const INSTALL_TEXT: Record<Platform, { intro: string; steps: string[] }> = {
 		intro:
 			"Pasang Sijil Mutaba'ah sebagai aplikasi agar bisa dibuka lewat ikon desktop.",
 		steps: [
-			"Klik ikon install (monitor dengan panah) di ujung kanan bilah alamat.",
+			"Klik ikon instal (monitor dengan panah) di ujung kanan bilah alamat.",
 			'Jika tidak muncul, buka menu ⋮ lalu pilih "Instal Sijil Mutaba\'ah".',
 			'Klik "Instal" untuk konfirmasi.',
 		],
@@ -341,14 +341,14 @@ export function TutorialOverlay({ onFinish }: { onFinish: () => void }) {
 		return [
 			...BASE_STEPS,
 			{
-				title: "Install sebagai Aplikasi",
+				title: "Instal sebagai Aplikasi",
 				text: INSTALL_TEXT[platform].intro,
 				navId: null,
 				variant: "center",
 				platform,
 			},
 			{
-				title: "Cara Install",
+				title: "Cara Instal",
 				text: "Ikuti langkah-langkah di bawah sesuai perangkat Anda.",
 				navId: null,
 				variant: "center",

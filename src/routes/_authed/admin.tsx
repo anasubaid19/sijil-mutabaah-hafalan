@@ -127,7 +127,7 @@ function AdminPage() {
 		<div className="mx-auto max-w-5xl space-y-6 pb-20 md:pb-6">
 			<div className="flex items-center justify-between">
 				<div>
-					<h2 className="text-base font-semibold">Admin Dashboard</h2>
+					<h2 className="text-base font-semibold">Dasbor Admin</h2>
 					<p className="mt-1 text-sm text-muted-foreground">
 						Ringkasan data aplikasi
 					</p>
@@ -148,7 +148,7 @@ function AdminPage() {
 					<div className="grid gap-3 grid-cols-2 lg:grid-cols-4">
 						<StatCard
 							icon={Group01Icon}
-							label="Total User"
+							label="Total Pengguna"
 							value={stats.totalUsers}
 							color="text-primary"
 						/>
@@ -174,7 +174,7 @@ function AdminPage() {
 
 					{stats.users.length > 0 && (
 						<div className="rounded-2xl border bg-card p-5 shadow-xs">
-							<h2 className="mb-4 text-base font-semibold">Daftar User</h2>
+							<h2 className="mb-4 text-base font-semibold">Daftar Pengguna</h2>
 							<div className="overflow-x-auto">
 								<table className="w-full text-sm">
 									<thead>
@@ -183,7 +183,7 @@ function AdminPage() {
 											<th className="px-3 py-2 text-left">Nama</th>
 											<th className="px-3 py-2 text-left">Username</th>
 											<th className="px-3 py-2 text-left">Email</th>
-											<th className="px-3 py-2 text-left">Role</th>
+											<th className="px-3 py-2 text-left">Peran</th>
 											<th className="px-3 py-2 text-left">Halaqah</th>
 											<th className="px-3 py-2 text-left">Daftar</th>
 										</tr>

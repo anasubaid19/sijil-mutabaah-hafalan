@@ -277,7 +277,7 @@ function SchoolSection({
 						</div>
 					) : (
 						<label className="flex cursor-pointer items-center justify-center rounded-lg border-2 border-dashed border-border bg-muted/30 px-4 py-6 text-xs text-muted-foreground hover:bg-muted/50">
-							<span>Klik untuk upload (PNG, JPG, SVG — maks 2 MB)</span>
+							<span>Klik untuk mengunggah (PNG, JPG, SVG — maks 2 MB)</span>
 							<input
 								type="file"
 								accept="image/png,image/jpeg,image/svg+xml"
@@ -444,8 +444,8 @@ function BackupSection({
 	return (
 		<section className="space-y-4 rounded-2xl border bg-card p-5 shadow-xs">
 			<SectionTitle
-				title="Backup & Restore"
-				description="Ekspor profil dan daftar siswa, atau impor dari file backup."
+				title="Cadangan & Pulihkan"
+				description="Ekspor profil dan daftar siswa, atau impor dari file cadangan."
 				compact={compact}
 			/>
 			<div className="flex gap-3">
@@ -454,10 +454,10 @@ function BackupSection({
 					size={compact ? "sm" : "default"}
 					onClick={exportJSON}
 				>
-					Export JSON
+					Ekspor JSON
 				</Button>
 				<label className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-md border border-input bg-background px-4 py-2 text-sm font-medium shadow-xs hover:bg-accent hover:text-accent-foreground">
-					Import JSON
+					Impor JSON
 					<input
 						type="file"
 						accept=".json"
@@ -469,12 +469,12 @@ function BackupSection({
 			<div className="space-y-1">
 				<p className="text-xs text-muted-foreground">
 					{lastBackup
-						? `Backup terakhir: ${formatBackupDate(lastBackup)}`
-						: "Belum pernah membuat backup."}
+						? `Cadangan terakhir: ${formatBackupDate(lastBackup)}`
+						: "Belum pernah membuat cadangan."}
 				</p>
 				<p className="text-xs text-muted-foreground">
-					Backup menyimpan profil dan daftar siswa. Riwayat setoran tersimpan di
-					database.
+					Cadangan menyimpan profil dan daftar siswa. Riwayat setoran tersimpan di
+					basis data.
 				</p>
 			</div>
 		</section>
@@ -772,7 +772,7 @@ function PengaturanPage() {
 		const now = new Date().toISOString();
 		localStorage.setItem("sijil_last_backup", now);
 		setLastBackup(now);
-		toast.success("Backup diekspor!");
+		toast.success("Cadangan diekspor!");
 	}
 
 	function importJSON(e: React.ChangeEvent<HTMLInputElement>) {
@@ -961,7 +961,7 @@ function PengaturanPage() {
 						<AccordionContent>{akunContent(true)}</AccordionContent>
 					</AccordionItem>
 					<AccordionItem value="backup">
-						<AccordionTrigger>Backup & Restore</AccordionTrigger>
+						<AccordionTrigger>Cadangan & Pulihkan</AccordionTrigger>
 						<AccordionContent>{backupContent(true)}</AccordionContent>
 					</AccordionItem>
 					<AccordionItem value="tutorial">
@@ -978,7 +978,7 @@ function PengaturanPage() {
 					<TabsList className="h-auto w-full">
 						<TabsTrigger value="sekolah">Profil Sekolah</TabsTrigger>
 						<TabsTrigger value="akun">Akun</TabsTrigger>
-						<TabsTrigger value="backup">Backup & Restore</TabsTrigger>
+						<TabsTrigger value="backup">Cadangan & Pulihkan</TabsTrigger>
 						<TabsTrigger value="tutorial">Tutorial</TabsTrigger>
 						<TabsTrigger value="zonabahaya">Zona Bahaya</TabsTrigger>
 					</TabsList>

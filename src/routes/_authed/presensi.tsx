@@ -180,7 +180,7 @@ function PresensiPage() {
 					Semua Hadir
 				</Button>
 				<Button variant="outline" size="sm" onClick={resetPresensi}>
-					Reset
+					Atur Ulang
 				</Button>
 				<div className="ml-auto flex items-center gap-2">
 					<Input

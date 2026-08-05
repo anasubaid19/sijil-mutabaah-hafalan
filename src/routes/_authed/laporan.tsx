@@ -259,7 +259,7 @@ function LaporanPage() {
 			<div className="flex items-center justify-between print:hidden">
 				<div>
 					<h2 className="text-base font-semibold">
-						Laporan — Progres & Insight
+						Laporan — Progres & Wawasan
 					</h2>
 					<p className="mt-1 text-sm text-muted-foreground">
 						{monthlySetoran.length} setoran bulan ini
@@ -274,7 +274,7 @@ function LaporanPage() {
 								: "bg-muted text-muted-foreground"
 						}`}
 					>
-						Grid
+						Kisi
 					</button>
 					<button
 						onClick={() => setView("list")}
@@ -284,7 +284,7 @@ function LaporanPage() {
 								: "bg-muted text-muted-foreground"
 						}`}
 					>
-						List
+						Daftar
 					</button>
 					<DropdownMenu>
 						<DropdownMenuTrigger
@@ -296,7 +296,7 @@ function LaporanPage() {
 								/>
 							}
 						>
-							Export
+							Ekspor
 						</DropdownMenuTrigger>
 						<DropdownMenuContent align="end">
 							<div className="px-2 py-1.5">
@@ -480,7 +480,7 @@ function LaporanPage() {
 					</div>
 					<div>
 						<p className="text-2xl font-bold">{topGrade}</p>
-						<p className="text-xs text-teal-200">Grade Tertinggi</p>
+						<p className="text-xs text-teal-200">Nilai Tertinggi</p>
 					</div>
 					<div>
 						<p className="text-2xl font-bold">{avgProgress}%</p>

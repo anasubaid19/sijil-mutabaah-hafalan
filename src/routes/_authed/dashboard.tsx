@@ -329,7 +329,7 @@ function DashboardPage() {
 							size="sm"
 							onClick={() => setResetOpen(true)}
 						>
-							Reset
+							Atur Ulang
 						</Button>
 					</div>
 				</div>
@@ -465,8 +465,8 @@ function DashboardPage() {
 							<div className="inline-flex rounded-lg border bg-muted/50 p-0.5">
 								{(
 									[
-										["bar", "Bar"],
-										["line", "Line"],
+										["bar", "Batang"],
+										["line", "Garis"],
 									] as const
 								).map(([key, label]) => (
 									<button
@@ -554,8 +554,8 @@ function DashboardPage() {
 								<div className="inline-flex rounded-lg border bg-muted/50 p-0.5">
 									{(
 										[
-											["bar", "Bar"],
-											["line", "Line"],
+											["bar", "Batang"],
+											["line", "Garis"],
 										] as const
 									).map(([key, label]) => (
 										<button

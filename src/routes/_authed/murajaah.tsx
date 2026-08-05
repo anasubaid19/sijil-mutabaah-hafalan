@@ -250,7 +250,7 @@ function FormBody(props: FormBodyProps) {
 					<div className="grid gap-3 sm:grid-cols-2">
 						<div className="relative space-y-2">
 							<label className="text-sm font-medium text-primary">
-								Surah End
+								Surah Akhir
 							</label>
 							<Input
 								type="text"
@@ -510,12 +510,12 @@ function MurajaahPage() {
 
 		if (lintasMode) {
 			if (!lintasSurahEnd || !lintasSampaiAyat) {
-				toast.error("Lengkapi Surah End dan Sampai Ayat");
+				toast.error("Lengkapi Surah Akhir dan Sampai Ayat");
 				return;
 			}
 			const endSurah = findSurah(lintasSurahEnd);
 			if (!endSurah) {
-				toast.error("Surah End tidak ditemukan");
+				toast.error("Surah Akhir tidak ditemukan");
 				return;
 			}
 			const lintasSampaiErr = validateAyat(lintasSurahEnd, lintasSampaiAyat);
