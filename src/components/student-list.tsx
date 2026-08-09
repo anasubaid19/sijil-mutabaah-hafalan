@@ -1,6 +1,10 @@
 import { toast } from "sonner";
+import { useEffect, useState } from "react";
 import type { Siswa } from "@/components/student-dialog";
 import { Button } from "@/components/ui/button";
+import { calcProgress, type SetoranData } from "@/lib/progress";
+
+type SetoranRow = SetoranData & { siswaId: string };
 
 interface StudentListProps {
 	siswaList: Siswa[];
@@ -20,6 +24,21 @@ export function StudentList({
 	onDelete,
 	onAdd,
 }: StudentListProps) {
+	const [setoranList, setSetoranList] = useState<SetoranRow[]>([]);
+
+	useEffect(() => {
+		let active = true;
+		fetch("/api/setoran")
+			.then((r) => (r.ok ? r.json() : []))
+			.then((d: SetoranRow[]) => {
+				if (active) setSetoranList(d);
+			})
+			.catch(() => {});
+		return () => {
+			active = false;
+		};
+	}, []);
+
 	if (siswaList.length === 0) {
 		return (
 			<div className="flex flex-col items-center gap-2 py-8 text-center">
@@ -39,10 +58,11 @@ export function StudentList({
 	return (
 		<div className="space-y-2">
 			{siswaList.map((s) => {
-				const pct =
-					s.target > 0
-						? Math.min(100, Math.round((s.hafalan / s.target) * 100))
-						: 0;
+				const prog = calcProgress(
+					s,
+					setoranList.filter((r) => r.siswaId === s.id),
+				);
+				const pct = prog.pct;
 				return (
 					<div
 						key={s.id}
@@ -52,8 +72,7 @@ export function StudentList({
 							<div className="min-w-0">
 								<p className="truncate text-sm font-semibold">{s.nama}</p>
 								<p className="text-xs text-muted-foreground">
-									{s.hafalan}/{s.target}{" "}
-									{s.metodeProgress === "surah" ? "surah" : "juz"}
+									{prog.current}/{prog.target} {prog.unit.toLowerCase()}
 									{s.mulaiHafalan ? ` (dari ${s.mulaiHafalan})` : ""}
 									{s.umur ? ` · ${s.umur} tahun` : ""}
 								</p>

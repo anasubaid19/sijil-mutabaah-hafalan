@@ -23,12 +23,15 @@ import {
 	type Surah,
 	searchSurah,
 	validateAyat,
+	juzLabel,
 } from "@/lib/surah-data";
+import { calcProgress, type SetoranData } from "@/lib/progress";
 
 interface Siswa {
 	id: string;
 	nama: string;
 	hafalan: number;
+	target: number;
 }
 
 const JENIS_MURAJAAH = [
@@ -92,6 +95,8 @@ interface FormBodyProps {
 	mushafOpen: boolean;
 	setMushafOpen: (v: boolean) => void;
 	setMushafMobileOpen: (v: boolean) => void;
+	juz: string;
+	terhafal: string;
 }
 
 function FormBody(props: FormBodyProps) {
@@ -140,7 +145,7 @@ function FormBody(props: FormBodyProps) {
 							{props.selectedSiswaData.nama}
 						</p>
 						<p className="text-xs text-muted-foreground">
-							{props.selectedSiswaData.hafalan} juz terhafal
+							{props.terhafal}
 						</p>
 					</div>
 				</div>
@@ -243,6 +248,16 @@ function FormBody(props: FormBodyProps) {
 						)}
 					</div>
 				)}
+			</div>
+
+			<div className="space-y-2">
+				<label className="text-sm font-medium">Juz</label>
+				<Input
+					value={props.juz ? `Juz ${props.juz}` : ""}
+					readOnly
+					placeholder="Juz otomatis dari surah & ayat"
+					className="bg-muted/40"
+				/>
 			</div>
 
 			{props.lintasMode && (
@@ -418,6 +433,7 @@ function MurajaahPage() {
 	const [lintasSampaiAyat, setLintasSampaiAyat] = useState("");
 	const [lintasAcEnd, setLintasAcEnd] = useState<Surah[]>([]);
 	const [lintasSampaiError, setLintasSampaiError] = useState("");
+	const [setoranList, setSetoranList] = useState<SetoranData[]>([]);
 
 	useEffect(() => {
 		fetch("/api/siswa")
@@ -430,23 +446,18 @@ function MurajaahPage() {
 	}, []);
 
 	useEffect(() => {
-		if (!selectedSiswa) return;
+		if (!selectedSiswa) {
+			setSetoranList([]);
+			return;
+		}
 		fetch(`/api/setoran?siswaId=${selectedSiswa}`)
 			.then((r) => {
 				if (r.ok) return r.json();
 				throw new Error();
 			})
-			.then(
-				(
-					data: {
-						surah?: number;
-						surahAkhir?: number;
-						lintas?: boolean;
-						ayatAwal?: number;
-						ayatAkhir?: number;
-					}[],
-				) => {
-					if (data.length > 0) {
+			.then((data: SetoranData[]) => {
+				setSetoranList(data);
+				if (data.length > 0) {
 						const last = data[data.length - 1];
 						if (last.lintas && last.surahAkhir) {
 							const endSurah = SURAH_DATA.find(
@@ -493,6 +504,21 @@ function MurajaahPage() {
 	function selectLintasSurahEnd(s: Surah) {
 		setLintasSurahEnd(s.name);
 		setLintasAcEnd([]);
+	}
+
+	function computeJuz(): string {
+		const start = findSurah(surahA);
+		if (!start || !dariAyat) return "";
+		const startAyat = Number.parseInt(dariAyat, 10);
+		if (Number.isNaN(startAyat) || startAyat <= 0) return "";
+		const endSurah = lintasMode ? findSurah(lintasSurahEnd) : start;
+		if (!endSurah) return "";
+		const endAyat = Number.parseInt(
+			lintasMode ? lintasSampaiAyat : sampaiAyat,
+			10,
+		);
+		if (Number.isNaN(endAyat) || endAyat <= 0) return "";
+		return juzLabel(start.number, startAyat, endSurah.number, endAyat) ?? "";
 	}
 
 	async function handleSubmit(e: React.FormEvent) {
@@ -635,6 +661,10 @@ function MurajaahPage() {
 
 	const selectedSiswaData = siswaList.find((s) => s.id === selectedSiswa);
 
+	const prog = selectedSiswaData
+		? calcProgress(selectedSiswaData, setoranList)
+		: null;
+
 	const formProps = {
 		siswaList,
 		selectedSiswa,
@@ -676,6 +706,10 @@ function MurajaahPage() {
 		mushafOpen,
 		setMushafOpen,
 		setMushafMobileOpen,
+		juz: computeJuz(),
+		terhafal: prog
+			? `${prog.current} ${prog.unit.toLowerCase()} terhafal`
+			: "",
 	};
 
 	return (

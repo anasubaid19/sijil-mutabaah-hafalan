@@ -23,6 +23,7 @@ import {
 	type Surah,
 	searchSurah,
 	validateAyat,
+	juzLabel,
 } from "@/lib/surah-data";
 
 interface Siswa {
@@ -81,6 +82,7 @@ interface FormBodyProps {
 	mushafOpen: boolean;
 	setMushafOpen: (v: boolean) => void;
 	setMushafMobileOpen: (v: boolean) => void;
+	juz: string;
 }
 
 function FormBody(props: FormBodyProps) {
@@ -191,6 +193,16 @@ function FormBody(props: FormBodyProps) {
 						)}
 					</div>
 				)}
+			</div>
+
+			<div className="space-y-2">
+				<label className="text-sm font-medium">Juz</label>
+				<Input
+					value={props.juz ? `Juz ${props.juz}` : ""}
+					readOnly
+					placeholder="Juz otomatis dari surah & ayat"
+					className="bg-muted/40"
+				/>
 			</div>
 
 			{props.lintasMode && (
@@ -447,6 +459,21 @@ function ZiyadahPage() {
 		setLintasAcEnd([]);
 	}
 
+	function computeJuz(): string {
+		const start = findSurah(surahA);
+		if (!start || !dariAyat) return "";
+		const startAyat = Number.parseInt(dariAyat, 10);
+		if (Number.isNaN(startAyat) || startAyat <= 0) return "";
+		const endSurah = lintasMode ? findSurah(lintasSurahEnd) : start;
+		if (!endSurah) return "";
+		const endAyat = Number.parseInt(
+			lintasMode ? lintasSampaiAyat : sampaiAyat,
+			10,
+		);
+		if (Number.isNaN(endAyat) || endAyat <= 0) return "";
+		return juzLabel(start.number, startAyat, endSurah.number, endAyat) ?? "";
+	}
+
 	async function handleSubmit(e: React.FormEvent) {
 		e.preventDefault();
 		if (!selectedSiswa || !surahA || !dariAyat) {
@@ -622,6 +649,7 @@ function ZiyadahPage() {
 		mushafOpen,
 		setMushafOpen,
 		setMushafMobileOpen,
+		juz: computeJuz(),
 	};
 
 	return (

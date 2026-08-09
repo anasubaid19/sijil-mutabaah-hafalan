@@ -3,7 +3,7 @@ import { and, eq, gte, inArray, lte } from "drizzle-orm";
 import { auth } from "@/lib/auth/auth";
 import { db } from "@/lib/db";
 import { presensi, setoran, siswa } from "@/lib/db/schema";
-import { SURAH_DATA } from "@/lib/surah-data";
+import { SURAH_DATA, juzLabel } from "@/lib/surah-data";
 
 export const Route = createFileRoute("/api/setoran")({
 	server: {
@@ -100,17 +100,16 @@ export const Route = createFileRoute("/api/setoran")({
 						}
 					}
 
-					// pre-compute juz range for lintas records
+					// auto-compute juz from surah/ayat range unless client sends one
 					let juz = body.juz;
-					if (lintas && !juz) {
-						const sStart = SURAH_DATA.find((s) => s.number === body.surah);
-						const sEnd = SURAH_DATA.find((s) => s.number === body.surahAkhir);
-						if (sStart && sEnd) {
-							juz =
-								sStart.juzStart === sEnd.juzEnd
-									? `${sStart.juzStart}`
-									: `${sStart.juzStart}-${sEnd.juzEnd}`;
-						}
+					if (!juz) {
+						const endSurah = lintas ? body.surahAkhir : body.surah;
+						juz = juzLabel(
+							body.surah,
+							body.ayatAwal,
+							endSurah ?? body.surah,
+							body.ayatAkhir ?? body.ayatAwal,
+						);
 					}
 
 					const [row] = await db
@@ -216,17 +215,16 @@ export const Route = createFileRoute("/api/setoran")({
 						}
 					}
 
-					// pre-compute juz range for lintas records
+					// auto-compute juz from surah/ayat range unless client sends one
 					let juz = body.juz;
-					if (lintas && !juz) {
-						const sStart = SURAH_DATA.find((s) => s.number === body.surah);
-						const sEnd = SURAH_DATA.find((s) => s.number === body.surahAkhir);
-						if (sStart && sEnd) {
-							juz =
-								sStart.juzStart === sEnd.juzEnd
-									? `${sStart.juzStart}`
-									: `${sStart.juzStart}-${sEnd.juzEnd}`;
-						}
+					if (!juz) {
+						const endSurah = lintas ? body.surahAkhir : body.surah;
+						juz = juzLabel(
+							body.surah,
+							body.ayatAwal,
+							endSurah ?? body.surah,
+							body.ayatAkhir ?? body.ayatAwal,
+						);
 					}
 
 					const [row] = await db

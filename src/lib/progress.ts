@@ -1,4 +1,4 @@
-import { findSurah, SURAH_DATA } from "./surah-data";
+import { findSurah, getJuzForAyat, SURAH_DATA } from "./surah-data";
 
 interface SiswaData {
 	nama: string;
@@ -8,7 +8,7 @@ interface SiswaData {
 	metodeProgress?: string;
 }
 
-interface SetoranData {
+export interface SetoranData {
 	type: string;
 	surah: number;
 	surahAkhir?: number | null;
@@ -42,49 +42,10 @@ export function hitungJuz(
 	const mn = Math.min(...numbers.map(Number));
 	const mx = Math.max(...numbers.map(Number));
 
-	// Surahs that span multiple juz — need ayat-level calculation
-	if (surahName === "Al-Baqarah") {
-		const s = mn <= 141 ? 1 : mn <= 252 ? 2 : 3;
-		const e = mx <= 141 ? 1 : mx <= 252 ? 2 : 3;
-		return { start: s, end: e };
-	}
-	if (surahName === "Ali 'Imran") {
-		const s = mn <= 92 ? 3 : 4;
-		const e = mx <= 92 ? 3 : 4;
-		return { start: s, end: e };
-	}
-	if (surahName === "An-Nisa'") {
-		const s = mn <= 23 ? 4 : mn <= 147 ? 5 : 6;
-		const e = mx <= 23 ? 4 : mx <= 147 ? 5 : 6;
-		return { start: s, end: e };
-	}
-	if (surahName === "Al-Ma'idah") {
-		const s = mn <= 81 ? 6 : 7;
-		const e = mx <= 81 ? 6 : 7;
-		return { start: s, end: e };
-	}
-	if (surahName === "Al-An'am") {
-		const s = mn <= 110 ? 7 : 8;
-		const e = mx <= 110 ? 7 : 8;
-		return { start: s, end: e };
-	}
-	if (surahName === "Al-A'raf") {
-		const s = mn <= 87 ? 8 : 9;
-		const e = mx <= 87 ? 8 : 9;
-		return { start: s, end: e };
-	}
-	if (surahName === "Al-Anfal") {
-		const s = mn <= 40 ? 9 : 10;
-		const e = mx <= 40 ? 9 : 10;
-		return { start: s, end: e };
-	}
-	if (surahName === "At-Taubah") {
-		const s = mn <= 92 ? 10 : 11;
-		const e = mx <= 92 ? 10 : 11;
-		return { start: s, end: e };
-	}
-
-	return { start: surah.juzStart, end: surah.juzEnd };
+	return {
+		start: getJuzForAyat(surah.number, mn),
+		end: getJuzForAyat(surah.number, mx),
+	};
 }
 
 export function calcProgress(

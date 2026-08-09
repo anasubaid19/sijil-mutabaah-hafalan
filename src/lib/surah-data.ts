@@ -1063,13 +1063,66 @@ export function validateAyat(
 	return null;
 }
 
-// ponytail: simplified juz calculation — for multi-juz surahs returns juzStart
-export function getJuzForAyat(surahName: string, ayatNumber: number): number {
-	const surah = findSurah(surahName);
-	if (!surah) return 0;
-	if (surah.juzStart === surah.juzEnd) return surah.juzStart;
-	// ponytail: only surahs 2,3,4,5,6,7,8,9,10,11,23,37,39 span multiple juz
-	// simplified: return the juz based on ayat midpoint
-	const mid = surah.ayatCount / 2;
-	return ayatNumber <= mid ? surah.juzStart : surah.juzEnd;
+// Juz boundaries (Hafs, Madinah mushaf): verse where each of the 30 juz starts
+const JUZ_STARTS: { surah: number; ayat: number }[] = [
+	{ surah: 1, ayat: 1 },
+	{ surah: 2, ayat: 142 },
+	{ surah: 2, ayat: 253 },
+	{ surah: 3, ayat: 93 },
+	{ surah: 4, ayat: 24 },
+	{ surah: 4, ayat: 148 },
+	{ surah: 5, ayat: 82 },
+	{ surah: 6, ayat: 111 },
+	{ surah: 7, ayat: 88 },
+	{ surah: 8, ayat: 41 },
+	{ surah: 9, ayat: 93 },
+	{ surah: 11, ayat: 6 },
+	{ surah: 12, ayat: 53 },
+	{ surah: 15, ayat: 1 },
+	{ surah: 17, ayat: 1 },
+	{ surah: 18, ayat: 75 },
+	{ surah: 21, ayat: 1 },
+	{ surah: 23, ayat: 1 },
+	{ surah: 25, ayat: 21 },
+	{ surah: 27, ayat: 56 },
+	{ surah: 29, ayat: 46 },
+	{ surah: 33, ayat: 31 },
+	{ surah: 36, ayat: 28 },
+	{ surah: 39, ayat: 32 },
+	{ surah: 41, ayat: 47 },
+	{ surah: 46, ayat: 1 },
+	{ surah: 51, ayat: 31 },
+	{ surah: 58, ayat: 1 },
+	{ surah: 67, ayat: 1 },
+	{ surah: 78, ayat: 1 },
+];
+
+export function getJuzForAyat(surahNumber: number, ayat: number): number {
+	let juz = 1;
+	for (let i = 0; i < JUZ_STARTS.length; i++) {
+		const b = JUZ_STARTS[i];
+		if (surahNumber > b.surah || (surahNumber === b.surah && ayat >= b.ayat)) {
+			juz = i + 1;
+		} else {
+			break;
+		}
+	}
+	return juz;
+}
+
+// Returns "3" or "3-4" (juz awal - juz akhir), or null when surah not found
+export function juzLabel(
+	startSurah: number,
+	startAyat: number,
+	endSurah: number = startSurah,
+	endAyat: number = startAyat,
+): string | null {
+	if (
+		!SURAH_DATA.some((s) => s.number === startSurah) ||
+		!SURAH_DATA.some((s) => s.number === endSurah)
+	)
+		return null;
+	const s = getJuzForAyat(startSurah, startAyat);
+	const e = getJuzForAyat(endSurah, endAyat);
+	return s === e ? `${s}` : `${s}-${e}`;
 }

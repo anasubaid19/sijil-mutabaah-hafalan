@@ -74,6 +74,8 @@ export const Route = createFileRoute("/api/parent-data")({
 						nama: siswaData.nama,
 						hafalan: siswaData.hafalan,
 						target: siswaData.target,
+						mulaiHafalan: siswaData.mulaiHafalan,
+						metodeProgress: siswaData.metodeProgress,
 					},
 					musyrif: musyrifData
 						? { nama: musyrifData.nama, halaqahName: musyrifData.halaqahName }

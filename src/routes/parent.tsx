@@ -8,12 +8,15 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { calcProgress } from "@/lib/progress";
 import { SURAH_DATA } from "@/lib/surah-data";
 
 interface SiswaData {
 	nama: string;
 	hafalan: number;
 	target: number;
+	mulaiHafalan?: string;
+	metodeProgress?: string;
 }
 
 interface MusyrifData {
@@ -27,10 +30,12 @@ interface Setoran {
 	tanggal: string;
 	surah: number;
 	surahAkhir?: number;
+	lintas?: boolean;
 	ayatAwal: number;
 	ayatAkhir: number;
 	status: string;
 	catatan?: string;
+	juz?: string | null;
 }
 
 interface Presensi {
@@ -96,12 +101,8 @@ function ParentDashboard() {
 		navigate({ to: "/login" });
 	}
 
-	const progressPercent = siswa
-		? Math.min(
-				100,
-				Math.round((siswa.hafalan / Math.max(siswa.target, 1)) * 100),
-			)
-		: 0;
+	const prog = siswa ? calcProgress(siswa, setoranList) : null;
+	const progressPercent = prog ? prog.pct : 0;
 
 	const hadirCount = presensiList.filter((p) => p.status === "Hadir").length;
 	const totalPresensi = presensiList.length;
@@ -204,7 +205,8 @@ function ParentDashboard() {
 									<p className="text-3xl font-bold">{progressPercent}%</p>
 								</div>
 								<p className="mt-1 text-lg font-bold">
-									Hafalan {siswa.hafalan} / {siswa.target} Juz
+									Hafalan {prog?.current ?? 0} / {prog?.target ?? 0}{" "}
+									{prog ? prog.unit.toLowerCase() : "juz"}
 								</p>
 								<div className="mt-4 h-2 w-full overflow-hidden rounded-full bg-muted">
 									<div

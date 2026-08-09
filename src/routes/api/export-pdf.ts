@@ -7,7 +7,7 @@ import { eq, inArray } from "drizzle-orm";
 import { auth } from "@/lib/auth/auth";
 import { db } from "@/lib/db";
 import { appConfig, setoran, siswa, userProfile } from "@/lib/db/schema";
-import { SURAH_DATA } from "@/lib/surah-data";
+import { juzLabel, SURAH_DATA } from "@/lib/surah-data";
 
 // ponytail: page calculation uses proportional mapping from SURAH_DATA
 // pageStart/pageEnd are from api.islamic.app /v1/chapters (Madinah mushaf 604 pages)
@@ -61,21 +61,6 @@ function calcLintasAyat(
 		total += to - from + 1;
 	}
 	return total;
-}
-
-function calcJuz(
-	surahNum: number,
-	ayatAwal: number,
-	ayatAkhir: number,
-): string {
-	const sData = SURAH_DATA.find((x) => x.number === surahNum);
-	if (!sData) return "-";
-	if (sData.juzStart === sData.juzEnd) return `${sData.juzStart}`;
-	const progress = (ayatAwal + ayatAkhir) / 2 / sData.ayatCount;
-	const juz = Math.round(
-		sData.juzStart + progress * (sData.juzEnd - sData.juzStart),
-	);
-	return `${juz}`;
 }
 
 function surahName(surahNum: number): string {
@@ -187,7 +172,14 @@ export const Route = createFileRoute("/api/export-pdf")({
 					const lastRec = recs.length > 0 ? recs[recs.length - 1] : null;
 					summaryJuz = lastRec
 						? lastRec.juz ||
-							calcJuz(lastRec.surah, lastRec.ayatAwal, lastRec.ayatAkhir)
+							juzLabel(
+								lastRec.surah,
+								lastRec.ayatAwal,
+								lastRec.lintas && lastRec.surahAkhir
+									? lastRec.surahAkhir
+									: lastRec.surah,
+								lastRec.ayatAkhir,
+							) || "-"
 						: "-";
 					summaryTerakhir = lastRec
 						? lastRec.lintas && lastRec.surahAkhir
@@ -226,7 +218,13 @@ export const Route = createFileRoute("/api/export-pdf")({
 											)
 										: calcHalaman(r.surah, r.ayatAwal, r.ayatAkhir);
 									const juz =
-										r.juz || calcJuz(r.surah, r.ayatAwal, r.ayatAkhir);
+										r.juz ||
+										juzLabel(
+											r.surah,
+											r.ayatAwal,
+											isLintas ? r.surahAkhir! : r.surah,
+											r.ayatAkhir,
+										) || "-";
 									const sName = isLintas
 										? surahRangeName(r.surah, r.surahAkhir)
 										: surahName(r.surah);
@@ -341,7 +339,13 @@ export const Route = createFileRoute("/api/export-pdf")({
 											)
 										: calcHalaman(r.surah, r.ayatAwal, r.ayatAkhir);
 									const juz =
-										r.juz || calcJuz(r.surah, r.ayatAwal, r.ayatAkhir);
+										r.juz ||
+										juzLabel(
+											r.surah,
+											r.ayatAwal,
+											isLintas ? r.surahAkhir! : r.surah,
+											r.ayatAkhir,
+										) || "-";
 									const sName = isLintas
 										? surahRangeName(r.surah, r.surahAkhir)
 										: surahName(r.surah);
