@@ -1,4 +1,5 @@
 import {
+	BookBookmark01Icon,
 	BookOpen,
 	CalendarCheck,
 	ChartBarIncreasingIcon,
@@ -44,6 +45,12 @@ const NAV_ITEMS = [
 ];
 const NAV_SECONDARY = [
 	{ to: "/laporan", label: "Laporan", icon: Document, navId: "nav-laporan" },
+	{
+		to: "/kitab",
+		label: "Kitab",
+		icon: BookBookmark01Icon,
+		navId: "nav-kitab",
+	},
 	{
 		to: "/manajemen-data",
 		label: "Manajemen Data",

@@ -16,6 +16,7 @@ import { Route as ParentRouteImport } from './routes/parent'
 import { Route as RegisterRouteImport } from './routes/register'
 import { Route as AuthedAdminRouteImport } from './routes/_authed/admin'
 import { Route as AuthedDashboardRouteImport } from './routes/_authed/dashboard'
+import { Route as AuthedKitabRouteImport } from './routes/_authed/kitab'
 import { Route as AuthedLaporanRouteImport } from './routes/_authed/laporan'
 import { Route as AuthedManajemenDataRouteImport } from './routes/_authed/manajemen-data'
 import { Route as AuthedMurajaahRouteImport } from './routes/_authed/murajaah'
@@ -70,6 +71,11 @@ const AuthedAdminRoute = AuthedAdminRouteImport.update({
 const AuthedDashboardRoute = AuthedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => AuthedRoute,
+} as any)
+const AuthedKitabRoute = AuthedKitabRouteImport.update({
+  id: '/kitab',
+  path: '/kitab',
   getParentRoute: () => AuthedRoute,
 } as any)
 const AuthedLaporanRoute = AuthedLaporanRouteImport.update({
@@ -185,6 +191,7 @@ export interface FileRoutesByFullPath {
   '/register': typeof RegisterRoute
   '/admin': typeof AuthedAdminRoute
   '/dashboard': typeof AuthedDashboardRoute
+  '/kitab': typeof AuthedKitabRoute
   '/laporan': typeof AuthedLaporanRoute
   '/manajemen-data': typeof AuthedManajemenDataRoute
   '/murajaah': typeof AuthedMurajaahRoute
@@ -214,6 +221,7 @@ export interface FileRoutesByTo {
   '/register': typeof RegisterRoute
   '/admin': typeof AuthedAdminRoute
   '/dashboard': typeof AuthedDashboardRoute
+  '/kitab': typeof AuthedKitabRoute
   '/laporan': typeof AuthedLaporanRoute
   '/manajemen-data': typeof AuthedManajemenDataRoute
   '/murajaah': typeof AuthedMurajaahRoute
@@ -245,6 +253,7 @@ export interface FileRoutesById {
   '/register': typeof RegisterRoute
   '/_authed/admin': typeof AuthedAdminRoute
   '/_authed/dashboard': typeof AuthedDashboardRoute
+  '/_authed/kitab': typeof AuthedKitabRoute
   '/_authed/laporan': typeof AuthedLaporanRoute
   '/_authed/manajemen-data': typeof AuthedManajemenDataRoute
   '/_authed/murajaah': typeof AuthedMurajaahRoute
@@ -276,6 +285,7 @@ export interface FileRouteTypes {
     | '/register'
     | '/admin'
     | '/dashboard'
+    | '/kitab'
     | '/laporan'
     | '/manajemen-data'
     | '/murajaah'
@@ -305,6 +315,7 @@ export interface FileRouteTypes {
     | '/register'
     | '/admin'
     | '/dashboard'
+    | '/kitab'
     | '/laporan'
     | '/manajemen-data'
     | '/murajaah'
@@ -335,6 +346,7 @@ export interface FileRouteTypes {
     | '/register'
     | '/_authed/admin'
     | '/_authed/dashboard'
+    | '/_authed/kitab'
     | '/_authed/laporan'
     | '/_authed/manajemen-data'
     | '/_authed/murajaah'
@@ -430,6 +442,13 @@ declare module '@tanstack/react-router' {
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof AuthedDashboardRouteImport
+      parentRoute: typeof AuthedRoute
+    }
+    '/_authed/kitab': {
+      id: '/_authed/kitab'
+      path: '/kitab'
+      fullPath: '/kitab'
+      preLoaderRoute: typeof AuthedKitabRouteImport
       parentRoute: typeof AuthedRoute
     }
     '/_authed/laporan': {
@@ -585,6 +604,7 @@ declare module '@tanstack/react-router' {
 interface AuthedRouteChildren {
   AuthedAdminRoute: typeof AuthedAdminRoute
   AuthedDashboardRoute: typeof AuthedDashboardRoute
+  AuthedKitabRoute: typeof AuthedKitabRoute
   AuthedLaporanRoute: typeof AuthedLaporanRoute
   AuthedManajemenDataRoute: typeof AuthedManajemenDataRoute
   AuthedMurajaahRoute: typeof AuthedMurajaahRoute
@@ -596,6 +616,7 @@ interface AuthedRouteChildren {
 const AuthedRouteChildren: AuthedRouteChildren = {
   AuthedAdminRoute: AuthedAdminRoute,
   AuthedDashboardRoute: AuthedDashboardRoute,
+  AuthedKitabRoute: AuthedKitabRoute,
   AuthedLaporanRoute: AuthedLaporanRoute,
   AuthedManajemenDataRoute: AuthedManajemenDataRoute,
   AuthedMurajaahRoute: AuthedMurajaahRoute,

@@ -1,4 +1,5 @@
 import {
+	BookBookmark01Icon,
 	BookOpen,
 	CalendarCheck,
 	ChartBarIncreasingIcon,
@@ -39,6 +40,7 @@ const MAIN_TABS = [
 
 const SECONDARY_ITEMS = [
 	{ to: "/laporan", label: "Laporan", icon: Document },
+	{ to: "/kitab", label: "Kitab", icon: BookBookmark01Icon },
 	{ to: "/manajemen-data", label: "Manajemen Data", icon: Group01Icon },
 	{ to: "/pengaturan", label: "Pengaturan", icon: SlidersHorizontal },
 ];
