@@ -163,3 +163,43 @@ export function getSurahName(surahNumber: number): string {
 		SURAH_DATA.find((s) => s.number === surahNumber)?.name || `#${surahNumber}`
 	);
 }
+
+export interface NextPosition {
+	surah: number;
+	ayat: number;
+}
+
+export function nextAfter(setoran: SetoranData): NextPosition | null {
+	const endSurah = setoran.lintas && setoran.surahAkhir
+		? setoran.surahAkhir
+		: setoran.surah;
+	const endAyat = setoran.ayatAkhir || setoran.ayatAwal;
+	const surah = SURAH_DATA.find((s) => s.number === endSurah);
+	if (!surah) return null;
+	if (endAyat < surah.ayatCount) return { surah: endSurah, ayat: endAyat + 1 };
+	const next = SURAH_DATA.find((s) => s.number === endSurah + 1);
+	if (!next) return null;
+	return { surah: next.number, ayat: 1 };
+}
+
+// ponytail: API sorts setoran by tanggal ASC, so scanning from the end returns the newest match
+export function lastOfType(
+	setorans: SetoranData[],
+	type: "Ziyadah" | "Murajaah",
+): SetoranData | null {
+	for (let i = setorans.length - 1; i >= 0; i--) {
+		const r = setorans[i];
+		if (type === "Ziyadah" ? r.type === "Ziyadah" : r.type.startsWith("Murajaah")) {
+			return r;
+		}
+	}
+	return null;
+}
+
+export function nextPositionFromList(
+	setorans: SetoranData[],
+	type: "Ziyadah" | "Murajaah",
+): NextPosition | null {
+	const last = lastOfType(setorans, type);
+	return last ? nextAfter(last) : null;
+}

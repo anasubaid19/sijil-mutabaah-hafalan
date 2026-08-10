@@ -25,7 +25,12 @@ import {
 	validateAyat,
 	juzLabel,
 } from "@/lib/surah-data";
-import { calcProgress, type SetoranData } from "@/lib/progress";
+import {
+	calcProgress,
+	nextPositionFromList,
+	nextAfter,
+	type SetoranData,
+} from "@/lib/progress";
 import { localDateString } from "@/lib/utils";
 
 interface Siswa {
@@ -564,37 +569,13 @@ function MurajaahPage() {
 			})
 			.then((data: SetoranData[]) => {
 				setSetoranList(data);
-				if (data.length > 0) {
-						const last = data[data.length - 1];
-						if (last.lintas && last.surahAkhir) {
-							const endSurah = SURAH_DATA.find(
-								(s) => s.number === last.surahAkhir,
-							);
-							if (endSurah && last.ayatAkhir != null) {
-								if (last.ayatAkhir >= endSurah.ayatCount) {
-									const nextSurahNum = last.surahAkhir + 1;
-									const next = SURAH_DATA.find(
-										(s) => s.number === nextSurahNum,
-									);
-									if (next) {
-										setSurahA(next.name);
-										setDariAyat("1");
-									}
-								} else {
-									setSurahA(endSurah.name);
-									setDariAyat(String(last.ayatAkhir + 1));
-								}
-							}
-						} else {
-							if (last.surah) {
-								const s = SURAH_DATA.find((s) => s.number === last.surah);
-								if (s) setSurahA(s.name);
-							}
-							if (last.ayatAkhir) setDariAyat(String(last.ayatAkhir + 1));
-						}
-					}
-				},
-			)
+				const next = nextPositionFromList(data, "Murajaah");
+				if (next) {
+					const s = SURAH_DATA.find((s) => s.number === next.surah);
+					if (s) setSurahA(s.name);
+					setDariAyat(String(next.ayat));
+				}
+			})
 			.catch(() => {});
 	}, [selectedSiswa]);
 
@@ -684,6 +665,14 @@ function MurajaahPage() {
 			if (res.ok) {
 				toast.success("Murajaah lintas surah tersimpan!");
 				resetForm();
+				prefillNextFrom({
+					type: jenis,
+					surah: 0,
+					surahAkhir: endSurah.number,
+					lintas: true,
+					ayatAwal: 1,
+					ayatAkhir: Number.parseInt(lintasSampaiAyat, 10) || 0,
+				});
 			} else {
 				toast.error("Gagal menyimpan");
 			}
@@ -722,6 +711,16 @@ function MurajaahPage() {
 			if (res.ok) {
 				toast.success("Murajaah tersimpan!");
 				resetForm();
+				prefillNextFrom({
+					type: jenis,
+					surah: findSurah(surahA)?.number ?? 0,
+					lintas: false,
+					ayatAwal: Number.parseInt(dariAyat, 10) || 0,
+					ayatAkhir:
+						Number.parseInt(sampaiAyat, 10) ||
+						Number.parseInt(dariAyat, 10) ||
+						0,
+				});
 			} else {
 				toast.error("Gagal menyimpan");
 			}
@@ -738,6 +737,14 @@ function MurajaahPage() {
 		setLintasSurahEnd("");
 		setLintasSampaiAyat("");
 		setLintasSampaiError("");
+	}
+
+	function prefillNextFrom(saved: SetoranData) {
+		const next = nextAfter(saved);
+		if (!next) return;
+		const s = SURAH_DATA.find((s) => s.number === next.surah);
+		setSurahA(s?.name ?? "");
+		setDariAyat(String(next.ayat));
 	}
 
 	function handleMushafSelect(

@@ -26,6 +26,11 @@ import {
 	juzLabel,
 } from "@/lib/surah-data";
 import { localDateString } from "@/lib/utils";
+import {
+	nextPositionFromList,
+	type SetoranData,
+	nextAfter,
+} from "@/lib/progress";
 
 interface Siswa {
 	id: string;
@@ -499,47 +504,14 @@ function ZiyadahPage() {
 				if (r.ok) return r.json();
 				throw new Error();
 			})
-			.then(
-				(
-					data: {
-						surah?: number;
-						surahAkhir?: number;
-						lintas?: boolean;
-						ayatAwal?: number;
-						ayatAkhir?: number;
-					}[],
-				) => {
-					if (data.length > 0) {
-						const last = data[data.length - 1];
-						if (last.lintas && last.surahAkhir) {
-							const endSurah = SURAH_DATA.find(
-								(s) => s.number === last.surahAkhir,
-							);
-							if (endSurah && last.ayatAkhir != null) {
-								if (last.ayatAkhir >= endSurah.ayatCount) {
-									const nextSurahNum = last.surahAkhir + 1;
-									const next = SURAH_DATA.find(
-										(s) => s.number === nextSurahNum,
-									);
-									if (next) {
-										setSurahA(next.name);
-										setDariAyat("1");
-									}
-								} else {
-									setSurahA(endSurah.name);
-									setDariAyat(String(last.ayatAkhir + 1));
-								}
-							}
-						} else {
-							if (last.surah) {
-								const s = SURAH_DATA.find((s) => s.number === last.surah);
-								if (s) setSurahA(s.name);
-							}
-							if (last.ayatAkhir) setDariAyat(String(last.ayatAkhir + 1));
-						}
-					}
-				},
-			)
+			.then((data: SetoranData[]) => {
+				const next = nextPositionFromList(data, "Ziyadah");
+				if (next) {
+					const s = SURAH_DATA.find((s) => s.number === next.surah);
+					if (s) setSurahA(s.name);
+					setDariAyat(String(next.ayat));
+				}
+			})
 			.catch(() => {});
 	}, [selectedSiswa]);
 
@@ -634,6 +606,14 @@ function ZiyadahPage() {
 			if (res.ok) {
 				toast.success("Ziyadah lintas surah tersimpan!");
 				resetForm();
+				prefillNextFrom({
+					type: "Ziyadah",
+					surah: 0,
+					surahAkhir: endSurah.number,
+					lintas: true,
+					ayatAwal: 1,
+					ayatAkhir: Number.parseInt(lintasSampaiAyat, 10) || 0,
+				});
 			} else {
 				toast.error("Gagal menyimpan");
 			}
@@ -672,6 +652,16 @@ function ZiyadahPage() {
 			if (res.ok) {
 				toast.success("Ziyadah tersimpan!");
 				resetForm();
+				prefillNextFrom({
+					type: "Ziyadah",
+					surah: findSurah(surahA)?.number ?? 0,
+					lintas: false,
+					ayatAwal: Number.parseInt(dariAyat, 10) || 0,
+					ayatAkhir:
+						Number.parseInt(sampaiAyat, 10) ||
+						Number.parseInt(dariAyat, 10) ||
+						0,
+				});
 			} else {
 				toast.error("Gagal menyimpan");
 			}
@@ -688,6 +678,14 @@ function ZiyadahPage() {
 		setLintasSurahEnd("");
 		setLintasSampaiAyat("");
 		setLintasSampaiError("");
+	}
+
+	function prefillNextFrom(saved: SetoranData) {
+		const next = nextAfter(saved);
+		if (!next) return;
+		const s = SURAH_DATA.find((s) => s.number === next.surah);
+		setSurahA(s?.name ?? "");
+		setDariAyat(String(next.ayat));
 	}
 
 	function handleMushafSelect(
