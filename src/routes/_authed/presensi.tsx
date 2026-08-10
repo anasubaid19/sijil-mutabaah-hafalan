@@ -2,8 +2,20 @@ import { CalendarCheck } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import {
+	AlertDialog,
+	AlertDialogAction,
+	AlertDialogCancel,
+	AlertDialogContent,
+	AlertDialogDescription,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
+import { localDateString } from "@/lib/utils";
 
 interface Siswa {
 	id: string;
@@ -40,13 +52,15 @@ export const Route = createFileRoute("/_authed/presensi")({
 });
 
 function todayStr() {
-	return new Date().toISOString().split("T")[0];
+	return localDateString();
 }
 
 function PresensiPage() {
 	const [siswaList, setSiswaList] = useState<Siswa[]>([]);
 	const [presensiList, setPresensiList] = useState<Presensi[]>([]);
 	const [loading, setLoading] = useState(true);
+	const [busy, setBusy] = useState(false);
+	const [resetOpen, setResetOpen] = useState(false);
 	const [search, setSearch] = useState("");
 	const [statusFilter, setStatusFilter] = useState<PresensiStatus | "all">(
 		"all",
@@ -107,42 +121,83 @@ function PresensiPage() {
 	);
 
 	const markAllPresent = useCallback(async () => {
-		const promises = siswaList
-			.filter(
-				(s) =>
-					!presensiMap.has(s.id) || presensiMap.get(s.id)?.status !== "Hadir",
-			)
-			.map(async (s) => {
-				const existing = presensiMap.get(s.id);
-				if (existing) {
+		setBusy(true);
+		try {
+			const promises = siswaList
+				.filter(
+					(s) =>
+						!presensiMap.has(s.id) ||
+						presensiMap.get(s.id)?.status !== "Hadir",
+				)
+				.map(async (s) => {
+					const existing = presensiMap.get(s.id);
+					if (existing) {
+						return fetch("/api/presensi", {
+							method: "PUT",
+							headers: { "Content-Type": "application/json" },
+							body: JSON.stringify({ id: existing.id, status: "Hadir" }),
+						});
+					}
 					return fetch("/api/presensi", {
-						method: "PUT",
+						method: "POST",
 						headers: { "Content-Type": "application/json" },
-						body: JSON.stringify({ id: existing.id, status: "Hadir" }),
+						body: JSON.stringify({
+							siswaId: s.id,
+							tanggal: today,
+							status: "Hadir",
+						}),
 					});
-				}
-				return fetch("/api/presensi", {
-					method: "POST",
-					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify({
-						siswaId: s.id,
-						tanggal: today,
-						status: "Hadir",
-					}),
 				});
-			});
-		await Promise.all(promises);
-		const pRes = await fetch(`/api/presensi?tanggal=${today}`);
-		if (pRes.ok) setPresensiList(await pRes.json());
+			await Promise.all(promises);
+			const pRes = await fetch(`/api/presensi?tanggal=${today}`);
+			if (pRes.ok) setPresensiList(await pRes.json());
+			toast.success("Semua siswa ditandai Hadir");
+		} catch {
+			toast.error("Gagal menyimpan presensi");
+		} finally {
+			setBusy(false);
+		}
 	}, [siswaList, presensiMap, today]);
 
 	const resetPresensi = useCallback(async () => {
-		const promises = presensiList.map((p) =>
-			fetch(`/api/presensi?id=${p.id}`, { method: "DELETE" }),
-		);
-		await Promise.all(promises);
-		setPresensiList([]);
-	}, [presensiList]);
+		const snapshot = [...presensiList];
+		setBusy(true);
+		try {
+			const promises = snapshot.map((p) =>
+				fetch(`/api/presensi?id=${p.id}`, { method: "DELETE" }),
+			);
+			await Promise.all(promises);
+			setPresensiList([]);
+			toast.success("Presensi hari ini dikosongkan", {
+				action: {
+					label: "Batalkan",
+					onClick: async () => {
+						try {
+							await Promise.all(
+								snapshot.map((p) =>
+									fetch("/api/presensi", {
+										method: "POST",
+										headers: { "Content-Type": "application/json" },
+										body: JSON.stringify({
+											siswaId: p.siswaId,
+											tanggal: p.tanggal,
+											status: p.status,
+										}),
+									}),
+								),
+							);
+							const pRes = await fetch(`/api/presensi?tanggal=${today}`);
+							if (pRes.ok) setPresensiList(await pRes.json());
+						} catch {}
+					},
+				},
+			});
+		} catch {
+			toast.error("Gagal mengosongkan presensi");
+		} finally {
+			setBusy(false);
+		}
+	}, [presensiList, today]);
 
 	const filtered = siswaList.filter(
 		(s) =>
@@ -176,10 +231,20 @@ function PresensiPage() {
 
 			{/* Controls */}
 			<div className="flex flex-wrap items-center gap-2">
-				<Button variant="outline" size="sm" onClick={markAllPresent}>
-					Semua Hadir
+				<Button
+					variant="outline"
+					size="sm"
+					onClick={markAllPresent}
+					disabled={busy}
+				>
+					{busy ? "Menyimpan..." : "Semua Hadir"}
 				</Button>
-				<Button variant="outline" size="sm" onClick={resetPresensi}>
+				<Button
+					variant="outline"
+					size="sm"
+					onClick={() => setResetOpen(true)}
+					disabled={busy}
+				>
 					Atur Ulang
 				</Button>
 				<div className="ml-auto flex items-center gap-2">
@@ -193,9 +258,11 @@ function PresensiPage() {
 			</div>
 
 			{/* Status filter */}
-			<div className="flex items-center gap-2">
+			<div className="flex flex-wrap items-center gap-2">
 				<button
 					type="button"
+					aria-pressed={statusFilter === "all"}
+					aria-label="Filter semua status"
 					onClick={() => setStatusFilter("all")}
 					className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors ${
 						statusFilter === "all"
@@ -209,6 +276,8 @@ function PresensiPage() {
 					<button
 						key={st}
 						type="button"
+						aria-pressed={statusFilter === st}
+						aria-label={`Filter status ${st}`}
 						onClick={() => setStatusFilter(st)}
 						className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors ${
 							statusFilter === st
@@ -257,6 +326,8 @@ function PresensiPage() {
 										<button
 											type="button"
 											key={st}
+											aria-pressed={current === st}
+											aria-label={`Tandai ${s.nama}: ${st}`}
 											onClick={() => handlePresensiChange(s.id, st)}
 											className={`rounded-md px-2.5 py-1.5 text-xs font-semibold min-h-[44px] min-w-[44px] focus-visible:ring-2 focus-visible:ring-ring ${
 												current === st ? CHIP_ACTIVE[st] : CHIP_COLORS[st]
@@ -284,6 +355,32 @@ function PresensiPage() {
 					</p>
 				</div>
 			)}
+
+			{/* Reset confirmation */}
+			<AlertDialog open={resetOpen} onOpenChange={setResetOpen}>
+				<AlertDialogContent size="sm">
+					<AlertDialogHeader>
+						<AlertDialogTitle>Kosongkan presensi hari ini?</AlertDialogTitle>
+						<AlertDialogDescription>
+							Status kehadiran semua siswa untuk tanggal ini akan dihapus.
+						</AlertDialogDescription>
+					</AlertDialogHeader>
+					<AlertDialogFooter>
+						<AlertDialogCancel onClick={() => setResetOpen(false)}>
+							Batal
+						</AlertDialogCancel>
+						<AlertDialogAction
+							variant="destructive"
+							onClick={() => {
+								setResetOpen(false);
+								resetPresensi();
+							}}
+						>
+							Kosongkan
+						</AlertDialogAction>
+					</AlertDialogFooter>
+				</AlertDialogContent>
+			</AlertDialog>
 		</div>
 	);
 }

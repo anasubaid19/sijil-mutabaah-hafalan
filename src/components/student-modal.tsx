@@ -7,6 +7,7 @@ import {
 	DialogTitle,
 } from "@/components/ui/dialog";
 import { calcProgress, getSurahName } from "@/lib/progress";
+import { localMonthString } from "@/lib/utils";
 
 interface Siswa {
 	id: string;
@@ -65,7 +66,7 @@ export function StudentModal({
 	setoranList,
 }: StudentModalProps) {
 	const [previewOpen, setPreviewOpen] = useState(false);
-	const defaultMonth = new Date().toISOString().slice(0, 7);
+	const defaultMonth = localMonthString();
 	const [exportPeriode, setExportPeriode] = useState(defaultMonth);
 
 	if (!siswa) return null;

@@ -210,7 +210,7 @@ function arrowStyle(side: Placement["side"]): React.CSSProperties | null {
 			top: 24,
 			borderTop: "7px solid transparent",
 			borderBottom: "7px solid transparent",
-			borderRight: "9px solid hsl(var(--card))",
+			borderRight: "9px solid var(--card)",
 		};
 	}
 	if (side === "left") {
@@ -219,7 +219,7 @@ function arrowStyle(side: Placement["side"]): React.CSSProperties | null {
 			top: 24,
 			borderTop: "7px solid transparent",
 			borderBottom: "7px solid transparent",
-			borderLeft: "9px solid hsl(var(--card))",
+			borderLeft: "9px solid var(--card)",
 		};
 	}
 	if (side === "bottom") {
@@ -228,7 +228,7 @@ function arrowStyle(side: Placement["side"]): React.CSSProperties | null {
 			top: -8,
 			borderLeft: "7px solid transparent",
 			borderRight: "7px solid transparent",
-			borderBottom: "9px solid hsl(var(--card))",
+			borderBottom: "9px solid var(--card)",
 		};
 	}
 	if (side === "top") {
@@ -237,7 +237,7 @@ function arrowStyle(side: Placement["side"]): React.CSSProperties | null {
 			bottom: -8,
 			borderLeft: "7px solid transparent",
 			borderRight: "7px solid transparent",
-			borderTop: "9px solid hsl(var(--card))",
+			borderTop: "9px solid var(--card)",
 		};
 	}
 	return null;
@@ -500,9 +500,9 @@ export function TutorialOverlay({ onFinish }: { onFinish: () => void }) {
 						width: target.width + 10,
 						height: target.height + 10,
 						borderRadius: 14,
-						border: "3px solid hsl(var(--primary) / 0.5)",
+						border: "3px solid color-mix(in oklch, var(--primary) 50%, transparent)",
 						boxShadow:
-							"0 0 14px 3px hsl(var(--primary) / 0.25), inset 0 0 14px 3px hsl(var(--primary) / 0.1)",
+							"0 0 14px 3px color-mix(in oklch, var(--primary) 25%, transparent), inset 0 0 14px 3px color-mix(in oklch, var(--primary) 10%, transparent)",
 						transition: "all 300ms ease-out",
 						zIndex: 3,
 					}}

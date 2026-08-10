@@ -16,6 +16,16 @@ import { toast } from "sonner";
 import { PdfPreviewDialog } from "@/components/pdf-preview-dialog";
 import { PresensiExportDialog } from "@/components/presensi-export-dialog";
 import { StudentModal } from "@/components/student-modal";
+import {
+	AlertDialog,
+	AlertDialogAction,
+	AlertDialogCancel,
+	AlertDialogContent,
+	AlertDialogDescription,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import {
 	DropdownMenu,
@@ -26,6 +36,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { calcProgress } from "@/lib/progress";
 import { SURAH_DATA } from "@/lib/surah-data";
+import { localDateString, localMonthString } from "@/lib/utils";
 
 interface Siswa {
 	id: string;
@@ -112,11 +123,11 @@ function LaporanPage() {
 	const [showAllStudents, setShowAllStudents] = useState(false);
 	const [riwayatPage, setRiwayatPage] = useState(1);
 	const RIWAYAT_PER_PAGE = 30;
-	const defaultMonth = new Date().toISOString().slice(0, 7);
+	const defaultMonth = localMonthString();
 	const [exportPeriode, setExportPeriode] = useState(defaultMonth);
+	const [setoranToDelete, setSetoranToDelete] = useState<string | null>(null);
 
 	async function deleteSetoran(id: string) {
-		if (!confirm("Hapus setoran ini?")) return;
 		const res = await fetch(`/api/setoran?id=${id}`, { method: "DELETE" });
 		if (res.ok) {
 			toast.success("Setoran dihapus");
@@ -236,7 +247,7 @@ function LaporanPage() {
 		const url = URL.createObjectURL(blob);
 		const a = document.createElement("a");
 		a.href = url;
-		a.download = `Laporan_${now.toISOString().split("T")[0]}.csv`;
+		a.download = `Laporan_${localDateString(now)}.csv`;
 		a.click();
 		URL.revokeObjectURL(url);
 		toast.success("CSV diekspor!");
@@ -624,7 +635,7 @@ function LaporanPage() {
 													</span>
 													<button
 														type="button"
-														onClick={() => deleteSetoran(r.id)}
+														onClick={() => setSetoranToDelete(r.id)}
 														className="rounded-full p-0.5 text-muted-foreground/50 transition-colors hover:bg-destructive/10 hover:text-destructive"
 														title="Hapus"
 													>
@@ -686,7 +697,7 @@ function LaporanPage() {
 												<td className="py-2">
 													<button
 														type="button"
-														onClick={() => deleteSetoran(r.id)}
+														onClick={() => setSetoranToDelete(r.id)}
 														className="rounded p-1 text-xs text-muted-foreground/50 transition-colors hover:bg-destructive/10 hover:text-destructive"
 														title="Hapus"
 													>
@@ -742,7 +753,7 @@ function LaporanPage() {
 				open={previewOpen}
 				onOpenChange={setPreviewOpen}
 				payload={{ type: "laporan", periode: exportPeriode }}
-				filename={`Laporan_${new Date().toISOString().split("T")[0]}.pdf`}
+				filename={`Laporan_${localDateString()}.pdf`}
 			/>
 
 			{/* Presensi Export */}
@@ -750,6 +761,35 @@ function LaporanPage() {
 				open={presensiExportOpen}
 				onOpenChange={setPresensiExportOpen}
 			/>
+
+			<AlertDialog
+				open={setoranToDelete !== null}
+				onOpenChange={(o) => !o && setSetoranToDelete(null)}
+			>
+				<AlertDialogContent size="sm">
+					<AlertDialogHeader>
+						<AlertDialogTitle>Hapus setoran ini?</AlertDialogTitle>
+						<AlertDialogDescription>
+							Riwayat setoran ini akan dihapus dan tidak dapat dipulihkan.
+						</AlertDialogDescription>
+					</AlertDialogHeader>
+					<AlertDialogFooter>
+						<AlertDialogCancel onClick={() => setSetoranToDelete(null)}>
+							Batal
+						</AlertDialogCancel>
+						<AlertDialogAction
+							variant="destructive"
+							onClick={() => {
+								const id = setoranToDelete;
+								setSetoranToDelete(null);
+								if (id) deleteSetoran(id);
+							}}
+						>
+							Hapus setoran
+						</AlertDialogAction>
+					</AlertDialogFooter>
+				</AlertDialogContent>
+			</AlertDialog>
 		</div>
 	);
 }
@@ -764,7 +804,7 @@ function getWeeklyTrend(setoran: Setoran[]) {
 	for (let i = 0; i < 7; i++) {
 		const d = new Date(weekAgo);
 		d.setDate(d.getDate() + i);
-		counts[d.toISOString().split("T")[0]] = 0;
+		counts[localDateString(d)] = 0;
 	}
 
 	setoran.forEach((r) => {

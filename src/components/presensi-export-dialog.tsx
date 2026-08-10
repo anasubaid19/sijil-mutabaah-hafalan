@@ -10,6 +10,7 @@ import {
 	DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { localDateString } from "@/lib/utils";
 
 interface Siswa {
 	id: string;
@@ -34,7 +35,7 @@ const PRESETS: { key: Preset; label: string }[] = [
 ];
 
 function today() {
-	return new Date().toISOString().split("T")[0];
+	return localDateString();
 }
 
 function presetRange(preset: Preset): { awal: string; akhir: string } {
@@ -70,7 +71,7 @@ function presetRange(preset: Preset): { awal: string; akhir: string } {
 }
 
 function fmt(d: Date): string {
-	return d.toISOString().split("T")[0];
+	return localDateString(d);
 }
 
 // Future: add format selection here

@@ -25,6 +25,7 @@ import {
 	validateAyat,
 	juzLabel,
 } from "@/lib/surah-data";
+import { localDateString } from "@/lib/utils";
 
 interface Siswa {
 	id: string;
@@ -83,6 +84,12 @@ interface FormBodyProps {
 	setMushafOpen: (v: boolean) => void;
 	setMushafMobileOpen: (v: boolean) => void;
 	juz: string;
+	acActive: number;
+	setAcActive: (v: number) => void;
+	acEndActive: number;
+	setAcEndActive: (v: number) => void;
+	setAcA: (v: Surah[]) => void;
+	setLintasAcEnd: (v: Surah[]) => void;
 }
 
 function FormBody(props: FormBodyProps) {
@@ -93,8 +100,9 @@ function FormBody(props: FormBodyProps) {
 		>
 			<div className="grid gap-3 sm:grid-cols-2">
 				<div className="space-y-2">
-					<label className="text-sm font-medium">Siswa</label>
+					<label htmlFor="ziyadah-siswa" className="text-sm font-medium">Siswa</label>
 					<select
+						id="ziyadah-siswa"
 						value={props.selectedSiswa}
 						onChange={(e) => props.setSelectedSiswa(e.target.value)}
 						required
@@ -109,8 +117,9 @@ function FormBody(props: FormBodyProps) {
 					</select>
 				</div>
 				<div className="space-y-2">
-					<label className="text-sm font-medium">Tanggal</label>
+					<label htmlFor="ziyadah-tanggal" className="text-sm font-medium">Tanggal</label>
 					<Input
+						id="ziyadah-tanggal"
 						type="date"
 						value={props.tanggal}
 						onChange={(e) => props.setTanggal(e.target.value)}
@@ -123,22 +132,63 @@ function FormBody(props: FormBodyProps) {
 				className={`grid gap-3 ${props.lintasMode ? "sm:grid-cols-2" : "sm:grid-cols-3"}`}
 			>
 				<div className="relative space-y-2">
-					<label className="text-sm font-medium">Surah</label>
+					<label htmlFor="ziyadah-surah" className="text-sm font-medium">Surah</label>
 					<Input
+						id="ziyadah-surah"
 						type="text"
+						role="combobox"
+						aria-expanded={props.acA.length > 0}
+						aria-controls="ziyadah-surah-list"
+						aria-activedescendant={
+							props.acA.length > 0 && props.acActive >= 0
+								? `ziyadah-surah-opt-${props.acA[props.acActive]?.number}`
+								: undefined
+						}
 						value={props.surahA}
 						onChange={(e) => props.handleSurahAChange(e.target.value)}
+						onKeyDown={(e) => {
+							if (props.acA.length === 0) return;
+							if (e.key === "ArrowDown") {
+								e.preventDefault();
+								props.setAcActive((props.acActive + 1) % props.acA.length);
+							} else if (e.key === "ArrowUp") {
+								e.preventDefault();
+								props.setAcActive(
+									(props.acActive - 1 + props.acA.length) % props.acA.length,
+								);
+							} else if (e.key === "Enter") {
+								const s = props.acA[props.acActive];
+								if (s) {
+									e.preventDefault();
+									props.selectSurahA(s);
+								}
+							} else if (e.key === "Escape") {
+								props.setAcA([]);
+							}
+						}}
 						placeholder="Ketik nama surah..."
 						required
 					/>
 					{props.acA.length > 0 && (
-						<div className="absolute z-10 mt-1 w-full rounded-xl border bg-card shadow-lg">
-							{props.acA.map((s) => (
+						<div
+							role="listbox"
+							id="ziyadah-surah-list"
+							className="absolute z-10 mt-1 w-full rounded-xl border bg-card shadow-lg"
+						>
+							{props.acA.map((s, idx) => (
 								<button
 									key={s.number}
 									type="button"
+									role="option"
+									id={`ziyadah-surah-opt-${s.number}`}
+									aria-selected={idx === props.acActive}
+									onMouseEnter={() => props.setAcActive(idx)}
 									onClick={() => props.selectSurahA(s)}
-									className="flex w-full items-center justify-between px-4 py-2 text-sm hover:bg-muted/50 first:rounded-t-xl last:rounded-b-xl"
+									className={`flex w-full items-center justify-between px-4 py-2 text-sm first:rounded-t-xl last:rounded-b-xl ${
+										idx === props.acActive
+											? "bg-muted/70"
+											: "hover:bg-muted/50"
+									}`}
 								>
 									<span>{s.name}</span>
 									<span className="text-xs text-muted-foreground">
@@ -150,8 +200,9 @@ function FormBody(props: FormBodyProps) {
 					)}
 				</div>
 				<div className="space-y-2">
-					<label className="text-sm font-medium">Dari Ayat</label>
+					<label htmlFor="ziyadah-dari-ayat" className="text-sm font-medium">Dari Ayat</label>
 					<Input
+						id="ziyadah-dari-ayat"
 						type="text"
 						value={props.dariAyat}
 						onChange={(e) => {
@@ -171,8 +222,9 @@ function FormBody(props: FormBodyProps) {
 				</div>
 				{!props.lintasMode && (
 					<div className="space-y-2">
-						<label className="text-sm font-medium">Sampai Ayat</label>
+						<label htmlFor="ziyadah-sampai-ayat" className="text-sm font-medium">Sampai Ayat</label>
 						<Input
+							id="ziyadah-sampai-ayat"
 							type="text"
 							value={props.sampaiAyat}
 							onChange={(e) => {
@@ -196,8 +248,9 @@ function FormBody(props: FormBodyProps) {
 			</div>
 
 			<div className="space-y-2">
-				<label className="text-sm font-medium">Juz</label>
+				<label htmlFor="ziyadah-juz" className="text-sm font-medium">Juz</label>
 				<Input
+					id="ziyadah-juz"
 					value={props.juz ? `Juz ${props.juz}` : ""}
 					readOnly
 					placeholder="Juz otomatis dari surah & ayat"
@@ -209,26 +262,70 @@ function FormBody(props: FormBodyProps) {
 				<div className="rounded-xl bg-muted/30 p-3 border border-dashed border-primary/30">
 					<div className="grid gap-3 sm:grid-cols-2">
 						<div className="relative space-y-2">
-							<label className="text-sm font-medium text-primary">
+							<label htmlFor="ziyadah-lintas-end" className="text-sm font-medium text-primary">
 								Surah Akhir
 							</label>
 							<Input
+								id="ziyadah-lintas-end"
 								type="text"
+								role="combobox"
+								aria-expanded={props.lintasAcEnd.length > 0}
+								aria-controls="ziyadah-lintas-end-list"
+								aria-activedescendant={
+									props.lintasAcEnd.length > 0 && props.acEndActive >= 0
+										? `ziyadah-lintas-end-opt-${props.lintasAcEnd[props.acEndActive]?.number}`
+										: undefined
+								}
 								value={props.lintasSurahEnd}
 								onChange={(e) =>
 									props.handleLintasSurahEndChange(e.target.value)
 								}
+								onKeyDown={(e) => {
+									if (props.lintasAcEnd.length === 0) return;
+									if (e.key === "ArrowDown") {
+										e.preventDefault();
+										props.setAcEndActive(
+											(props.acEndActive + 1) % props.lintasAcEnd.length,
+										);
+									} else if (e.key === "ArrowUp") {
+										e.preventDefault();
+										props.setAcEndActive(
+											(props.acEndActive - 1 + props.lintasAcEnd.length) %
+												props.lintasAcEnd.length,
+										);
+									} else if (e.key === "Enter") {
+										const s = props.lintasAcEnd[props.acEndActive];
+										if (s) {
+											e.preventDefault();
+											props.selectLintasSurahEnd(s);
+										}
+									} else if (e.key === "Escape") {
+										props.setLintasAcEnd([]);
+									}
+								}}
 								placeholder="Surah tujuan..."
 								required
 							/>
 							{props.lintasAcEnd.length > 0 && (
-								<div className="absolute z-10 mt-1 w-full rounded-xl border bg-card shadow-lg">
-									{props.lintasAcEnd.map((s) => (
+								<div
+									role="listbox"
+									id="ziyadah-lintas-end-list"
+									className="absolute z-10 mt-1 w-full rounded-xl border bg-card shadow-lg"
+								>
+									{props.lintasAcEnd.map((s, idx) => (
 										<button
 											key={s.number}
 											type="button"
+											role="option"
+											id={`ziyadah-lintas-end-opt-${s.number}`}
+											aria-selected={idx === props.acEndActive}
+											onMouseEnter={() => props.setAcEndActive(idx)}
 											onClick={() => props.selectLintasSurahEnd(s)}
-											className="flex w-full items-center justify-between px-4 py-2 text-sm hover:bg-muted/50 first:rounded-t-xl last:rounded-b-xl"
+											className={`flex w-full items-center justify-between px-4 py-2 text-sm hover:bg-muted/50 first:rounded-t-xl last:rounded-b-xl ${
+												idx === props.acEndActive
+													? "bg-muted/70"
+													: "hover:bg-muted/50"
+											}`}
 										>
 											<span>{s.name}</span>
 											<span className="text-xs text-muted-foreground">
@@ -240,10 +337,11 @@ function FormBody(props: FormBodyProps) {
 							)}
 						</div>
 						<div className="space-y-2">
-							<label className="text-sm font-medium text-primary">
+							<label htmlFor="ziyadah-lintas-sampai" className="text-sm font-medium text-primary">
 								Sampai Ayat
 							</label>
 							<Input
+								id="ziyadah-lintas-sampai"
 								type="text"
 								value={props.lintasSampaiAyat}
 								onChange={(e) => {
@@ -302,14 +400,19 @@ function FormBody(props: FormBodyProps) {
 			</div>
 
 			<div className="space-y-2">
-				<label className="text-sm font-medium">Penilaian</label>
-				<div className="flex flex-wrap gap-2">
+				<label id="ziyadah-penilaian-label" className="text-sm font-medium">Penilaian</label>
+				<div
+					role="group"
+					aria-labelledby="ziyadah-penilaian-label"
+					className="flex flex-wrap gap-2"
+				>
 					{GRADES.map((g) => (
 						<button
 							key={g}
 							type="button"
+							aria-pressed={props.gred === g}
 							onClick={() => props.setGred(g)}
-							className={`rounded-xl border px-4 py-2 text-sm font-semibold transition-all ${
+							className={`rounded-xl border px-4 py-2 text-sm font-semibold transition-colors ${
 								props.gred === g
 									? GRADE_COLORS[g]
 									: "border-border text-muted-foreground hover:bg-muted/50"
@@ -322,8 +425,9 @@ function FormBody(props: FormBodyProps) {
 			</div>
 
 			<div className="space-y-2">
-				<label className="text-sm font-medium">Catatan (opsional)</label>
+				<label htmlFor="ziyadah-catatan" className="text-sm font-medium">Catatan (opsional)</label>
 				<textarea
+					id="ziyadah-catatan"
 					value={props.catatan}
 					onChange={(e) => props.setCatatan(e.target.value)}
 					placeholder="Catatan tambahan..."
@@ -348,9 +452,7 @@ function FormBody(props: FormBodyProps) {
 function ZiyadahPage() {
 	const [siswaList, setSiswaList] = useState<Siswa[]>([]);
 	const [selectedSiswa, setSelectedSiswa] = useState("");
-	const [tanggal, setTanggal] = useState(
-		new Date().toISOString().split("T")[0],
-	);
+	const [tanggal, setTanggal] = useState(localDateString());
 	const [surahA, setSurahA] = useState("");
 	const [dariAyat, setDariAyat] = useState("");
 	const [sampaiAyat, setSampaiAyat] = useState("");
@@ -373,6 +475,8 @@ function ZiyadahPage() {
 	});
 
 	const [lintasMode, setLintasMode] = useState(false);
+	const [acActive, setAcActive] = useState(0);
+	const [acEndActive, setAcEndActive] = useState(0);
 	const [lintasSurahEnd, setLintasSurahEnd] = useState("");
 	const [lintasSampaiAyat, setLintasSampaiAyat] = useState("");
 	const [lintasAcEnd, setLintasAcEnd] = useState<Surah[]>([]);
@@ -441,6 +545,7 @@ function ZiyadahPage() {
 
 	function handleSurahAChange(val: string) {
 		setSurahA(val);
+		setAcActive(0);
 		setAcA(val.length >= 1 ? searchSurah(val).slice(0, 5) : []);
 	}
 
@@ -451,6 +556,7 @@ function ZiyadahPage() {
 
 	function handleLintasSurahEndChange(val: string) {
 		setLintasSurahEnd(val);
+		setAcEndActive(0);
 		setLintasAcEnd(val.length >= 1 ? searchSurah(val).slice(0, 5) : []);
 	}
 
@@ -650,9 +756,14 @@ function ZiyadahPage() {
 		setMushafOpen,
 		setMushafMobileOpen,
 		juz: computeJuz(),
+		acActive,
+		setAcActive,
+		acEndActive,
+		setAcEndActive,
+		setAcA,
+		setLintasAcEnd,
 	};
-
-	return (
+		return (
 		<div className="mx-auto max-w-7xl space-y-4 pb-20 md:pb-6">
 			<div>
 				<h2 className="text-base font-semibold">

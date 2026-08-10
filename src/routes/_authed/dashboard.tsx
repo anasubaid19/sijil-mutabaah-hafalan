@@ -32,6 +32,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { calcProgress, getSurahName } from "@/lib/progress";
+import { localDateString } from "@/lib/utils";
 
 interface Siswa {
 	id: string;
@@ -92,7 +93,7 @@ export const Route = createFileRoute("/_authed/dashboard")({
 });
 
 function todayStr() {
-	return new Date().toISOString().split("T")[0];
+	return localDateString();
 }
 
 function DashboardPage() {
@@ -907,7 +908,7 @@ function getWeeklyData(setoran: Setoran[]) {
 	for (let i = 0; i < 7; i++) {
 		const d = new Date(weekAgo);
 		d.setDate(d.getDate() + i);
-		const key = d.toISOString().split("T")[0];
+		const key = localDateString(d);
 		data[key] = { ziyadah: 0, murajaah: 0 };
 	}
 

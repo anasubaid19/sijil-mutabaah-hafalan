@@ -10,10 +10,21 @@ import {
 	AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
+import {
+	AlertDialog,
+	AlertDialogAction,
+	AlertDialogCancel,
+	AlertDialogContent,
+	AlertDialogDescription,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { UnsavedChangesGuard } from "@/components/unsaved-changes";
 import { authClient } from "@/lib/auth/auth-client";
+import { localDateString } from "@/lib/utils";
 
 interface UserProfile {
 	id: string;
@@ -579,6 +590,7 @@ function PengaturanPage() {
 	// Siswa dialog
 	const [dialogOpen, setDialogOpen] = useState(false);
 	const [editingSiswa, setEditingSiswa] = useState<Siswa | null>(null);
+	const [siswaToDelete, setSiswaToDelete] = useState<string | null>(null);
 
 	// School profile
 	const [schoolLogo, setSchoolLogo] = useState("");
@@ -734,7 +746,6 @@ function PengaturanPage() {
 	}
 
 	async function deleteSiswa(id: string) {
-		if (!confirm("Hapus siswa ini?")) return;
 		const res = await fetch(`/api/siswa?id=${id}`, { method: "DELETE" });
 		if (res.ok) {
 			toast.success("Siswa dihapus");
@@ -764,7 +775,7 @@ function PengaturanPage() {
 		const url = URL.createObjectURL(blob);
 		const a = document.createElement("a");
 		a.href = url;
-		a.download = `Backup_Sijil_${new Date().toISOString().split("T")[0]}.json`;
+		a.download = `Backup_Sijil_${localDateString()}.json`;
 		a.click();
 		URL.revokeObjectURL(url);
 		// ponytail: last-backup tracked per browser via localStorage; move to
@@ -900,7 +911,7 @@ function PengaturanPage() {
 				<StudentList
 					siswaList={siswaList}
 					onEdit={openEditSiswa}
-					onDelete={deleteSiswa}
+					onDelete={(id) => setSiswaToDelete(id)}
 					onAdd={openAddSiswa}
 				/>
 			</section>
@@ -1007,6 +1018,32 @@ function PengaturanPage() {
 				editingSiswa={editingSiswa}
 				onSaved={refreshSiswa}
 			/>
+			<AlertDialog open={siswaToDelete !== null} onOpenChange={(o) => !o && setSiswaToDelete(null)}>
+				<AlertDialogContent size="sm">
+					<AlertDialogHeader>
+						<AlertDialogTitle>Hapus siswa ini?</AlertDialogTitle>
+						<AlertDialogDescription>
+							Data siswa beserta riwayat hafalannya akan dihapus dan tidak dapat
+							dipulihkan.
+						</AlertDialogDescription>
+					</AlertDialogHeader>
+					<AlertDialogFooter>
+						<AlertDialogCancel onClick={() => setSiswaToDelete(null)}>
+							Batal
+						</AlertDialogCancel>
+						<AlertDialogAction
+							variant="destructive"
+							onClick={() => {
+								const id = siswaToDelete;
+								setSiswaToDelete(null);
+								if (id) deleteSiswa(id);
+							}}
+						>
+							Hapus siswa
+						</AlertDialogAction>
+					</AlertDialogFooter>
+				</AlertDialogContent>
+			</AlertDialog>
 			<UnsavedChangesGuard dirty={profileDirty || schoolDirty} />
 		</div>
 	);

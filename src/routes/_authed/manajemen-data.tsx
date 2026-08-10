@@ -3,6 +3,16 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { type Siswa, StudentDialog } from "@/components/student-dialog";
 import { StudentList } from "@/components/student-list";
+import {
+	AlertDialog,
+	AlertDialogAction,
+	AlertDialogCancel,
+	AlertDialogContent,
+	AlertDialogDescription,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { UnsavedChangesGuard } from "@/components/unsaved-changes";
@@ -34,6 +44,7 @@ function ManajemenDataPage() {
 	// Siswa dialog
 	const [dialogOpen, setDialogOpen] = useState(false);
 	const [editingSiswa, setEditingSiswa] = useState<Siswa | null>(null);
+	const [siswaToDelete, setSiswaToDelete] = useState<string | null>(null);
 
 	useEffect(() => {
 		function onResize() {
@@ -85,7 +96,6 @@ function ManajemenDataPage() {
 	}
 
 	async function deleteSiswa(id: string) {
-		if (!confirm("Hapus siswa ini?")) return;
 		const res = await fetch(`/api/siswa?id=${id}`, { method: "DELETE" });
 		if (res.ok) {
 			toast.success("Siswa dihapus");
@@ -225,7 +235,7 @@ function ManajemenDataPage() {
 						<StudentList
 							siswaList={siswaList}
 							onEdit={openEditSiswa}
-							onDelete={deleteSiswa}
+							onDelete={(id) => setSiswaToDelete(id)}
 							onAdd={openAddSiswa}
 						/>
 					</section>
@@ -238,6 +248,32 @@ function ManajemenDataPage() {
 				editingSiswa={editingSiswa}
 				onSaved={refreshSiswa}
 			/>
+			<AlertDialog open={siswaToDelete !== null} onOpenChange={(o) => !o && setSiswaToDelete(null)}>
+				<AlertDialogContent size="sm">
+					<AlertDialogHeader>
+						<AlertDialogTitle>Hapus siswa ini?</AlertDialogTitle>
+						<AlertDialogDescription>
+							Data siswa beserta riwayat hafalannya akan dihapus dan tidak dapat
+							dipulihkan.
+						</AlertDialogDescription>
+					</AlertDialogHeader>
+					<AlertDialogFooter>
+						<AlertDialogCancel onClick={() => setSiswaToDelete(null)}>
+							Batal
+						</AlertDialogCancel>
+						<AlertDialogAction
+							variant="destructive"
+							onClick={() => {
+								const id = siswaToDelete;
+								setSiswaToDelete(null);
+								if (id) deleteSiswa(id);
+							}}
+						>
+							Hapus siswa
+						</AlertDialogAction>
+					</AlertDialogFooter>
+				</AlertDialogContent>
+			</AlertDialog>
 			<UnsavedChangesGuard dirty={profileDirty} />
 		</div>
 	);
