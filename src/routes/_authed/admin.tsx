@@ -126,7 +126,7 @@ function AdminPage() {
 	}
 
 	return (
-		<div className="mx-auto max-w-5xl space-y-6 pb-20 md:pb-6">
+		<div className="mx-auto max-w-6xl space-y-6 pb-20 md:pb-6">
 			<div className="flex items-center justify-between">
 				<div>
 					<h2 className="text-base font-semibold">Dasbor Admin</h2>
@@ -287,7 +287,7 @@ function StatCard({
 	color: string;
 }) {
 	return (
-		<div className="flex items-center gap-4 rounded-2xl border bg-card p-5 shadow-xs transition-all duration-200 hover:shadow-sm">
+		<div className="flex min-h-24 items-center gap-3 rounded-2xl border bg-card p-4 shadow-xs transition-[border-color,box-shadow] duration-150 hover:border-primary/20 hover:shadow-sm">
 			<div
 				className={`flex size-10 items-center justify-center rounded-xl bg-muted ${color}`}
 			>

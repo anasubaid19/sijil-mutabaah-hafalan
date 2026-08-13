@@ -126,7 +126,7 @@ function ManajemenDataPage() {
 	}
 
 	return (
-		<div className="mx-auto max-w-2xl space-y-6 pb-20 md:pb-6">
+		<div className="mx-auto max-w-6xl space-y-6 pb-20 md:pb-6">
 			{isMobile ? (
 				<div className="rounded-2xl border bg-card p-8 text-center shadow-xs">
 					<p className="text-sm text-muted-foreground">

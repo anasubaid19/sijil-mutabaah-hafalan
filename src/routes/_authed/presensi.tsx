@@ -65,6 +65,9 @@ function PresensiPage() {
 	const [statusFilter, setStatusFilter] = useState<PresensiStatus | "all">(
 		"all",
 	);
+	const [rowFeedback, setRowFeedback] = useState<
+		Record<string, "saving" | "saved" | "error">
+	>({});
 
 	const today = todayStr();
 
@@ -88,33 +91,46 @@ function PresensiPage() {
 
 	const handlePresensiChange = useCallback(
 		async (siswaId: string, status: PresensiStatus) => {
-			const existing = presensiMap.get(siswaId);
-			if (existing && existing.status === status) {
-				await fetch(`/api/presensi?id=${existing.id}`, { method: "DELETE" });
-				setPresensiList((prev) => prev.filter((p) => p.siswaId !== siswaId));
-				return;
-			}
-			if (existing) {
-				const res = await fetch("/api/presensi", {
-					method: "PUT",
-					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify({ id: existing.id, status }),
-				});
-				if (res.ok) {
+			setRowFeedback((prev) => ({ ...prev, [siswaId]: "saving" }));
+			try {
+				const existing = presensiMap.get(siswaId);
+				if (existing && existing.status === status) {
+					const res = await fetch(`/api/presensi?id=${existing.id}`, {
+						method: "DELETE",
+					});
+					if (!res.ok) throw new Error("delete failed");
+					setPresensiList((prev) => prev.filter((p) => p.siswaId !== siswaId));
+				} else if (existing) {
+					const res = await fetch("/api/presensi", {
+						method: "PUT",
+						headers: { "Content-Type": "application/json" },
+						body: JSON.stringify({ id: existing.id, status }),
+					});
+					if (!res.ok) throw new Error("update failed");
 					setPresensiList((prev) =>
 						prev.map((p) => (p.siswaId === siswaId ? { ...p, status } : p)),
 					);
-				}
-			} else {
-				const res = await fetch("/api/presensi", {
-					method: "POST",
-					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify({ siswaId, tanggal: today, status }),
-				});
-				if (res.ok) {
+				} else {
+					const res = await fetch("/api/presensi", {
+						method: "POST",
+						headers: { "Content-Type": "application/json" },
+						body: JSON.stringify({ siswaId, tanggal: today, status }),
+					});
+					if (!res.ok) throw new Error("create failed");
 					const row = await res.json();
 					setPresensiList((prev) => [...prev, row]);
 				}
+				setRowFeedback((prev) => ({ ...prev, [siswaId]: "saved" }));
+				window.setTimeout(() => {
+					setRowFeedback((prev) => {
+						const next = { ...prev };
+						delete next[siswaId];
+						return next;
+					});
+				}, 1800);
+			} catch {
+				setRowFeedback((prev) => ({ ...prev, [siswaId]: "error" }));
+				toast.error("Presensi gagal disimpan. Periksa koneksi dan coba lagi.");
 			}
 		},
 		[today, presensiMap],
@@ -215,7 +231,7 @@ function PresensiPage() {
 	}
 
 	return (
-		<div className="mx-auto max-w-3xl space-y-6 pb-20 md:pb-6">
+		<div className="mx-auto max-w-6xl space-y-5 pb-20 md:pb-6">
 			<div>
 				<h2 className="text-base font-semibold">Presensi</h2>
 				<p className="mt-1 text-sm text-muted-foreground">
@@ -249,7 +265,8 @@ function PresensiPage() {
 				</Button>
 				<div className="ml-auto flex items-center gap-2">
 					<Input
-						placeholder="Cari siswa..."
+						aria-label="Cari siswa"
+						placeholder="Cari siswa…"
 						value={search}
 						onChange={(e) => setSearch(e.target.value)}
 						className="w-40"
@@ -318,25 +335,42 @@ function PresensiPage() {
 						return (
 							<div
 								key={s.id}
-								className="flex items-center justify-between rounded-xl bg-muted/50 px-4 py-3 transition-colors hover:bg-muted"
-							>
-								<span className="text-sm font-medium">{s.nama}</span>
-								<div className="flex gap-1">
+							className="grid items-center gap-2 rounded-xl border border-transparent bg-muted/40 px-3 py-2 transition-[border-color,background-color] hover:border-border hover:bg-muted/60 sm:grid-cols-[minmax(0,1fr)_auto_5.5rem]"
+						>
+							<span className="min-w-0 truncate text-sm font-medium">{s.nama}</span>
+							<div className="flex gap-1 justify-self-start sm:justify-self-end">
 									{PRESENSI_STATUSES.map((st) => (
 										<button
 											type="button"
 											key={st}
 											aria-pressed={current === st}
 											aria-label={`Tandai ${s.nama}: ${st}`}
-											onClick={() => handlePresensiChange(s.id, st)}
-											className={`rounded-md px-2.5 py-1.5 text-xs font-semibold min-h-[44px] min-w-[44px] focus-visible:ring-2 focus-visible:ring-ring ${
+										onClick={() => handlePresensiChange(s.id, st)}
+										disabled={rowFeedback[s.id] === "saving"}
+										className={`min-h-9 min-w-9 rounded-lg px-2 py-1 text-xs font-semibold transition-[background-color,color,box-shadow] pointer-coarse:min-h-11 pointer-coarse:min-w-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary disabled:cursor-wait disabled:opacity-60 ${
 												current === st ? CHIP_ACTIVE[st] : CHIP_COLORS[st]
 											}`}
 										>
 											{st[0]}
 										</button>
-									))}
-								</div>
+								))}
+							</div>
+							<span
+								role="status"
+								className={`text-xs font-medium sm:text-right ${
+									rowFeedback[s.id] === "error"
+										? "text-destructive"
+										: "text-emerald-700 dark:text-emerald-400"
+								}`}
+							>
+								{rowFeedback[s.id] === "saving"
+									? "Menyimpan…"
+									: rowFeedback[s.id] === "saved"
+										? "✓ Tersimpan"
+										: rowFeedback[s.id] === "error"
+											? "Gagal"
+											: ""}
+							</span>
 							</div>
 						);
 					})}

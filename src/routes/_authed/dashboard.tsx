@@ -91,6 +91,14 @@ const STATUS_COLORS: Record<string, string> = {
 };
 
 export const Route = createFileRoute("/_authed/dashboard")({
+	validateSearch: (
+		search: Record<string, unknown>,
+	): { view?: "sudah-setor" | "belum-setor" } => {
+		if (search.view === "sudah-setor" || search.view === "belum-setor") {
+			return { view: search.view };
+		}
+		return {};
+	},
 	component: DashboardPage,
 });
 
@@ -99,6 +107,7 @@ function todayStr() {
 }
 
 function DashboardPage() {
+	const { view } = Route.useSearch();
 	const [siswaList, setSiswaList] = useState<Siswa[]>([]);
 	const [setoranList, setSetoranList] = useState<Setoran[]>([]);
 	const [presensiList, setPresensiList] = useState<Presensi[]>([]);
@@ -155,9 +164,10 @@ function DashboardPage() {
 	const todayPresensiMap = new Map(presensiList.map((p) => [p.siswaId, p]));
 
 	const hadirCount = presensiList.filter((p) => p.status === "Hadir").length;
-	const sudahSetor = new Set(
+	const todaySubmissionStudentIds = new Set(
 		setoranList.filter((r) => r.tanggal === today).map((r) => r.siswaId),
-	).size;
+	);
+	const sudahSetor = todaySubmissionStudentIds.size;
 	const belumSetor = siswaList.length - sudahSetor;
 
 	const weeklyData = getWeeklyData(setoranList);
@@ -266,7 +276,7 @@ function DashboardPage() {
 	}
 
 	return (
-		<div className="space-y-6 pb-20 md:pb-6">
+		<div className="mx-auto max-w-6xl space-y-5 pb-20 md:pb-6">
 			{/* Quick Actions */}
 			<div className="flex items-center gap-2">
 				<Button
@@ -302,6 +312,7 @@ function DashboardPage() {
 					value={hadirCount}
 					color="text-blue-600 dark:text-blue-400"
 					sub={`dari ${siswaList.length} siswa`}
+					action="presensi"
 				/>
 				<StatCard
 					icon={BookOpen}
@@ -309,6 +320,7 @@ function DashboardPage() {
 					value={sudahSetor}
 					color="text-primary"
 					sub="hari ini"
+					action="sudah-setor"
 				/>
 				<StatCard
 					icon={Clock}
@@ -316,8 +328,56 @@ function DashboardPage() {
 					value={belumSetor}
 					color="text-amber-600 dark:text-amber-400"
 					sub="perlu tindak lanjut"
+					action="belum-setor"
 				/>
 			</div>
+
+			{view && (
+				<section className="rounded-2xl border bg-card p-4 shadow-xs" aria-live="polite">
+					<div className="mb-3 flex items-center justify-between gap-3">
+						<div>
+							<h2 className="text-base font-semibold">
+								{view === "sudah-setor"
+									? "Setoran Hari Ini"
+									: "Siswa Belum Setor Hari Ini"}
+							</h2>
+							<p className="text-xs text-muted-foreground">
+								Filter aktif dari ringkasan dashboard
+							</p>
+						</div>
+						<Link
+							to="/dashboard"
+							search={{}}
+							className="rounded-lg px-3 py-2 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+						>
+							Tutup Filter
+						</Link>
+					</div>
+					<div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+						{view === "sudah-setor"
+							? setoranList
+									.filter((record) => record.tanggal === today)
+									.map((record) => (
+										<div key={record.id} className="rounded-xl bg-muted/50 px-3 py-2.5">
+											<p className="truncate text-sm font-semibold">
+												{siswaList.find((student) => student.id === record.siswaId)?.nama ?? "—"}
+											</p>
+											<p className="text-xs text-muted-foreground">
+												{record.type} · {getSurahName(record.surah)} · Ayat {record.ayatAwal}–{record.ayatAkhir}
+											</p>
+										</div>
+									))
+							: siswaList
+									.filter((student) => !todaySubmissionStudentIds.has(student.id))
+									.map((student) => (
+										<div key={student.id} className="rounded-xl bg-muted/50 px-3 py-2.5">
+											<p className="truncate text-sm font-semibold">{student.nama}</p>
+											<p className="text-xs text-muted-foreground">Belum ada setoran hari ini</p>
+										</div>
+									))}
+					</div>
+				</section>
+			)}
 
 			{/* Presensi */}
 			<div className="rounded-2xl border bg-card p-5 shadow-xs">
@@ -605,14 +665,14 @@ function DashboardPage() {
 							return (
 								<div
 									key={r.id}
-									className="flex items-center justify-between rounded-xl bg-muted/50 px-4 py-2.5 transition-colors duration-200 hover:bg-muted"
+								className="flex items-center justify-between gap-3 rounded-xl bg-muted/50 px-3 py-2 transition-colors duration-150 hover:bg-muted"
 								>
 									<div className="min-w-0">
 										<p className="text-sm font-medium truncate">
 											{siswa?.nama ?? "—"}
 										</p>
-										<p className="text-xs text-muted-foreground">
-											{r.type} —{" "}
+									<p className="text-xs font-medium text-primary">{r.type}</p>
+									<p className="text-xs text-muted-foreground">
 											{r.lintas && r.surahAkhir
 												? `${getSurahName(r.surah)} → ${getSurahName(r.surahAkhir)} (${r.ayatAwal}–${r.ayatAkhir})`
 												: `${getSurahName(r.surah)} ${r.ayatAwal}:${r.ayatAkhir}`}
@@ -877,27 +937,50 @@ function StatCard({
 	value,
 	color,
 	sub,
+	action,
 }: {
 	icon: IconSvgObject;
 	label: string;
 	value: number | string;
 	color: string;
 	sub?: string;
+	action?: "presensi" | "sudah-setor" | "belum-setor";
 }) {
-	return (
-		<div className="flex items-center gap-4 rounded-2xl border bg-card p-5 shadow-xs transition-all duration-200 hover:shadow-sm">
+	const content = (
+		<>
 			<div
-				className={`flex size-10 items-center justify-center rounded-xl bg-muted ${color}`}
+				className={`flex size-9 items-center justify-center rounded-xl bg-muted ${color}`}
 			>
 				<HugeiconsIcon icon={icon} strokeWidth={1.8} />
 			</div>
 			<div>
 				<p className="text-xs text-muted-foreground">{label}</p>
-				<p className="text-2xl font-bold tracking-tight">{value}</p>
+				<p className="text-xl font-bold tracking-tight tabular-nums">{value}</p>
 				{sub && <p className="mt-0.5 text-xs text-muted-foreground">{sub}</p>}
 			</div>
-		</div>
+		</>
 	);
+	const className = `flex min-h-24 items-center gap-3 rounded-2xl border bg-card p-4 text-left shadow-xs transition-[border-color,background-color,box-shadow] ${
+		action
+			? "hover:border-primary/30 hover:bg-primary/5 hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+			: ""
+	}`;
+
+	if (action === "presensi") {
+		return (
+			<Link to="/presensi" className={className} aria-label="Buka presensi hari ini">
+				{content}
+			</Link>
+		);
+	}
+	if (action) {
+		return (
+			<Link to="/dashboard" search={{ view: action }} className={className}>
+				{content}
+			</Link>
+		);
+	}
+	return <div className={className}>{content}</div>;
 }
 
 function getWeeklyData(setoran: Setoran[]) {

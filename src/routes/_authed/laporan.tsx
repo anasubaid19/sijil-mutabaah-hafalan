@@ -8,7 +8,7 @@ import {
 	Pie,
 	PieChart,
 	ResponsiveContainer,
-	Tooltip,
+	Tooltip as ChartTooltip,
 	XAxis,
 	YAxis,
 } from "recharts";
@@ -34,6 +34,12 @@ import {
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipProvider,
+	TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { calcProgress } from "@/lib/progress";
 import { SURAH_DATA } from "@/lib/surah-data";
 import { localDateString, localMonthString } from "@/lib/utils";
@@ -69,7 +75,7 @@ const STATUS_COLORS: Record<string, string> = {
 	"Tidak Lancar": "bg-red-500/15 text-red-700 dark:text-red-400",
 };
 
-const PIE_COLORS = ["#2563eb", "#f59e0b", "#ef4444"];
+const PIE_COLORS = ["var(--chart-1)", "var(--chart-3)", "var(--destructive)"];
 
 const AVATAR_COLORS: Record<string, string[]> = {
 	a: ["#f0fdf4", "#166534"],
@@ -104,14 +110,19 @@ function surahAyatDisplay(r: Setoran): string {
 }
 
 export const Route = createFileRoute("/_authed/laporan")({
+	validateSearch: (search: Record<string, unknown>): { siswa?: string } =>
+		typeof search.siswa === "string" ? { siswa: search.siswa } : {},
 	component: LaporanPage,
 });
 
 function LaporanPage() {
+	const { siswa: siswaFromSearch } = Route.useSearch();
 	const [siswaList, setSiswaList] = useState<Siswa[]>([]);
 	const [setoranList, setSetoranList] = useState<Setoran[]>([]);
 	const [view, setView] = useState<"grid" | "list">("grid");
-	const [selectedSiswa, setSelectedSiswa] = useState<string | null>(null);
+	const [selectedSiswa, setSelectedSiswa] = useState<string | null>(
+		siswaFromSearch ?? null,
+	);
 	const [modalSiswa, setModalSiswa] = useState<Siswa | null>(null);
 	const [halaqahName, setHalaqahName] = useState<string>("");
 	const [loading, setLoading] = useState(true);
@@ -215,20 +226,69 @@ function LaporanPage() {
 					}, 0) / siswaList.length,
 				)
 			: 0;
+	const ATTENTION_DAYS = 7;
+	const gradeRank: Record<string, number> = {
+		"Tidak Lancar": 1,
+		Jayyid: 1,
+		"Mulai Lancar": 2,
+		"Jayyid Jiddan": 2,
+		Lancar: 3,
+		Mumtaz: 3,
+		Mutqin: 4,
+	};
+	const studentsBelowTarget = siswaList.filter((student) => {
+		const progress = calcProgress(
+			student,
+			setoranList.filter((record) => record.siswaId === student.id),
+		);
+		return !progress.noTarget && progress.pct < 100;
+	});
+	const studentsWithoutRecentSubmission = siswaList.filter((student) => {
+		const latest = setoranList
+			.filter((record) => record.siswaId === student.id)
+			.sort((a, b) => b.tanggal.localeCompare(a.tanggal))[0];
+		if (!latest) return true;
+		const latestDate = new Date(`${latest.tanggal}T00:00:00`);
+		const ageInDays = Math.floor(
+			(now.getTime() - latestDate.getTime()) / (24 * 60 * 60 * 1000),
+		);
+		return ageInDays >= ATTENTION_DAYS;
+	});
+	const studentsWithDecliningGrade = siswaList.filter((student) => {
+		const recent = setoranList
+			.filter((record) => record.siswaId === student.id)
+			.sort(
+				(a, b) =>
+					b.tanggal.localeCompare(a.tanggal) || b.id.localeCompare(a.id),
+			)
+			.slice(0, 2);
+		if (recent.length < 2) return false;
+		return (gradeRank[recent[0]?.status ?? ""] ?? 0) <
+			(gradeRank[recent[1]?.status ?? ""] ?? 0);
+	});
+	const attentionReasons = [
+		studentsBelowTarget.length > 0
+			? `${studentsBelowTarget.length} siswa masih di bawah target`
+			: null,
+		studentsWithoutRecentSubmission.length > 0
+			? `${studentsWithoutRecentSubmission.length} siswa tidak memiliki setoran dalam ${ATTENTION_DAYS} hari terakhir`
+			: null,
+		studentsWithDecliningGrade.length > 0
+			? `Penilaian terbaru menurun pada ${studentsWithDecliningGrade.length} siswa`
+			: null,
+	].filter((reason): reason is string => Boolean(reason));
 
 	const statusLabel =
-		avgProgress >= 80
+		attentionReasons.length > 0
+			? "Perlu Perhatian"
+			: avgProgress >= 80
 			? "Target Terlampaui"
-			: avgProgress >= 50
-				? "Dalam Jalur"
-				: "Perlu Perhatian";
+			: "Dalam Jalur";
 
 	const statusColor =
-		avgProgress >= 80
-			? "bg-emerald-400 text-emerald-900"
-			: avgProgress >= 50
-				? "bg-amber-400 text-amber-900"
-				: "bg-red-400 text-red-900";
+		attentionReasons.length > 0
+			? "border-amber-500/30 bg-amber-500/10 text-amber-800 dark:text-amber-300"
+			: "border-emerald-500/30 bg-emerald-500/10 text-emerald-800 dark:text-emerald-300";
 
 	function exportCSV() {
 		if (filteredSetoran.length === 0) {
@@ -267,7 +327,7 @@ function LaporanPage() {
 	}
 
 	return (
-		<div className="space-y-6 pb-20 md:pb-6 print:space-y-4 print:pb-0">
+		<div className="mx-auto max-w-6xl space-y-6 pb-20 md:pb-6 print:space-y-4 print:pb-0">
 			<div className="flex items-center justify-between print:hidden">
 				<div>
 					<h2 className="text-base font-semibold">
@@ -279,6 +339,7 @@ function LaporanPage() {
 				</div>
 				<div className="flex items-center gap-2">
 					<button
+						type="button"
 						onClick={() => setView("grid")}
 						className={`rounded-xl px-3 py-1.5 text-sm font-semibold transition-colors ${
 							view === "grid"
@@ -289,6 +350,7 @@ function LaporanPage() {
 						Kisi
 					</button>
 					<button
+						type="button"
 						onClick={() => setView("list")}
 						className={`rounded-xl px-3 py-1.5 text-sm font-semibold transition-colors ${
 							view === "list"
@@ -407,7 +469,7 @@ function LaporanPage() {
 							<button
 								key={s.id}
 								onClick={() => setModalSiswa(s)}
-								className="rounded-2xl border bg-card p-4 shadow-xs transition-all hover:shadow-md text-left w-full"
+							className="w-full rounded-2xl border bg-card p-4 text-left shadow-xs transition-[border-color,box-shadow,background-color] hover:border-primary/25 hover:bg-muted/20 hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
 							>
 								<div className="flex items-center gap-3">
 									<div
@@ -461,13 +523,13 @@ function LaporanPage() {
 				)}
 
 			{/* Monthly Insight Card */}
-			<div className="bg-gradient-to-br from-teal-700 to-teal-900 text-white rounded-2xl p-6">
+			<div className="rounded-2xl border bg-card p-5 shadow-xs">
 				<div className="flex items-start justify-between">
 					<div>
 						<h3 className="text-lg font-bold">
 							Evaluasi Capaian{halaqahName ? ` ${halaqahName}` : ""}
 						</h3>
-						<p className="mt-1 text-sm text-teal-200">
+						<p className="mt-1 text-sm text-muted-foreground">
 							Ringkasan bulan{" "}
 							{now.toLocaleDateString("id-ID", {
 								month: "long",
@@ -475,28 +537,42 @@ function LaporanPage() {
 							})}
 						</p>
 					</div>
-					<span
-						className={`rounded-full px-3 py-1 text-xs font-bold ${statusColor}`}
-					>
-						{statusLabel}
-					</span>
+					<TooltipProvider delay={250}>
+						<Tooltip>
+							<TooltipTrigger
+								render={
+									<button
+										type="button"
+										className={`rounded-full border px-3 py-1 text-xs font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${statusColor}`}
+									/>
+								}
+							>
+								{statusLabel}
+							</TooltipTrigger>
+							<TooltipContent className="max-w-sm">
+								{attentionReasons.length > 0
+									? attentionReasons.join(" · ")
+									: "Tidak ada indikator perhatian dari data bulan ini."}
+							</TooltipContent>
+						</Tooltip>
+					</TooltipProvider>
 				</div>
 				<div className="mt-5 grid grid-cols-2 gap-4 sm:grid-cols-4">
 					<div>
 						<p className="text-2xl font-bold">{monthlySetoran.length}</p>
-						<p className="text-xs text-teal-200">Setoran Bulan Ini</p>
+						<p className="text-xs text-muted-foreground">Setoran Bulan Ini</p>
 					</div>
 					<div>
 						<p className="text-2xl font-bold">{juzCompleted}</p>
-						<p className="text-xs text-teal-200">Juz Selesai</p>
+						<p className="text-xs text-muted-foreground">Juz Selesai</p>
 					</div>
 					<div>
 						<p className="text-2xl font-bold">{topGrade}</p>
-						<p className="text-xs text-teal-200">Nilai Tertinggi</p>
+						<p className="text-xs text-muted-foreground">Nilai Tertinggi</p>
 					</div>
 					<div>
 						<p className="text-2xl font-bold">{avgProgress}%</p>
-						<p className="text-xs text-teal-200">Rata-rata Progres</p>
+						<p className="text-xs text-muted-foreground">Rata-rata Progres</p>
 					</div>
 				</div>
 			</div>
@@ -549,7 +625,7 @@ function LaporanPage() {
 										<Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />
 									))}
 								</Pie>
-								<Tooltip />
+								<ChartTooltip />
 							</PieChart>
 						</ResponsiveContainer>
 					) : (
@@ -578,10 +654,10 @@ function LaporanPage() {
 					{weeklyTrend.length > 0 ? (
 						<ResponsiveContainer width="100%" height={200}>
 							<BarChart data={weeklyTrend}>
-								<CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+								<CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
 								<XAxis dataKey="day" className="text-xs" />
 								<YAxis className="text-xs" />
-								<Tooltip
+								<ChartTooltip
 									contentStyle={{
 										borderRadius: "0.75rem",
 										border: "1px solid var(--border)",
@@ -589,7 +665,11 @@ function LaporanPage() {
 										fontSize: "0.875rem",
 									}}
 								/>
-								<Bar dataKey="count" fill="#2563eb" radius={[6, 6, 0, 0]} />
+								<Bar
+									dataKey="count"
+									fill="var(--chart-1)"
+									radius={[6, 6, 0, 0]}
+								/>
 							</BarChart>
 						</ResponsiveContainer>
 					) : (
@@ -619,13 +699,14 @@ function LaporanPage() {
 											key={r.id}
 											className="rounded-xl border p-3 transition-colors hover:bg-muted/30"
 										>
-											<div className="flex items-start justify-between">
-												<div>
-													<p className="text-sm font-semibold">{siswaName}</p>
-													<p className="text-xs text-muted-foreground">
-														{surahDisplay(r)} ({r.ayatAwal}–{r.ayatAkhir})
-													</p>
-												</div>
+										<div className="flex items-start justify-between gap-3">
+											<div className="min-w-0 space-y-0.5">
+												<p className="truncate text-sm font-semibold">{siswaName}</p>
+												<p className="text-xs font-medium text-primary">{r.type}</p>
+												<p className="text-xs text-muted-foreground">
+													{surahDisplay(r)} · Ayat {r.ayatAwal}–{r.ayatAkhir}
+												</p>
+											</div>
 												<div className="flex items-center gap-1.5">
 													<span
 														className={`rounded-full px-2 py-0.5 text-[0.65rem] font-semibold ${
@@ -644,10 +725,7 @@ function LaporanPage() {
 													</button>
 												</div>
 											</div>
-											<div className="mt-2 flex items-center justify-between">
-												<span className="text-xs font-bold text-primary">
-													{r.type}
-												</span>
+										<div className="mt-2 flex items-center justify-end">
 												<span className="text-xs text-muted-foreground">
 													{fmtDate(r.tanggal)}
 												</span>

@@ -1,9 +1,11 @@
 import { BookOpen01Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { GradeSelector } from "@/components/grade-selector";
 import { MushafPanel } from "@/components/mushaf-panel";
+import { showSubmissionSuccess } from "@/components/submission-success-toast";
 import { Button } from "@/components/ui/button";
 import {
 	Dialog,
@@ -12,6 +14,7 @@ import {
 	DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import {
 	ResizableHandle,
 	ResizablePanel,
@@ -46,16 +49,6 @@ const JENIS_MURAJAAH = [
 	"Sabqi",
 	"Muraja'ah",
 ];
-const GRADES = ["Jayyid", "Jayyid Jiddan", "Mumtaz", "Mutqin"];
-const GRADE_COLORS: Record<string, string> = {
-	Jayyid: "bg-red-500/15 text-red-700 dark:text-red-400 border-red-500/30",
-	"Jayyid Jiddan":
-		"bg-amber-500/15 text-amber-700 dark:text-amber-400 border-amber-500/30",
-	Mumtaz:
-		"bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/30",
-	Mutqin: "bg-primary/15 text-primary border-primary/30",
-};
-
 export const Route = createFileRoute("/_authed/murajaah")({
 	component: MurajaahPage,
 });
@@ -98,6 +91,7 @@ interface FormBodyProps {
 	setCatatan: (v: string) => void;
 	loading: boolean;
 	handleSubmit: (e: React.FormEvent) => void;
+	onCancel: () => void;
 	mushafOpen: boolean;
 	setMushafOpen: (v: boolean) => void;
 	setMushafMobileOpen: (v: boolean) => void;
@@ -114,7 +108,7 @@ function FormBody(props: FormBodyProps) {
 	return (
 		<form
 			onSubmit={props.handleSubmit}
-			className="rounded-2xl border bg-card p-4 shadow-xs space-y-4"
+			className="w-full max-w-3xl space-y-4 rounded-2xl border bg-card p-4 shadow-xs"
 		>
 			<div className="grid gap-3 sm:grid-cols-2">
 				<div className="space-y-2">
@@ -124,9 +118,9 @@ function FormBody(props: FormBodyProps) {
 						value={props.selectedSiswa}
 						onChange={(e) => props.setSelectedSiswa(e.target.value)}
 						required
-						className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-xs transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring md:text-sm"
+					className="flex h-9 w-full rounded-xl border border-input bg-background px-3 py-1 text-base shadow-xs transition-[border-color,box-shadow] hover:border-foreground/25 focus-visible:border-primary focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-primary/20 md:text-sm"
 					>
-						<option value="">Pilih siswa...</option>
+					<option value="">Pilih siswa…</option>
 						{props.siswaList.map((s) => (
 							<option key={s.id} value={s.id}>
 								{s.nama}
@@ -228,7 +222,7 @@ function FormBody(props: FormBodyProps) {
 								props.setAcA([]);
 							}
 						}}
-						placeholder="Ketik nama surah..."
+						placeholder="Ketik nama surah…"
 						required
 					/>
 					{props.acA.length > 0 && (
@@ -366,7 +360,7 @@ function FormBody(props: FormBodyProps) {
 										props.setLintasAcEnd([]);
 									}
 								}}
-								placeholder="Surah tujuan..."
+								placeholder="Surah tujuan…"
 								required
 							/>
 							{props.lintasAcEnd.length > 0 && (
@@ -462,45 +456,40 @@ function FormBody(props: FormBodyProps) {
 				</Button>
 			</div>
 
-			<div className="space-y-2">
-				<label id="murajaah-penilaian-label" className="text-sm font-medium">Penilaian</label>
-				<div
-					role="group"
-					aria-labelledby="murajaah-penilaian-label"
-					className="flex flex-wrap gap-2"
-				>
-					{GRADES.map((g) => (
-						<button
-							key={g}
-							type="button"
-							aria-pressed={props.gred === g}
-							onClick={() => props.setGred(g)}
-							className={`rounded-xl border px-4 py-2 text-sm font-semibold transition-colors ${
-								props.gred === g
-									? GRADE_COLORS[g]
-									: "border-border text-muted-foreground hover:bg-muted/50"
-							}`}
-						>
-							{g}
-						</button>
-					))}
-				</div>
-			</div>
+			<GradeSelector id="murajaah-penilaian" value={props.gred} onChange={props.setGred} />
 
 			<div className="space-y-2">
 				<label htmlFor="murajaah-catatan" className="text-sm font-medium">Catatan (opsional)</label>
-				<textarea
+				<Textarea
 					id="murajaah-catatan"
 					value={props.catatan}
 					onChange={(e) => props.setCatatan(e.target.value)}
-					placeholder="Catatan tambahan..."
+					placeholder="Catatan tambahan…"
 					rows={3}
-					className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-base shadow-xs placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring resize-none md:text-sm"
 				/>
 			</div>
 
-			<div className="sticky bottom-16 z-10 -mx-1 -mb-1 bg-card px-1 pb-1 pt-3">
-				<Button type="submit" disabled={props.loading} className="w-full">
+			<div className="sticky bottom-16 z-10 -mx-1 -mb-1 flex flex-col gap-2 border-t bg-card/95 px-1 pb-1 pt-3 backdrop-blur-sm sm:static sm:mx-0 sm:mb-0 sm:flex-row sm:justify-end sm:border-0 sm:bg-transparent sm:px-0 sm:pb-0 sm:backdrop-blur-none">
+				<Button
+					type="button"
+					variant="ghost"
+					onClick={props.onCancel}
+					disabled={props.loading}
+					className="w-full sm:w-auto"
+				>
+					Batal
+				</Button>
+				<Button
+					type="submit"
+					name="submitAction"
+					value="next-student"
+					variant="outline"
+					disabled={props.loading}
+					className="w-full sm:w-auto"
+				>
+					Simpan & Siswa Berikutnya
+				</Button>
+				<Button type="submit" disabled={props.loading} className="w-full sm:w-auto">
 					{props.loading
 						? "Menyimpan..."
 						: props.lintasMode
@@ -513,6 +502,7 @@ function FormBody(props: FormBodyProps) {
 }
 
 function MurajaahPage() {
+	const navigate = useNavigate();
 	const [siswaList, setSiswaList] = useState<Siswa[]>([]);
 	const [selectedSiswa, setSelectedSiswa] = useState("");
 	const [tanggal, setTanggal] = useState(localDateString());
@@ -613,6 +603,10 @@ function MurajaahPage() {
 
 	async function handleSubmit(e: React.FormEvent) {
 		e.preventDefault();
+		const submitter = (e.nativeEvent as SubmitEvent).submitter as
+			| HTMLButtonElement
+			| null;
+		const advanceStudent = submitter?.value === "next-student";
 		if (!selectedSiswa || !surahA || !dariAyat) {
 			toast.error("Lengkapi semua field yang diperlukan");
 			return;
@@ -663,16 +657,14 @@ function MurajaahPage() {
 			setLoading(false);
 
 			if (res.ok) {
-				toast.success("Murajaah lintas surah tersimpan!");
-				resetForm();
-				prefillNextFrom({
+				completeSave({
 					type: jenis,
 					surah: 0,
 					surahAkhir: endSurah.number,
 					lintas: true,
 					ayatAwal: 1,
 					ayatAkhir: Number.parseInt(lintasSampaiAyat, 10) || 0,
-				});
+				}, advanceStudent);
 			} else {
 				toast.error("Gagal menyimpan");
 			}
@@ -709,9 +701,7 @@ function MurajaahPage() {
 			setLoading(false);
 
 			if (res.ok) {
-				toast.success("Murajaah tersimpan!");
-				resetForm();
-				prefillNextFrom({
+				completeSave({
 					type: jenis,
 					surah: findSurah(surahA)?.number ?? 0,
 					lintas: false,
@@ -720,11 +710,36 @@ function MurajaahPage() {
 						Number.parseInt(sampaiAyat, 10) ||
 						Number.parseInt(dariAyat, 10) ||
 						0,
-				});
+				}, advanceStudent);
 			} else {
 				toast.error("Gagal menyimpan");
 			}
 		}
+	}
+
+	function completeSave(saved: SetoranData, advanceStudent: boolean) {
+		const savedStudentId = selectedSiswa;
+		const savedStudentName =
+			siswaList.find((student) => student.id === savedStudentId)?.nama ?? "siswa";
+
+		resetForm();
+		if (advanceStudent && siswaList.length > 1) {
+			const currentIndex = siswaList.findIndex(
+				(student) => student.id === savedStudentId,
+			);
+			const nextStudent = siswaList[(currentIndex + 1) % siswaList.length];
+			if (nextStudent) setSelectedSiswa(nextStudent.id);
+		} else {
+			prefillNextFrom(saved);
+		}
+
+		showSubmissionSuccess({
+			studentName: savedStudentName,
+			onNext: () => document.getElementById("murajaah-siswa")?.focus(),
+			onMurajaah: () => document.getElementById("murajaah-siswa")?.focus(),
+			onReport: () =>
+				navigate({ to: "/laporan", search: { siswa: savedStudentId } }),
+		});
 	}
 
 	function resetForm() {
@@ -819,6 +834,7 @@ function MurajaahPage() {
 		setCatatan,
 		loading,
 		handleSubmit,
+		onCancel: resetForm,
 		mushafOpen,
 		setMushafOpen,
 		setMushafMobileOpen,
@@ -834,7 +850,7 @@ function MurajaahPage() {
 	};
 
 	return (
-		<div className="mx-auto max-w-7xl space-y-4 pb-20 md:pb-6">
+		<div className="mx-auto max-w-6xl space-y-4 pb-20 md:pb-6">
 			<div>
 				<h2 className="text-base font-semibold">Murajaah — Review Hafalan</h2>
 				<p className="mt-1 text-sm text-muted-foreground">
