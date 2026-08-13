@@ -20,6 +20,7 @@ import {
 	ResizablePanel,
 	ResizablePanelGroup,
 } from "@/components/ui/resizable";
+import { useMediaQuery } from "@/hooks/use-media-query";
 import {
 	findSurah,
 	SURAH_DATA,
@@ -503,6 +504,7 @@ function FormBody(props: FormBodyProps) {
 
 function MurajaahPage() {
 	const navigate = useNavigate();
+	const desktopLayout = useMediaQuery("(min-width: 1024px)");
 	const [siswaList, setSiswaList] = useState<Siswa[]>([]);
 	const [selectedSiswa, setSelectedSiswa] = useState("");
 	const [tanggal, setTanggal] = useState(localDateString());
@@ -858,7 +860,8 @@ function MurajaahPage() {
 				</p>
 			</div>
 
-			<div className="hidden lg:block">
+			{desktopLayout ? (
+			<div>
 				<ResizablePanelGroup
 					orientation="horizontal"
 					className="gap-3"
@@ -885,10 +888,11 @@ function MurajaahPage() {
 					)}
 				</ResizablePanelGroup>
 			</div>
-
-			<div className="lg:hidden">
+			) : (
+			<div>
 				<FormBody {...formProps} />
 			</div>
+			)}
 
 			<Dialog open={mushafMobileOpen} onOpenChange={setMushafMobileOpen}>
 				<DialogContent className="max-w-[95vw] max-h-[90vh] overflow-hidden p-0">
