@@ -1,0 +1,27 @@
+[
+  {
+    "viewport": "iphone",
+    "initial": {
+      "canvasCssWidth": 284,
+      "viewportWidth": 308,
+      "documentOverflow": false
+    },
+    "pageCount": 8,
+    "zoomed": 355,
+    "errors": []
+  },
+  {
+    "viewport": "desktop",
+    "initial": {
+      "canvasCssWidth": 694,
+      "viewportWidth": 718,
+      "documentOverflow": false
+    },
+    "pageCount": 8,
+    "zoomed": 867,
+    "errors": []
+  },
+  {
+    "reducedMotion": true
+  }
+]

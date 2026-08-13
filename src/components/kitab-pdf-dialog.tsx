@@ -1,5 +1,11 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { PdfReader } from "@/components/pdf-reader";
 import { Button } from "@/components/ui/button";
+import {
+	Dialog,
+	DialogContent,
+	DialogHeader,
+	DialogTitle,
+} from "@/components/ui/dialog";
 
 interface KitabPdfDialogProps {
 	open: boolean;
@@ -22,7 +28,7 @@ export function KitabPdfDialog({
 				</DialogHeader>
 
 				<div className="flex-1 min-h-0 rounded-xl border bg-muted/30 overflow-hidden">
-					<iframe src={file} className="w-full h-full" title={nama} />
+					<PdfReader url={file} />
 				</div>
 
 				<div className="flex justify-end pt-2">

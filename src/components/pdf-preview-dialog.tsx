@@ -3,6 +3,7 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { PdfReader } from "@/components/pdf-reader";
 import {
 	Dialog,
 	DialogContent,
@@ -85,11 +86,7 @@ export function PdfPreviewDialog({
 							</div>
 						</div>
 					) : pdfUrl ? (
-						<iframe
-							src={pdfUrl}
-							className="w-full h-full"
-							title="PDF Preview"
-						/>
+						<PdfReader url={pdfUrl} />
 					) : null}
 				</div>
 
