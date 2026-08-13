@@ -36,6 +36,7 @@ export default defineConfig({
 		nitro(),
 		VitePWA({
 			registerType: "autoUpdate",
+			injectRegister: null,
 			includeAssets: ["logo-sijil-v3.svg"],
 			manifest: {
 				name: "Sijil Mutaba'ah",
@@ -74,6 +75,8 @@ export default defineConfig({
 				],
 			},
 			workbox: {
+				globDirectory: ".output/public",
+				swDest: ".output/public/sw.js",
 				globPatterns: ["**/*.{js,css,html,ico,png,svg}"],
 				runtimeCaching: [
 					{

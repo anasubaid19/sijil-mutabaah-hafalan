@@ -5,8 +5,18 @@ import {
 	Scripts,
 } from "@tanstack/react-router";
 import { ThemeProvider } from "next-themes";
+import { useEffect } from "react";
+import { registerSW } from "virtual:pwa-register";
 import { Toaster } from "@/components/ui/sonner";
 import "@/lib/styles.css";
+
+function ServiceWorkerRegistration() {
+	useEffect(() => {
+		registerSW({ immediate: true });
+	}, []);
+
+	return null;
+}
 
 export const Route = createRootRoute({
 	component: () => (
@@ -74,6 +84,7 @@ export const Route = createRootRoute({
 					<HeadContent />
 				</head>
 				<body>
+					<ServiceWorkerRegistration />
 					<Outlet />
 					<Toaster position="top-center" />
 					<Scripts />
