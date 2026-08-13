@@ -1,0 +1,972 @@
+[
+  {
+    "area": "login",
+    "viewport": "desktop",
+    "mode": "light",
+    "status": 200,
+    "keyboard": {
+      "pass": true,
+      "tag": "Ustadz / Musyrif"
+    },
+    "visual": {
+      "overflowX": false,
+      "dark": false
+    },
+    "errors": [],
+    "screenshot": "/Users/anasubaid19/Vibe Code/sijil-mutabaah/dogfood-output/screenshots/login-desktop-light.png"
+  },
+  {
+    "area": "dashboard",
+    "viewport": "desktop",
+    "mode": "light",
+    "status": 200,
+    "keyboard": {
+      "pass": true,
+      "tag": "Lewati ke konten"
+    },
+    "visual": {
+      "overflowX": false,
+      "dark": false
+    },
+    "errors": [],
+    "screenshot": "/Users/anasubaid19/Vibe Code/sijil-mutabaah/dogfood-output/screenshots/dashboard-desktop-light.png"
+  },
+  {
+    "area": "ziyadah",
+    "viewport": "desktop",
+    "mode": "light",
+    "status": 200,
+    "keyboard": {
+      "pass": true,
+      "tag": "Lewati ke konten"
+    },
+    "visual": {
+      "overflowX": false,
+      "dark": false
+    },
+    "errors": [
+      "A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\n%s%s https://react.dev/link/hydration-mismatch \n\n  ...\n    <MatchView router={{...}} matchId=\"/_authed/z...\" resetKey={0} matchState={{routeId:\"/...\", ...}}>\n      <SafeFragment>\n        <SafeFragment fallback={null}>\n          <SafeFragment getResetKey={function getResetKey} errorComponent={function ErrorComponent} ...>\n            <SafeFragment fallback={function fallback}>\n              <MatchInnerImpl matchId=\"/_authed/z...\">\n                <Lazy>\n                  <ZiyadahPage>\n                    <div className=\"mx-auto ma...\">\n                      <div>\n                      ...\n                        <div className={undefined} style={{...}}>\n                          <FormBody siswaList={[...]} selectedSiswa=\"\" setSelectedSiswa={function bound dispatchSetState} ...>\n                            <form onSubmit={function handleSubmit} className=\"w-full max...\">\n                              ...\n                                <Input id=\"ziyadah-ta...\" type=\"date\" value=\"2026-08-13\" onChange={function onChange} ...>\n                                  <Input type=\"date\" data-slot=\"input\" className=\"h-9 w-full...\" id=\"ziyadah-ta...\" ...>\n                                    <FieldControl ref={null} type=\"date\" data-slot=\"input\" className=\"h-9 w-full...\" ...>\n                                      <input\n                                        id=\"ziyadah-tanggal\"\n                                        disabled={false}\n                                        name={undefined}\n                                        ref={function}\n                                        aria-labelledby={undefined}\n                                        autoFocus={false}\n                                        value=\"2026-08-13\"\n                                        onChange={function}\n                                        onFocus={function}\n                                        onBlur={function}\n                                        onKeyDown={function}\n                                        type=\"date\"\n                                        data-slot=\"input\"\n                                        required={true}\n                                        className=\"h-9 w-full min-w-0 rounded-xl border border-input bg-background px-...\"\n-                                       style={{}}\n                                      >\n                              <div className=\"grid gap-3...\">\n                                <div className=\"relative s...\">\n                                  <label>\n                                  <Input id=\"ziyadah-surah\" type=\"text\" role=\"combobox\" aria-expanded={false} ...>\n                                    <Input type=\"text\" data-slot=\"input\" className=\"h-9 w-full...\" id=\"ziyadah-surah\" ...>\n                                      <FieldControl ref={null} type=\"text\" data-slot=\"input\" className=\"h-9 w-full...\" ...>\n                                        <input\n                                          id=\"ziyadah-surah\"\n                                          disabled={false}\n                                          name={undefined}\n                                          ref={function}\n                                          aria-labelledby={undefined}\n                                          autoFocus={false}\n                                          value=\"\"\n                                          onChange={function}\n                                          onFocus={function}\n                                          onBlur={function}\n                                          onKeyDown={function}\n                                          type=\"text\"\n                                          data-slot=\"input\"\n                                          role=\"combobox\"\n                                          aria-expanded={false}\n                                          aria-controls=\"ziyadah-surah-list\"\n                                          aria-activedescendant={undefined}\n                                          placeholder=\"Ketik nama surah…\"\n                                          required={true}\n                                          className=\"h-9 w-full min-w-0 rounded-xl border border-input bg-background p...\"\n-                                         style={{}}\n                                        >\n                                <div className=\"space-y-2\">\n                                  <label>\n                                  <Input id=\"ziyadah-da...\" type=\"text\" value=\"\" onChange={function onChange} ...>\n                                    <Input type=\"text\" data-slot=\"input\" className=\"h-9 w-full...\" id=\"ziyadah-da...\" ...>\n                                      <FieldControl ref={null} type=\"text\" data-slot=\"input\" className=\"h-9 w-full...\" ...>\n                                        <input\n                                          id=\"ziyadah-dari-ayat\"\n                                          disabled={false}\n                                          name={undefined}\n                                          ref={function}\n                                          aria-labelledby={undefined}\n                                          autoFocus={false}\n                                          value=\"\"\n                                          onChange={function}\n                                          onFocus={function}\n                                          onBlur={function}\n                                          onKeyDown={function}\n                                          type=\"text\"\n                                          data-slot=\"input\"\n                                          placeholder=\"Ayat awal\"\n                                          required={true}\n                                          className=\"h-9 w-full min-w-0 rounded-xl border border-input bg-background p...\"\n-                                         style={{}}\n                                        >\n                                <div className=\"space-y-2\">\n                                  <label>\n                                  <Input id=\"ziyadah-sa...\" type=\"text\" value=\"\" onChange={function onChange} ...>\n                                    <Input type=\"text\" data-slot=\"input\" className=\"h-9 w-full...\" id=\"ziyadah-sa...\" ...>\n                                      <FieldControl ref={null} type=\"text\" data-slot=\"input\" className=\"h-9 w-full...\" ...>\n                                        <input\n                                          id=\"ziyadah-sampai-ayat\"\n                                          disabled={false}\n                                          name={undefined}\n                                          ref={function}\n                                          aria-labelledby={undefined}\n                                          autoFocus={false}\n                                          value=\"\"\n                                          onChange={function}\n                                          onFocus={function}\n                                          onBlur={function}\n                                          onKeyDown={function}\n                                          type=\"text\"\n                                          data-slot=\"input\"\n                                          placeholder=\"Ayat akhir\"\n                                          required={true}\n                                          className=\"h-9 w-full min-w-0 rounded-xl border border-input bg-background p...\"\n-                                         style={{}}\n                                        >\n                              <div className=\"space-y-2\">\n                                <label>\n                                <Input id=\"ziyadah-juz\" value=\"\" readOnly={true} placeholder={\"Juz otom...\"} ...>\n                                  <Input type={undefined} data-slot=\"input\" className=\"h-9 w-full...\" id=\"ziyadah-juz\" ...>\n                                    <FieldControl ref={null} type={undefined} data-slot=\"input\" className=\"h-9 w-full...\" ...>\n                                      <input\n                                        id=\"ziyadah-juz\"\n                                        disabled={false}\n                                        name={undefined}\n                                        ref={function}\n                                        aria-labelledby={undefined}\n                                        autoFocus={false}\n                                        value=\"\"\n                                        onChange={function}\n                                        onFocus={function}\n                                        onBlur={function}\n                                        onKeyDown={function}\n                                        type={undefined}\n                                        data-slot=\"input\"\n                                        readOnly={true}\n                                        placeholder={\"Juz otomatis dari surah & ayat\"}\n                                        className=\"h-9 w-full min-w-0 rounded-xl border border-input px-3 py-1 text-ba...\"\n-                                       style={{}}\n                                      >\n                              <div>\n                              <GradeSelector>\n                              <div className=\"space-y-2\">\n                                <label>\n                                <Textarea id=\"ziyadah-ca...\" value=\"\" onChange={function onChange} ...>\n                                  <textarea\n                                    data-slot=\"textarea\"\n                                    className=\"flex field-sizing-content min-h-16 w-full resize-none rounded-xl border...\"\n                                    id=\"ziyadah-catatan\"\n                                    value=\"\"\n                                    onChange={function onChange}\n                                    placeholder=\"Catatan tambahan…\"\n                                    rows={3}\n-                                   style={{}}\n                                  >\n                              ...\n                      <div className=\"lg:hidden\">\n                        <FormBody siswaList={[...]} selectedSiswa=\"\" setSelectedSiswa={function bound dispatchSetState} ...>\n                          <form onSubmit={function handleSubmit} className=\"w-full max...\">\n                            ...\n                              <Input id=\"ziyadah-ta...\" type=\"date\" value=\"2026-08-13\" onChange={function onChange} ...>\n                                <Input type=\"date\" data-slot=\"input\" className=\"h-9 w-full...\" id=\"ziyadah-ta...\" ...>\n                                  <FieldControl ref={null} type=\"date\" data-slot=\"input\" className=\"h-9 w-full...\" ...>\n                                    <input\n                                      id=\"ziyadah-tanggal\"\n                                      disabled={false}\n                                      name={undefined}\n                                      ref={function}\n                                      aria-labelledby={undefined}\n                                      autoFocus={false}\n                                      value=\"2026-08-13\"\n                                      onChange={function}\n                                      onFocus={function}\n                                      onBlur={function}\n                                      onKeyDown={function}\n                                      type=\"date\"\n                                      data-slot=\"input\"\n                                      required={true}\n                                      className=\"h-9 w-full min-w-0 rounded-xl border border-input bg-background px-3 ...\"\n-                                     style={{}}\n                                    >\n                            <div className=\"grid gap-3...\">\n                              <div className=\"relative s...\">\n                                <label>\n                                <Input id=\"ziyadah-surah\" type=\"text\" role=\"combobox\" aria-expanded={false} ...>\n                                  <Input type=\"text\" data-slot=\"input\" className=\"h-9 w-full...\" id=\"ziyadah-surah\" ...>\n                                    <FieldControl ref={null} type=\"text\" data-slot=\"input\" className=\"h-9 w-full...\" ...>\n                                      <input\n                                        id=\"ziyadah-surah\"\n                                        disabled={false}\n                                        name={undefined}\n                                        ref={function}\n                                        aria-labelledby={undefined}\n                                        autoFocus={false}\n                                        value=\"\"\n                                        onChange={function}\n                                        onFocus={function}\n                                        onBlur={function}\n                                        onKeyDown={function}\n                                        type=\"text\"\n                                        data-slot=\"input\"\n                                        role=\"combobox\"\n                                        aria-expanded={false}\n                                        aria-controls=\"ziyadah-surah-list\"\n                                        aria-activedescendant={undefined}\n                                        placeholder=\"Ketik nama surah…\"\n                                        required={true}\n                                        className=\"h-9 w-full min-w-0 rounded-xl border border-input bg-background px-...\"\n-                                       style={{}}\n                                      >\n                              <div className=\"space-y-2\">\n                                <label>\n                                <Input id=\"ziyadah-da...\" type=\"text\" value=\"\" onChange={function onChange} ...>\n                                  <Input type=\"text\" data-slot=\"input\" className=\"h-9 w-full...\" id=\"ziyadah-da...\" ...>\n                                    <FieldControl ref={null} type=\"text\" data-slot=\"input\" className=\"h-9 w-full...\" ...>\n                                      <input\n                                        id=\"ziyadah-dari-ayat\"\n                                        disabled={false}\n                                        name={undefined}\n                                        ref={function}\n                                        aria-labelledby={undefined}\n                                        autoFocus={false}\n                                        value=\"\"\n                                        onChange={function}\n                                        onFocus={function}\n                                        onBlur={function}\n                                        onKeyDown={function}\n                                        type=\"text\"\n                                        data-slot=\"input\"\n                                        placeholder=\"Ayat awal\"\n                                        required={true}\n                                        className=\"h-9 w-full min-w-0 rounded-xl border border-input bg-background px-...\"\n-                                       style={{}}\n                                      >\n                              <div className=\"space-y-2\">\n                                <label>\n                                <Input id=\"ziyadah-sa...\" type=\"text\" value=\"\" onChange={function onChange} ...>\n                                  <Input type=\"text\" data-slot=\"input\" className=\"h-9 w-full...\" id=\"ziyadah-sa...\" ...>\n                                    <FieldControl ref={null} type=\"text\" data-slot=\"input\" className=\"h-9 w-full...\" ...>\n                                      <input\n                                        id=\"ziyadah-sampai-ayat\"\n                                        disabled={false}\n                                        name={undefined}\n                                        ref={function}\n                                        aria-labelledby={undefined}\n                                        autoFocus={false}\n                                        value=\"\"\n                                        onChange={function}\n                                        onFocus={function}\n                                        onBlur={function}\n                                        onKeyDown={function}\n                                        type=\"text\"\n                                        data-slot=\"input\"\n                                        placeholder=\"Ayat akhir\"\n                                        required={true}\n                                        className=\"h-9 w-full min-w-0 rounded-xl border border-input bg-background px-...\"\n-                                       style={{}}\n                                      >\n                            <div className=\"space-y-2\">\n                              <label>\n                              <Input id=\"ziyadah-juz\" value=\"\" readOnly={true} placeholder={\"Juz otom...\"} ...>\n                                <Input type={undefined} data-slot=\"input\" className=\"h-9 w-full...\" id=\"ziyadah-juz\" ...>\n                                  <FieldControl ref={null} type={undefined} data-slot=\"input\" className=\"h-9 w-full...\" ...>\n                                    <input\n                                      id=\"ziyadah-juz\"\n                                      disabled={false}\n                                      name={undefined}\n                                      ref={function}\n                                      aria-labelledby={undefined}\n                                      autoFocus={false}\n                                      value=\"\"\n                                      onChange={function}\n                                      onFocus={function}\n                                      onBlur={function}\n                                      onKeyDown={function}\n                                      type={undefined}\n                                      data-slot=\"input\"\n                                      readOnly={true}\n                                      placeholder={\"Juz otomatis dari surah & ayat\"}\n                                      className=\"h-9 w-full min-w-0 rounded-xl border border-input px-3 py-1 text-base...\"\n-                                     style={{}}\n                                    >\n                            <div>\n                            <GradeSelector>\n                            <div className=\"space-y-2\">\n                              <label>\n                              <Textarea id=\"ziyadah-ca...\" value=\"\" onChange={function onChange} ...>\n                                <textarea\n                                  data-slot=\"textarea\"\n                                  className=\"flex field-sizing-content min-h-16 w-full resize-none rounded-xl border b...\"\n                                  id=\"ziyadah-catatan\"\n                                  value=\"\"\n                                  onChange={function onChange}\n                                  placeholder=\"Catatan tambahan…\"\n                                  rows={3}\n-                                 style={{}}\n                                >\n                            ...\n                      ...\n"
+    ],
+    "screenshot": "/Users/anasubaid19/Vibe Code/sijil-mutabaah/dogfood-output/screenshots/ziyadah-desktop-light.png"
+  },
+  {
+    "area": "murajaah",
+    "viewport": "desktop",
+    "mode": "light",
+    "status": 200,
+    "keyboard": {
+      "pass": true,
+      "tag": "Lewati ke konten"
+    },
+    "visual": {
+      "overflowX": false,
+      "dark": false
+    },
+    "errors": [],
+    "screenshot": "/Users/anasubaid19/Vibe Code/sijil-mutabaah/dogfood-output/screenshots/murajaah-desktop-light.png"
+  },
+  {
+    "area": "presensi",
+    "viewport": "desktop",
+    "mode": "light",
+    "status": 200,
+    "keyboard": {
+      "pass": true,
+      "tag": "Lewati ke konten"
+    },
+    "visual": {
+      "overflowX": false,
+      "dark": false
+    },
+    "errors": [],
+    "screenshot": "/Users/anasubaid19/Vibe Code/sijil-mutabaah/dogfood-output/screenshots/presensi-desktop-light.png"
+  },
+  {
+    "area": "laporan",
+    "viewport": "desktop",
+    "mode": "light",
+    "status": 200,
+    "keyboard": {
+      "pass": true,
+      "tag": "Lewati ke konten"
+    },
+    "visual": {
+      "overflowX": true,
+      "dark": false
+    },
+    "errors": [],
+    "screenshot": "/Users/anasubaid19/Vibe Code/sijil-mutabaah/dogfood-output/screenshots/laporan-desktop-light.png"
+  },
+  {
+    "area": "manajemen-data",
+    "viewport": "desktop",
+    "mode": "light",
+    "status": 200,
+    "keyboard": {
+      "pass": true,
+      "tag": "Lewati ke konten"
+    },
+    "visual": {
+      "overflowX": false,
+      "dark": false
+    },
+    "errors": [],
+    "screenshot": "/Users/anasubaid19/Vibe Code/sijil-mutabaah/dogfood-output/screenshots/manajemen-data-desktop-light.png"
+  },
+  {
+    "area": "pengaturan",
+    "viewport": "desktop",
+    "mode": "light",
+    "status": 200,
+    "keyboard": {
+      "pass": true,
+      "tag": "Lewati ke konten"
+    },
+    "visual": {
+      "overflowX": false,
+      "dark": false
+    },
+    "errors": [],
+    "screenshot": "/Users/anasubaid19/Vibe Code/sijil-mutabaah/dogfood-output/screenshots/pengaturan-desktop-light.png"
+  },
+  {
+    "area": "kitab",
+    "viewport": "desktop",
+    "mode": "light",
+    "status": 200,
+    "keyboard": {
+      "pass": true,
+      "tag": "Lewati ke konten"
+    },
+    "visual": {
+      "overflowX": false,
+      "dark": false
+    },
+    "errors": [],
+    "screenshot": "/Users/anasubaid19/Vibe Code/sijil-mutabaah/dogfood-output/screenshots/kitab-desktop-light.png"
+  },
+  {
+    "area": "login",
+    "viewport": "desktop",
+    "mode": "dark",
+    "status": 200,
+    "keyboard": {
+      "pass": true,
+      "tag": "Ustadz / Musyrif"
+    },
+    "visual": {
+      "overflowX": false,
+      "dark": true
+    },
+    "errors": [],
+    "screenshot": "/Users/anasubaid19/Vibe Code/sijil-mutabaah/dogfood-output/screenshots/login-desktop-dark.png"
+  },
+  {
+    "area": "dashboard",
+    "viewport": "desktop",
+    "mode": "dark",
+    "status": 200,
+    "keyboard": {
+      "pass": true,
+      "tag": "Lewati ke konten"
+    },
+    "visual": {
+      "overflowX": false,
+      "dark": true
+    },
+    "errors": [],
+    "screenshot": "/Users/anasubaid19/Vibe Code/sijil-mutabaah/dogfood-output/screenshots/dashboard-desktop-dark.png"
+  },
+  {
+    "area": "ziyadah",
+    "viewport": "desktop",
+    "mode": "dark",
+    "status": 200,
+    "keyboard": {
+      "pass": true,
+      "tag": "Lewati ke konten"
+    },
+    "visual": {
+      "overflowX": false,
+      "dark": true
+    },
+    "errors": [],
+    "screenshot": "/Users/anasubaid19/Vibe Code/sijil-mutabaah/dogfood-output/screenshots/ziyadah-desktop-dark.png"
+  },
+  {
+    "area": "murajaah",
+    "viewport": "desktop",
+    "mode": "dark",
+    "status": 200,
+    "keyboard": {
+      "pass": true,
+      "tag": "Lewati ke konten"
+    },
+    "visual": {
+      "overflowX": false,
+      "dark": true
+    },
+    "errors": [],
+    "screenshot": "/Users/anasubaid19/Vibe Code/sijil-mutabaah/dogfood-output/screenshots/murajaah-desktop-dark.png"
+  },
+  {
+    "area": "presensi",
+    "viewport": "desktop",
+    "mode": "dark",
+    "status": 200,
+    "keyboard": {
+      "pass": true,
+      "tag": "Lewati ke konten"
+    },
+    "visual": {
+      "overflowX": false,
+      "dark": true
+    },
+    "errors": [],
+    "screenshot": "/Users/anasubaid19/Vibe Code/sijil-mutabaah/dogfood-output/screenshots/presensi-desktop-dark.png"
+  },
+  {
+    "area": "laporan",
+    "viewport": "desktop",
+    "mode": "dark",
+    "status": 200,
+    "keyboard": {
+      "pass": true,
+      "tag": "Lewati ke konten"
+    },
+    "visual": {
+      "overflowX": true,
+      "dark": true
+    },
+    "errors": [],
+    "screenshot": "/Users/anasubaid19/Vibe Code/sijil-mutabaah/dogfood-output/screenshots/laporan-desktop-dark.png"
+  },
+  {
+    "area": "manajemen-data",
+    "viewport": "desktop",
+    "mode": "dark",
+    "status": 200,
+    "keyboard": {
+      "pass": true,
+      "tag": "Lewati ke konten"
+    },
+    "visual": {
+      "overflowX": false,
+      "dark": true
+    },
+    "errors": [],
+    "screenshot": "/Users/anasubaid19/Vibe Code/sijil-mutabaah/dogfood-output/screenshots/manajemen-data-desktop-dark.png"
+  },
+  {
+    "area": "pengaturan",
+    "viewport": "desktop",
+    "mode": "dark",
+    "status": 200,
+    "keyboard": {
+      "pass": true,
+      "tag": "Lewati ke konten"
+    },
+    "visual": {
+      "overflowX": false,
+      "dark": true
+    },
+    "errors": [],
+    "screenshot": "/Users/anasubaid19/Vibe Code/sijil-mutabaah/dogfood-output/screenshots/pengaturan-desktop-dark.png"
+  },
+  {
+    "area": "kitab",
+    "viewport": "desktop",
+    "mode": "dark",
+    "status": 200,
+    "keyboard": {
+      "pass": true,
+      "tag": "Lewati ke konten"
+    },
+    "visual": {
+      "overflowX": false,
+      "dark": true
+    },
+    "errors": [],
+    "screenshot": "/Users/anasubaid19/Vibe Code/sijil-mutabaah/dogfood-output/screenshots/kitab-desktop-dark.png"
+  },
+  {
+    "area": "login",
+    "viewport": "tablet",
+    "mode": "light",
+    "status": 200,
+    "keyboard": {
+      "pass": true,
+      "tag": "Ustadz / Musyrif"
+    },
+    "visual": {
+      "overflowX": false,
+      "dark": false
+    },
+    "errors": [],
+    "screenshot": "/Users/anasubaid19/Vibe Code/sijil-mutabaah/dogfood-output/screenshots/login-tablet-light.png"
+  },
+  {
+    "area": "dashboard",
+    "viewport": "tablet",
+    "mode": "light",
+    "status": 200,
+    "keyboard": {
+      "pass": true,
+      "tag": "Lewati ke konten"
+    },
+    "visual": {
+      "overflowX": false,
+      "dark": false
+    },
+    "errors": [],
+    "screenshot": "/Users/anasubaid19/Vibe Code/sijil-mutabaah/dogfood-output/screenshots/dashboard-tablet-light.png"
+  },
+  {
+    "area": "ziyadah",
+    "viewport": "tablet",
+    "mode": "light",
+    "status": 200,
+    "keyboard": {
+      "pass": true,
+      "tag": "Lewati ke konten"
+    },
+    "visual": {
+      "overflowX": false,
+      "dark": false
+    },
+    "errors": [
+      "A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\n%s%s https://react.dev/link/hydration-mismatch \n\n  ...\n    <MatchView router={{...}} matchId=\"/_authed/z...\" resetKey={0} matchState={{routeId:\"/...\", ...}}>\n      <SafeFragment>\n        <SafeFragment fallback={null}>\n          <SafeFragment getResetKey={function getResetKey} errorComponent={function ErrorComponent} ...>\n            <SafeFragment fallback={function fallback}>\n              <MatchInnerImpl matchId=\"/_authed/z...\">\n                <Lazy>\n                  <ZiyadahPage>\n                    <div className=\"mx-auto ma...\">\n                      <div>\n                      ...\n                        <div className={undefined} style={{...}}>\n                          <FormBody siswaList={[...]} selectedSiswa=\"\" setSelectedSiswa={function bound dispatchSetState} ...>\n                            <form onSubmit={function handleSubmit} className=\"w-full max...\">\n                              ...\n                                <Input id=\"ziyadah-ta...\" type=\"date\" value=\"2026-08-13\" onChange={function onChange} ...>\n                                  <Input type=\"date\" data-slot=\"input\" className=\"h-9 w-full...\" id=\"ziyadah-ta...\" ...>\n                                    <FieldControl ref={null} type=\"date\" data-slot=\"input\" className=\"h-9 w-full...\" ...>\n                                      <input\n                                        id=\"ziyadah-tanggal\"\n                                        disabled={false}\n                                        name={undefined}\n                                        ref={function}\n                                        aria-labelledby={undefined}\n                                        autoFocus={false}\n                                        value=\"2026-08-13\"\n                                        onChange={function}\n                                        onFocus={function}\n                                        onBlur={function}\n                                        onKeyDown={function}\n                                        type=\"date\"\n                                        data-slot=\"input\"\n                                        required={true}\n                                        className=\"h-9 w-full min-w-0 rounded-xl border border-input bg-background px-...\"\n-                                       style={{}}\n                                      >\n                              <div className=\"grid gap-3...\">\n                                <div className=\"relative s...\">\n                                  <label>\n                                  <Input id=\"ziyadah-surah\" type=\"text\" role=\"combobox\" aria-expanded={false} ...>\n                                    <Input type=\"text\" data-slot=\"input\" className=\"h-9 w-full...\" id=\"ziyadah-surah\" ...>\n                                      <FieldControl ref={null} type=\"text\" data-slot=\"input\" className=\"h-9 w-full...\" ...>\n                                        <input\n                                          id=\"ziyadah-surah\"\n                                          disabled={false}\n                                          name={undefined}\n                                          ref={function}\n                                          aria-labelledby={undefined}\n                                          autoFocus={false}\n                                          value=\"\"\n                                          onChange={function}\n                                          onFocus={function}\n                                          onBlur={function}\n                                          onKeyDown={function}\n                                          type=\"text\"\n                                          data-slot=\"input\"\n                                          role=\"combobox\"\n                                          aria-expanded={false}\n                                          aria-controls=\"ziyadah-surah-list\"\n                                          aria-activedescendant={undefined}\n                                          placeholder=\"Ketik nama surah…\"\n                                          required={true}\n                                          className=\"h-9 w-full min-w-0 rounded-xl border border-input bg-background p...\"\n-                                         style={{}}\n                                        >\n                                <div className=\"space-y-2\">\n                                  <label>\n                                  <Input id=\"ziyadah-da...\" type=\"text\" value=\"\" onChange={function onChange} ...>\n                                    <Input type=\"text\" data-slot=\"input\" className=\"h-9 w-full...\" id=\"ziyadah-da...\" ...>\n                                      <FieldControl ref={null} type=\"text\" data-slot=\"input\" className=\"h-9 w-full...\" ...>\n                                        <input\n                                          id=\"ziyadah-dari-ayat\"\n                                          disabled={false}\n                                          name={undefined}\n                                          ref={function}\n                                          aria-labelledby={undefined}\n                                          autoFocus={false}\n                                          value=\"\"\n                                          onChange={function}\n                                          onFocus={function}\n                                          onBlur={function}\n                                          onKeyDown={function}\n                                          type=\"text\"\n                                          data-slot=\"input\"\n                                          placeholder=\"Ayat awal\"\n                                          required={true}\n                                          className=\"h-9 w-full min-w-0 rounded-xl border border-input bg-background p...\"\n-                                         style={{}}\n                                        >\n                                <div className=\"space-y-2\">\n                                  <label>\n                                  <Input id=\"ziyadah-sa...\" type=\"text\" value=\"\" onChange={function onChange} ...>\n                                    <Input type=\"text\" data-slot=\"input\" className=\"h-9 w-full...\" id=\"ziyadah-sa...\" ...>\n                                      <FieldControl ref={null} type=\"text\" data-slot=\"input\" className=\"h-9 w-full...\" ...>\n                                        <input\n                                          id=\"ziyadah-sampai-ayat\"\n                                          disabled={false}\n                                          name={undefined}\n                                          ref={function}\n                                          aria-labelledby={undefined}\n                                          autoFocus={false}\n                                          value=\"\"\n                                          onChange={function}\n                                          onFocus={function}\n                                          onBlur={function}\n                                          onKeyDown={function}\n                                          type=\"text\"\n                                          data-slot=\"input\"\n                                          placeholder=\"Ayat akhir\"\n                                          required={true}\n                                          className=\"h-9 w-full min-w-0 rounded-xl border border-input bg-background p...\"\n-                                         style={{}}\n                                        >\n                              <div className=\"space-y-2\">\n                                <label>\n                                <Input id=\"ziyadah-juz\" value=\"\" readOnly={true} placeholder={\"Juz otom...\"} ...>\n                                  <Input type={undefined} data-slot=\"input\" className=\"h-9 w-full...\" id=\"ziyadah-juz\" ...>\n                                    <FieldControl ref={null} type={undefined} data-slot=\"input\" className=\"h-9 w-full...\" ...>\n                                      <input\n                                        id=\"ziyadah-juz\"\n                                        disabled={false}\n                                        name={undefined}\n                                        ref={function}\n                                        aria-labelledby={undefined}\n                                        autoFocus={false}\n                                        value=\"\"\n                                        onChange={function}\n                                        onFocus={function}\n                                        onBlur={function}\n                                        onKeyDown={function}\n                                        type={undefined}\n                                        data-slot=\"input\"\n                                        readOnly={true}\n                                        placeholder={\"Juz otomatis dari surah & ayat\"}\n                                        className=\"h-9 w-full min-w-0 rounded-xl border border-input px-3 py-1 text-ba...\"\n-                                       style={{}}\n                                      >\n                              <div>\n                              <GradeSelector>\n                              <div className=\"space-y-2\">\n                                <label>\n                                <Textarea id=\"ziyadah-ca...\" value=\"\" onChange={function onChange} ...>\n                                  <textarea\n                                    data-slot=\"textarea\"\n                                    className=\"flex field-sizing-content min-h-16 w-full resize-none rounded-xl border...\"\n                                    id=\"ziyadah-catatan\"\n                                    value=\"\"\n                                    onChange={function onChange}\n                                    placeholder=\"Catatan tambahan…\"\n                                    rows={3}\n-                                   style={{}}\n                                  >\n                              ...\n                      <div className=\"lg:hidden\">\n                        <FormBody siswaList={[...]} selectedSiswa=\"\" setSelectedSiswa={function bound dispatchSetState} ...>\n                          <form onSubmit={function handleSubmit} className=\"w-full max...\">\n                            ...\n                              <Input id=\"ziyadah-ta...\" type=\"date\" value=\"2026-08-13\" onChange={function onChange} ...>\n                                <Input type=\"date\" data-slot=\"input\" className=\"h-9 w-full...\" id=\"ziyadah-ta...\" ...>\n                                  <FieldControl ref={null} type=\"date\" data-slot=\"input\" className=\"h-9 w-full...\" ...>\n                                    <input\n                                      id=\"ziyadah-tanggal\"\n                                      disabled={false}\n                                      name={undefined}\n                                      ref={function}\n                                      aria-labelledby={undefined}\n                                      autoFocus={false}\n                                      value=\"2026-08-13\"\n                                      onChange={function}\n                                      onFocus={function}\n                                      onBlur={function}\n                                      onKeyDown={function}\n                                      type=\"date\"\n                                      data-slot=\"input\"\n                                      required={true}\n                                      className=\"h-9 w-full min-w-0 rounded-xl border border-input bg-background px-3 ...\"\n-                                     style={{}}\n                                    >\n                            <div className=\"grid gap-3...\">\n                              <div className=\"relative s...\">\n                                <label>\n                                <Input id=\"ziyadah-surah\" type=\"text\" role=\"combobox\" aria-expanded={false} ...>\n                                  <Input type=\"text\" data-slot=\"input\" className=\"h-9 w-full...\" id=\"ziyadah-surah\" ...>\n                                    <FieldControl ref={null} type=\"text\" data-slot=\"input\" className=\"h-9 w-full...\" ...>\n                                      <input\n                                        id=\"ziyadah-surah\"\n                                        disabled={false}\n                                        name={undefined}\n                                        ref={function}\n                                        aria-labelledby={undefined}\n                                        autoFocus={false}\n                                        value=\"\"\n                                        onChange={function}\n                                        onFocus={function}\n                                        onBlur={function}\n                                        onKeyDown={function}\n                                        type=\"text\"\n                                        data-slot=\"input\"\n                                        role=\"combobox\"\n                                        aria-expanded={false}\n                                        aria-controls=\"ziyadah-surah-list\"\n                                        aria-activedescendant={undefined}\n                                        placeholder=\"Ketik nama surah…\"\n                                        required={true}\n                                        className=\"h-9 w-full min-w-0 rounded-xl border border-input bg-background px-...\"\n-                                       style={{}}\n                                      >\n                              <div className=\"space-y-2\">\n                                <label>\n                                <Input id=\"ziyadah-da...\" type=\"text\" value=\"\" onChange={function onChange} ...>\n                                  <Input type=\"text\" data-slot=\"input\" className=\"h-9 w-full...\" id=\"ziyadah-da...\" ...>\n                                    <FieldControl ref={null} type=\"text\" data-slot=\"input\" className=\"h-9 w-full...\" ...>\n                                      <input\n                                        id=\"ziyadah-dari-ayat\"\n                                        disabled={false}\n                                        name={undefined}\n                                        ref={function}\n                                        aria-labelledby={undefined}\n                                        autoFocus={false}\n                                        value=\"\"\n                                        onChange={function}\n                                        onFocus={function}\n                                        onBlur={function}\n                                        onKeyDown={function}\n                                        type=\"text\"\n                                        data-slot=\"input\"\n                                        placeholder=\"Ayat awal\"\n                                        required={true}\n                                        className=\"h-9 w-full min-w-0 rounded-xl border border-input bg-background px-...\"\n-                                       style={{}}\n                                      >\n                              <div className=\"space-y-2\">\n                                <label>\n                                <Input id=\"ziyadah-sa...\" type=\"text\" value=\"\" onChange={function onChange} ...>\n                                  <Input type=\"text\" data-slot=\"input\" className=\"h-9 w-full...\" id=\"ziyadah-sa...\" ...>\n                                    <FieldControl ref={null} type=\"text\" data-slot=\"input\" className=\"h-9 w-full...\" ...>\n                                      <input\n                                        id=\"ziyadah-sampai-ayat\"\n                                        disabled={false}\n                                        name={undefined}\n                                        ref={function}\n                                        aria-labelledby={undefined}\n                                        autoFocus={false}\n                                        value=\"\"\n                                        onChange={function}\n                                        onFocus={function}\n                                        onBlur={function}\n                                        onKeyDown={function}\n                                        type=\"text\"\n                                        data-slot=\"input\"\n                                        placeholder=\"Ayat akhir\"\n                                        required={true}\n                                        className=\"h-9 w-full min-w-0 rounded-xl border border-input bg-background px-...\"\n-                                       style={{}}\n                                      >\n                            <div className=\"space-y-2\">\n                              <label>\n                              <Input id=\"ziyadah-juz\" value=\"\" readOnly={true} placeholder={\"Juz otom...\"} ...>\n                                <Input type={undefined} data-slot=\"input\" className=\"h-9 w-full...\" id=\"ziyadah-juz\" ...>\n                                  <FieldControl ref={null} type={undefined} data-slot=\"input\" className=\"h-9 w-full...\" ...>\n                                    <input\n                                      id=\"ziyadah-juz\"\n                                      disabled={false}\n                                      name={undefined}\n                                      ref={function}\n                                      aria-labelledby={undefined}\n                                      autoFocus={false}\n                                      value=\"\"\n                                      onChange={function}\n                                      onFocus={function}\n                                      onBlur={function}\n                                      onKeyDown={function}\n                                      type={undefined}\n                                      data-slot=\"input\"\n                                      readOnly={true}\n                                      placeholder={\"Juz otomatis dari surah & ayat\"}\n                                      className=\"h-9 w-full min-w-0 rounded-xl border border-input px-3 py-1 text-base...\"\n-                                     style={{}}\n                                    >\n                            <div>\n                            <GradeSelector>\n                            <div className=\"space-y-2\">\n                              <label>\n                              <Textarea id=\"ziyadah-ca...\" value=\"\" onChange={function onChange} ...>\n                                <textarea\n                                  data-slot=\"textarea\"\n                                  className=\"flex field-sizing-content min-h-16 w-full resize-none rounded-xl border b...\"\n                                  id=\"ziyadah-catatan\"\n                                  value=\"\"\n                                  onChange={function onChange}\n                                  placeholder=\"Catatan tambahan…\"\n                                  rows={3}\n-                                 style={{}}\n                                >\n                            ...\n                      ...\n"
+    ],
+    "screenshot": "/Users/anasubaid19/Vibe Code/sijil-mutabaah/dogfood-output/screenshots/ziyadah-tablet-light.png"
+  },
+  {
+    "area": "murajaah",
+    "viewport": "tablet",
+    "mode": "light",
+    "status": 200,
+    "keyboard": {
+      "pass": true,
+      "tag": "Lewati ke konten"
+    },
+    "visual": {
+      "overflowX": false,
+      "dark": false
+    },
+    "errors": [],
+    "screenshot": "/Users/anasubaid19/Vibe Code/sijil-mutabaah/dogfood-output/screenshots/murajaah-tablet-light.png"
+  },
+  {
+    "area": "presensi",
+    "viewport": "tablet",
+    "mode": "light",
+    "status": 200,
+    "keyboard": {
+      "pass": true,
+      "tag": "Lewati ke konten"
+    },
+    "visual": {
+      "overflowX": false,
+      "dark": false
+    },
+    "errors": [],
+    "screenshot": "/Users/anasubaid19/Vibe Code/sijil-mutabaah/dogfood-output/screenshots/presensi-tablet-light.png"
+  },
+  {
+    "area": "laporan",
+    "viewport": "tablet",
+    "mode": "light",
+    "status": 200,
+    "keyboard": {
+      "pass": true,
+      "tag": "Lewati ke konten"
+    },
+    "visual": {
+      "overflowX": true,
+      "dark": false
+    },
+    "errors": [],
+    "screenshot": "/Users/anasubaid19/Vibe Code/sijil-mutabaah/dogfood-output/screenshots/laporan-tablet-light.png"
+  },
+  {
+    "area": "manajemen-data",
+    "viewport": "tablet",
+    "mode": "light",
+    "status": 200,
+    "keyboard": {
+      "pass": true,
+      "tag": "Lewati ke konten"
+    },
+    "visual": {
+      "overflowX": false,
+      "dark": false
+    },
+    "errors": [],
+    "screenshot": "/Users/anasubaid19/Vibe Code/sijil-mutabaah/dogfood-output/screenshots/manajemen-data-tablet-light.png"
+  },
+  {
+    "area": "pengaturan",
+    "viewport": "tablet",
+    "mode": "light",
+    "status": 200,
+    "keyboard": {
+      "pass": true,
+      "tag": "Lewati ke konten"
+    },
+    "visual": {
+      "overflowX": true,
+      "dark": false
+    },
+    "errors": [],
+    "screenshot": "/Users/anasubaid19/Vibe Code/sijil-mutabaah/dogfood-output/screenshots/pengaturan-tablet-light.png"
+  },
+  {
+    "area": "kitab",
+    "viewport": "tablet",
+    "mode": "light",
+    "status": 200,
+    "keyboard": {
+      "pass": true,
+      "tag": "Lewati ke konten"
+    },
+    "visual": {
+      "overflowX": false,
+      "dark": false
+    },
+    "errors": [],
+    "screenshot": "/Users/anasubaid19/Vibe Code/sijil-mutabaah/dogfood-output/screenshots/kitab-tablet-light.png"
+  },
+  {
+    "area": "login",
+    "viewport": "tablet",
+    "mode": "dark",
+    "status": 200,
+    "keyboard": {
+      "pass": true,
+      "tag": "Ustadz / Musyrif"
+    },
+    "visual": {
+      "overflowX": false,
+      "dark": true
+    },
+    "errors": [],
+    "screenshot": "/Users/anasubaid19/Vibe Code/sijil-mutabaah/dogfood-output/screenshots/login-tablet-dark.png"
+  },
+  {
+    "area": "dashboard",
+    "viewport": "tablet",
+    "mode": "dark",
+    "status": 200,
+    "keyboard": {
+      "pass": true,
+      "tag": "Lewati ke konten"
+    },
+    "visual": {
+      "overflowX": false,
+      "dark": true
+    },
+    "errors": [],
+    "screenshot": "/Users/anasubaid19/Vibe Code/sijil-mutabaah/dogfood-output/screenshots/dashboard-tablet-dark.png"
+  },
+  {
+    "area": "ziyadah",
+    "viewport": "tablet",
+    "mode": "dark",
+    "status": 200,
+    "keyboard": {
+      "pass": true,
+      "tag": "Lewati ke konten"
+    },
+    "visual": {
+      "overflowX": false,
+      "dark": true
+    },
+    "errors": [
+      "A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\n%s%s https://react.dev/link/hydration-mismatch \n\n  ...\n    <MatchView router={{...}} matchId=\"/_authed/z...\" resetKey={0} matchState={{routeId:\"/...\", ...}}>\n      <SafeFragment>\n        <SafeFragment fallback={null}>\n          <SafeFragment getResetKey={function getResetKey} errorComponent={function ErrorComponent} ...>\n            <SafeFragment fallback={function fallback}>\n              <MatchInnerImpl matchId=\"/_authed/z...\">\n                <Lazy>\n                  <ZiyadahPage>\n                    <div className=\"mx-auto ma...\">\n                      <div>\n                      ...\n                        <div className={undefined} style={{...}}>\n                          <FormBody siswaList={[...]} selectedSiswa=\"\" setSelectedSiswa={function bound dispatchSetState} ...>\n                            <form onSubmit={function handleSubmit} className=\"w-full max...\">\n                              ...\n                                <Input id=\"ziyadah-ta...\" type=\"date\" value=\"2026-08-13\" onChange={function onChange} ...>\n                                  <Input type=\"date\" data-slot=\"input\" className=\"h-9 w-full...\" id=\"ziyadah-ta...\" ...>\n                                    <FieldControl ref={null} type=\"date\" data-slot=\"input\" className=\"h-9 w-full...\" ...>\n                                      <input\n                                        id=\"ziyadah-tanggal\"\n                                        disabled={false}\n                                        name={undefined}\n                                        ref={function}\n                                        aria-labelledby={undefined}\n                                        autoFocus={false}\n                                        value=\"2026-08-13\"\n                                        onChange={function}\n                                        onFocus={function}\n                                        onBlur={function}\n                                        onKeyDown={function}\n                                        type=\"date\"\n                                        data-slot=\"input\"\n                                        required={true}\n                                        className=\"h-9 w-full min-w-0 rounded-xl border border-input bg-background px-...\"\n-                                       style={{caret-color:\"transparent\"}}\n                                      >\n                              <div className=\"grid gap-3...\">\n                                <div className=\"relative s...\">\n                                  <label>\n                                  <Input id=\"ziyadah-surah\" type=\"text\" role=\"combobox\" aria-expanded={false} ...>\n                                    <Input type=\"text\" data-slot=\"input\" className=\"h-9 w-full...\" id=\"ziyadah-surah\" ...>\n                                      <FieldControl ref={null} type=\"text\" data-slot=\"input\" className=\"h-9 w-full...\" ...>\n                                        <input\n                                          id=\"ziyadah-surah\"\n                                          disabled={false}\n                                          name={undefined}\n                                          ref={function}\n                                          aria-labelledby={undefined}\n                                          autoFocus={false}\n                                          value=\"\"\n                                          onChange={function}\n                                          onFocus={function}\n                                          onBlur={function}\n                                          onKeyDown={function}\n                                          type=\"text\"\n                                          data-slot=\"input\"\n                                          role=\"combobox\"\n                                          aria-expanded={false}\n                                          aria-controls=\"ziyadah-surah-list\"\n                                          aria-activedescendant={undefined}\n                                          placeholder=\"Ketik nama surah…\"\n                                          required={true}\n                                          className=\"h-9 w-full min-w-0 rounded-xl border border-input bg-background p...\"\n-                                         style={{caret-color:\"transparent\"}}\n                                        >\n                                <div className=\"space-y-2\">\n                                  <label>\n                                  <Input id=\"ziyadah-da...\" type=\"text\" value=\"\" onChange={function onChange} ...>\n                                    <Input type=\"text\" data-slot=\"input\" className=\"h-9 w-full...\" id=\"ziyadah-da...\" ...>\n                                      <FieldControl ref={null} type=\"text\" data-slot=\"input\" className=\"h-9 w-full...\" ...>\n                                        <input\n                                          id=\"ziyadah-dari-ayat\"\n                                          disabled={false}\n                                          name={undefined}\n                                          ref={function}\n                                          aria-labelledby={undefined}\n                                          autoFocus={false}\n                                          value=\"\"\n                                          onChange={function}\n                                          onFocus={function}\n                                          onBlur={function}\n                                          onKeyDown={function}\n                                          type=\"text\"\n                                          data-slot=\"input\"\n                                          placeholder=\"Ayat awal\"\n                                          required={true}\n                                          className=\"h-9 w-full min-w-0 rounded-xl border border-input bg-background p...\"\n-                                         style={{caret-color:\"transparent\"}}\n                                        >\n                                <div className=\"space-y-2\">\n                                  <label>\n                                  <Input id=\"ziyadah-sa...\" type=\"text\" value=\"\" onChange={function onChange} ...>\n                                    <Input type=\"text\" data-slot=\"input\" className=\"h-9 w-full...\" id=\"ziyadah-sa...\" ...>\n                                      <FieldControl ref={null} type=\"text\" data-slot=\"input\" className=\"h-9 w-full...\" ...>\n                                        <input\n                                          id=\"ziyadah-sampai-ayat\"\n                                          disabled={false}\n                                          name={undefined}\n                                          ref={function}\n                                          aria-labelledby={undefined}\n                                          autoFocus={false}\n                                          value=\"\"\n                                          onChange={function}\n                                          onFocus={function}\n                                          onBlur={function}\n                                          onKeyDown={function}\n                                          type=\"text\"\n                                          data-slot=\"input\"\n                                          placeholder=\"Ayat akhir\"\n                                          required={true}\n                                          className=\"h-9 w-full min-w-0 rounded-xl border border-input bg-background p...\"\n-                                         style={{caret-color:\"transparent\"}}\n                                        >\n                              <div className=\"space-y-2\">\n                                <label>\n                                <Input id=\"ziyadah-juz\" value=\"\" readOnly={true} placeholder={\"Juz otom...\"} ...>\n                                  <Input type={undefined} data-slot=\"input\" className=\"h-9 w-full...\" id=\"ziyadah-juz\" ...>\n                                    <FieldControl ref={null} type={undefined} data-slot=\"input\" className=\"h-9 w-full...\" ...>\n                                      <input\n                                        id=\"ziyadah-juz\"\n                                        disabled={false}\n                                        name={undefined}\n                                        ref={function}\n                                        aria-labelledby={undefined}\n                                        autoFocus={false}\n                                        value=\"\"\n                                        onChange={function}\n                                        onFocus={function}\n                                        onBlur={function}\n                                        onKeyDown={function}\n                                        type={undefined}\n                                        data-slot=\"input\"\n                                        readOnly={true}\n                                        placeholder={\"Juz otomatis dari surah & ayat\"}\n                                        className=\"h-9 w-full min-w-0 rounded-xl border border-input px-3 py-1 text-ba...\"\n-                                       style={{caret-color:\"transparent\"}}\n                                      >\n                              <div>\n                              <GradeSelector>\n                              <div className=\"space-y-2\">\n                                <label>\n                                <Textarea id=\"ziyadah-ca...\" value=\"\" onChange={function onChange} ...>\n                                  <textarea\n                                    data-slot=\"textarea\"\n                                    className=\"flex field-sizing-content min-h-16 w-full resize-none rounded-xl border...\"\n                                    id=\"ziyadah-catatan\"\n                                    value=\"\"\n                                    onChange={function onChange}\n                                    placeholder=\"Catatan tambahan…\"\n                                    rows={3}\n-                                   style={{caret-color:\"transparent\"}}\n                                  >\n                              ...\n                      <div className=\"lg:hidden\">\n                        <FormBody siswaList={[...]} selectedSiswa=\"\" setSelectedSiswa={function bound dispatchSetState} ...>\n                          <form onSubmit={function handleSubmit} className=\"w-full max...\">\n                            ...\n                              <Input id=\"ziyadah-ta...\" type=\"date\" value=\"2026-08-13\" onChange={function onChange} ...>\n                                <Input type=\"date\" data-slot=\"input\" className=\"h-9 w-full...\" id=\"ziyadah-ta...\" ...>\n                                  <FieldControl ref={null} type=\"date\" data-slot=\"input\" className=\"h-9 w-full...\" ...>\n                                    <input\n                                      id=\"ziyadah-tanggal\"\n                                      disabled={false}\n                                      name={undefined}\n                                      ref={function}\n                                      aria-labelledby={undefined}\n                                      autoFocus={false}\n                                      value=\"2026-08-13\"\n                                      onChange={function}\n                                      onFocus={function}\n                                      onBlur={function}\n                                      onKeyDown={function}\n                                      type=\"date\"\n                                      data-slot=\"input\"\n                                      required={true}\n                                      className=\"h-9 w-full min-w-0 rounded-xl border border-input bg-background px-3 ...\"\n-                                     style={{caret-color:\"transparent\"}}\n                                    >\n                            <div className=\"grid gap-3...\">\n                              <div className=\"relative s...\">\n                                <label>\n                                <Input id=\"ziyadah-surah\" type=\"text\" role=\"combobox\" aria-expanded={false} ...>\n                                  <Input type=\"text\" data-slot=\"input\" className=\"h-9 w-full...\" id=\"ziyadah-surah\" ...>\n                                    <FieldControl ref={null} type=\"text\" data-slot=\"input\" className=\"h-9 w-full...\" ...>\n                                      <input\n                                        id=\"ziyadah-surah\"\n                                        disabled={false}\n                                        name={undefined}\n                                        ref={function}\n                                        aria-labelledby={undefined}\n                                        autoFocus={false}\n                                        value=\"\"\n                                        onChange={function}\n                                        onFocus={function}\n                                        onBlur={function}\n                                        onKeyDown={function}\n                                        type=\"text\"\n                                        data-slot=\"input\"\n                                        role=\"combobox\"\n                                        aria-expanded={false}\n                                        aria-controls=\"ziyadah-surah-list\"\n                                        aria-activedescendant={undefined}\n                                        placeholder=\"Ketik nama surah…\"\n                                        required={true}\n                                        className=\"h-9 w-full min-w-0 rounded-xl border border-input bg-background px-...\"\n-                                       style={{caret-color:\"transparent\"}}\n                                      >\n                              <div className=\"space-y-2\">\n                                <label>\n                                <Input id=\"ziyadah-da...\" type=\"text\" value=\"\" onChange={function onChange} ...>\n                                  <Input type=\"text\" data-slot=\"input\" className=\"h-9 w-full...\" id=\"ziyadah-da...\" ...>\n                                    <FieldControl ref={null} type=\"text\" data-slot=\"input\" className=\"h-9 w-full...\" ...>\n                                      <input\n                                        id=\"ziyadah-dari-ayat\"\n                                        disabled={false}\n                                        name={undefined}\n                                        ref={function}\n                                        aria-labelledby={undefined}\n                                        autoFocus={false}\n                                        value=\"\"\n                                        onChange={function}\n                                        onFocus={function}\n                                        onBlur={function}\n                                        onKeyDown={function}\n                                        type=\"text\"\n                                        data-slot=\"input\"\n                                        placeholder=\"Ayat awal\"\n                                        required={true}\n                                        className=\"h-9 w-full min-w-0 rounded-xl border border-input bg-background px-...\"\n-                                       style={{caret-color:\"transparent\"}}\n                                      >\n                              <div className=\"space-y-2\">\n                                <label>\n                                <Input id=\"ziyadah-sa...\" type=\"text\" value=\"\" onChange={function onChange} ...>\n                                  <Input type=\"text\" data-slot=\"input\" className=\"h-9 w-full...\" id=\"ziyadah-sa...\" ...>\n                                    <FieldControl ref={null} type=\"text\" data-slot=\"input\" className=\"h-9 w-full...\" ...>\n                                      <input\n                                        id=\"ziyadah-sampai-ayat\"\n                                        disabled={false}\n                                        name={undefined}\n                                        ref={function}\n                                        aria-labelledby={undefined}\n                                        autoFocus={false}\n                                        value=\"\"\n                                        onChange={function}\n                                        onFocus={function}\n                                        onBlur={function}\n                                        onKeyDown={function}\n                                        type=\"text\"\n                                        data-slot=\"input\"\n                                        placeholder=\"Ayat akhir\"\n                                        required={true}\n                                        className=\"h-9 w-full min-w-0 rounded-xl border border-input bg-background px-...\"\n-                                       style={{caret-color:\"transparent\"}}\n                                      >\n                            <div className=\"space-y-2\">\n                              <label>\n                              <Input id=\"ziyadah-juz\" value=\"\" readOnly={true} placeholder={\"Juz otom...\"} ...>\n                                <Input type={undefined} data-slot=\"input\" className=\"h-9 w-full...\" id=\"ziyadah-juz\" ...>\n                                  <FieldControl ref={null} type={undefined} data-slot=\"input\" className=\"h-9 w-full...\" ...>\n                                    <input\n                                      id=\"ziyadah-juz\"\n                                      disabled={false}\n                                      name={undefined}\n                                      ref={function}\n                                      aria-labelledby={undefined}\n                                      autoFocus={false}\n                                      value=\"\"\n                                      onChange={function}\n                                      onFocus={function}\n                                      onBlur={function}\n                                      onKeyDown={function}\n                                      type={undefined}\n                                      data-slot=\"input\"\n                                      readOnly={true}\n                                      placeholder={\"Juz otomatis dari surah & ayat\"}\n                                      className=\"h-9 w-full min-w-0 rounded-xl border border-input px-3 py-1 text-base...\"\n-                                     style={{caret-color:\"transparent\"}}\n                                    >\n                            <div>\n                            <GradeSelector>\n                            <div className=\"space-y-2\">\n                              <label>\n                              <Textarea id=\"ziyadah-ca...\" value=\"\" onChange={function onChange} ...>\n                                <textarea\n                                  data-slot=\"textarea\"\n                                  className=\"flex field-sizing-content min-h-16 w-full resize-none rounded-xl border b...\"\n                                  id=\"ziyadah-catatan\"\n                                  value=\"\"\n                                  onChange={function onChange}\n                                  placeholder=\"Catatan tambahan…\"\n                                  rows={3}\n-                                 style={{caret-color:\"transparent\"}}\n                                >\n                            ...\n                      ...\n"
+    ],
+    "screenshot": "/Users/anasubaid19/Vibe Code/sijil-mutabaah/dogfood-output/screenshots/ziyadah-tablet-dark.png"
+  },
+  {
+    "area": "murajaah",
+    "viewport": "tablet",
+    "mode": "dark",
+    "status": 200,
+    "keyboard": {
+      "pass": true,
+      "tag": "Lewati ke konten"
+    },
+    "visual": {
+      "overflowX": false,
+      "dark": true
+    },
+    "errors": [],
+    "screenshot": "/Users/anasubaid19/Vibe Code/sijil-mutabaah/dogfood-output/screenshots/murajaah-tablet-dark.png"
+  },
+  {
+    "area": "presensi",
+    "viewport": "tablet",
+    "mode": "dark",
+    "status": 200,
+    "keyboard": {
+      "pass": true,
+      "tag": "Lewati ke konten"
+    },
+    "visual": {
+      "overflowX": false,
+      "dark": true
+    },
+    "errors": [],
+    "screenshot": "/Users/anasubaid19/Vibe Code/sijil-mutabaah/dogfood-output/screenshots/presensi-tablet-dark.png"
+  },
+  {
+    "area": "laporan",
+    "viewport": "tablet",
+    "mode": "dark",
+    "status": 200,
+    "keyboard": {
+      "pass": true,
+      "tag": "Lewati ke konten"
+    },
+    "visual": {
+      "overflowX": true,
+      "dark": true
+    },
+    "errors": [],
+    "screenshot": "/Users/anasubaid19/Vibe Code/sijil-mutabaah/dogfood-output/screenshots/laporan-tablet-dark.png"
+  },
+  {
+    "area": "manajemen-data",
+    "viewport": "tablet",
+    "mode": "dark",
+    "status": 200,
+    "keyboard": {
+      "pass": true,
+      "tag": "Lewati ke konten"
+    },
+    "visual": {
+      "overflowX": false,
+      "dark": true
+    },
+    "errors": [],
+    "screenshot": "/Users/anasubaid19/Vibe Code/sijil-mutabaah/dogfood-output/screenshots/manajemen-data-tablet-dark.png"
+  },
+  {
+    "area": "pengaturan",
+    "viewport": "tablet",
+    "mode": "dark",
+    "status": 200,
+    "keyboard": {
+      "pass": true,
+      "tag": "Lewati ke konten"
+    },
+    "visual": {
+      "overflowX": true,
+      "dark": true
+    },
+    "errors": [],
+    "screenshot": "/Users/anasubaid19/Vibe Code/sijil-mutabaah/dogfood-output/screenshots/pengaturan-tablet-dark.png"
+  },
+  {
+    "area": "kitab",
+    "viewport": "tablet",
+    "mode": "dark",
+    "status": 200,
+    "keyboard": {
+      "pass": true,
+      "tag": "Lewati ke konten"
+    },
+    "visual": {
+      "overflowX": false,
+      "dark": true
+    },
+    "errors": [],
+    "screenshot": "/Users/anasubaid19/Vibe Code/sijil-mutabaah/dogfood-output/screenshots/kitab-tablet-dark.png"
+  },
+  {
+    "area": "login",
+    "viewport": "mobile",
+    "mode": "light",
+    "status": 200,
+    "keyboard": {
+      "pass": true,
+      "tag": "Ustadz / Musyrif"
+    },
+    "visual": {
+      "overflowX": false,
+      "dark": false
+    },
+    "errors": [],
+    "screenshot": "/Users/anasubaid19/Vibe Code/sijil-mutabaah/dogfood-output/screenshots/login-mobile-light.png"
+  },
+  {
+    "area": "dashboard",
+    "viewport": "mobile",
+    "mode": "light",
+    "status": 200,
+    "keyboard": {
+      "pass": true,
+      "tag": "Lewati ke konten"
+    },
+    "visual": {
+      "overflowX": false,
+      "dark": false
+    },
+    "errors": [],
+    "screenshot": "/Users/anasubaid19/Vibe Code/sijil-mutabaah/dogfood-output/screenshots/dashboard-mobile-light.png"
+  },
+  {
+    "area": "ziyadah",
+    "viewport": "mobile",
+    "mode": "light",
+    "status": 200,
+    "keyboard": {
+      "pass": true,
+      "tag": "Lewati ke konten"
+    },
+    "visual": {
+      "overflowX": false,
+      "dark": false
+    },
+    "errors": [
+      "A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\n%s%s https://react.dev/link/hydration-mismatch \n\n  ...\n    <MatchView router={{...}} matchId=\"/_authed/z...\" resetKey={0} matchState={{routeId:\"/...\", ...}}>\n      <SafeFragment>\n        <SafeFragment fallback={null}>\n          <SafeFragment getResetKey={function getResetKey} errorComponent={function ErrorComponent} ...>\n            <SafeFragment fallback={function fallback}>\n              <MatchInnerImpl matchId=\"/_authed/z...\">\n                <Lazy>\n                  <ZiyadahPage>\n                    <div className=\"mx-auto ma...\">\n                      <div>\n                      ...\n                        <div className={undefined} style={{...}}>\n                          <FormBody siswaList={[...]} selectedSiswa=\"\" setSelectedSiswa={function bound dispatchSetState} ...>\n                            <form onSubmit={function handleSubmit} className=\"w-full max...\">\n                              ...\n                                <Input id=\"ziyadah-ta...\" type=\"date\" value=\"2026-08-13\" onChange={function onChange} ...>\n                                  <Input type=\"date\" data-slot=\"input\" className=\"h-9 w-full...\" id=\"ziyadah-ta...\" ...>\n                                    <FieldControl ref={null} type=\"date\" data-slot=\"input\" className=\"h-9 w-full...\" ...>\n                                      <input\n                                        id=\"ziyadah-tanggal\"\n                                        disabled={false}\n                                        name={undefined}\n                                        ref={function}\n                                        aria-labelledby={undefined}\n                                        autoFocus={false}\n                                        value=\"2026-08-13\"\n                                        onChange={function}\n                                        onFocus={function}\n                                        onBlur={function}\n                                        onKeyDown={function}\n                                        type=\"date\"\n                                        data-slot=\"input\"\n                                        required={true}\n                                        className=\"h-9 w-full min-w-0 rounded-xl border border-input bg-background px-...\"\n-                                       style={{caret-color:\"transparent\"}}\n                                      >\n                              <div className=\"grid gap-3...\">\n                                <div className=\"relative s...\">\n                                  <label>\n                                  <Input id=\"ziyadah-surah\" type=\"text\" role=\"combobox\" aria-expanded={false} ...>\n                                    <Input type=\"text\" data-slot=\"input\" className=\"h-9 w-full...\" id=\"ziyadah-surah\" ...>\n                                      <FieldControl ref={null} type=\"text\" data-slot=\"input\" className=\"h-9 w-full...\" ...>\n                                        <input\n                                          id=\"ziyadah-surah\"\n                                          disabled={false}\n                                          name={undefined}\n                                          ref={function}\n                                          aria-labelledby={undefined}\n                                          autoFocus={false}\n                                          value=\"\"\n                                          onChange={function}\n                                          onFocus={function}\n                                          onBlur={function}\n                                          onKeyDown={function}\n                                          type=\"text\"\n                                          data-slot=\"input\"\n                                          role=\"combobox\"\n                                          aria-expanded={false}\n                                          aria-controls=\"ziyadah-surah-list\"\n                                          aria-activedescendant={undefined}\n                                          placeholder=\"Ketik nama surah…\"\n                                          required={true}\n                                          className=\"h-9 w-full min-w-0 rounded-xl border border-input bg-background p...\"\n-                                         style={{caret-color:\"transparent\"}}\n                                        >\n                                <div className=\"space-y-2\">\n                                  <label>\n                                  <Input id=\"ziyadah-da...\" type=\"text\" value=\"\" onChange={function onChange} ...>\n                                    <Input type=\"text\" data-slot=\"input\" className=\"h-9 w-full...\" id=\"ziyadah-da...\" ...>\n                                      <FieldControl ref={null} type=\"text\" data-slot=\"input\" className=\"h-9 w-full...\" ...>\n                                        <input\n                                          id=\"ziyadah-dari-ayat\"\n                                          disabled={false}\n                                          name={undefined}\n                                          ref={function}\n                                          aria-labelledby={undefined}\n                                          autoFocus={false}\n                                          value=\"\"\n                                          onChange={function}\n                                          onFocus={function}\n                                          onBlur={function}\n                                          onKeyDown={function}\n                                          type=\"text\"\n                                          data-slot=\"input\"\n                                          placeholder=\"Ayat awal\"\n                                          required={true}\n                                          className=\"h-9 w-full min-w-0 rounded-xl border border-input bg-background p...\"\n-                                         style={{caret-color:\"transparent\"}}\n                                        >\n                                <div className=\"space-y-2\">\n                                  <label>\n                                  <Input id=\"ziyadah-sa...\" type=\"text\" value=\"\" onChange={function onChange} ...>\n                                    <Input type=\"text\" data-slot=\"input\" className=\"h-9 w-full...\" id=\"ziyadah-sa...\" ...>\n                                      <FieldControl ref={null} type=\"text\" data-slot=\"input\" className=\"h-9 w-full...\" ...>\n                                        <input\n                                          id=\"ziyadah-sampai-ayat\"\n                                          disabled={false}\n                                          name={undefined}\n                                          ref={function}\n                                          aria-labelledby={undefined}\n                                          autoFocus={false}\n                                          value=\"\"\n                                          onChange={function}\n                                          onFocus={function}\n                                          onBlur={function}\n                                          onKeyDown={function}\n                                          type=\"text\"\n                                          data-slot=\"input\"\n                                          placeholder=\"Ayat akhir\"\n                                          required={true}\n                                          className=\"h-9 w-full min-w-0 rounded-xl border border-input bg-background p...\"\n-                                         style={{caret-color:\"transparent\"}}\n                                        >\n                              <div className=\"space-y-2\">\n                                <label>\n                                <Input id=\"ziyadah-juz\" value=\"\" readOnly={true} placeholder={\"Juz otom...\"} ...>\n                                  <Input type={undefined} data-slot=\"input\" className=\"h-9 w-full...\" id=\"ziyadah-juz\" ...>\n                                    <FieldControl ref={null} type={undefined} data-slot=\"input\" className=\"h-9 w-full...\" ...>\n                                      <input\n                                        id=\"ziyadah-juz\"\n                                        disabled={false}\n                                        name={undefined}\n                                        ref={function}\n                                        aria-labelledby={undefined}\n                                        autoFocus={false}\n                                        value=\"\"\n                                        onChange={function}\n                                        onFocus={function}\n                                        onBlur={function}\n                                        onKeyDown={function}\n                                        type={undefined}\n                                        data-slot=\"input\"\n                                        readOnly={true}\n                                        placeholder={\"Juz otomatis dari surah & ayat\"}\n                                        className=\"h-9 w-full min-w-0 rounded-xl border border-input px-3 py-1 text-ba...\"\n-                                       style={{caret-color:\"transparent\"}}\n                                      >\n                              <div>\n                              <GradeSelector>\n                              <div className=\"space-y-2\">\n                                <label>\n                                <Textarea id=\"ziyadah-ca...\" value=\"\" onChange={function onChange} ...>\n                                  <textarea\n                                    data-slot=\"textarea\"\n                                    className=\"flex field-sizing-content min-h-16 w-full resize-none rounded-xl border...\"\n                                    id=\"ziyadah-catatan\"\n                                    value=\"\"\n                                    onChange={function onChange}\n                                    placeholder=\"Catatan tambahan…\"\n                                    rows={3}\n-                                   style={{caret-color:\"transparent\"}}\n                                  >\n                              ...\n                      <div className=\"lg:hidden\">\n                        <FormBody siswaList={[...]} selectedSiswa=\"\" setSelectedSiswa={function bound dispatchSetState} ...>\n                          <form onSubmit={function handleSubmit} className=\"w-full max...\">\n                            ...\n                              <Input id=\"ziyadah-ta...\" type=\"date\" value=\"2026-08-13\" onChange={function onChange} ...>\n                                <Input type=\"date\" data-slot=\"input\" className=\"h-9 w-full...\" id=\"ziyadah-ta...\" ...>\n                                  <FieldControl ref={null} type=\"date\" data-slot=\"input\" className=\"h-9 w-full...\" ...>\n                                    <input\n                                      id=\"ziyadah-tanggal\"\n                                      disabled={false}\n                                      name={undefined}\n                                      ref={function}\n                                      aria-labelledby={undefined}\n                                      autoFocus={false}\n                                      value=\"2026-08-13\"\n                                      onChange={function}\n                                      onFocus={function}\n                                      onBlur={function}\n                                      onKeyDown={function}\n                                      type=\"date\"\n                                      data-slot=\"input\"\n                                      required={true}\n                                      className=\"h-9 w-full min-w-0 rounded-xl border border-input bg-background px-3 ...\"\n-                                     style={{caret-color:\"transparent\"}}\n                                    >\n                            <div className=\"grid gap-3...\">\n                              <div className=\"relative s...\">\n                                <label>\n                                <Input id=\"ziyadah-surah\" type=\"text\" role=\"combobox\" aria-expanded={false} ...>\n                                  <Input type=\"text\" data-slot=\"input\" className=\"h-9 w-full...\" id=\"ziyadah-surah\" ...>\n                                    <FieldControl ref={null} type=\"text\" data-slot=\"input\" className=\"h-9 w-full...\" ...>\n                                      <input\n                                        id=\"ziyadah-surah\"\n                                        disabled={false}\n                                        name={undefined}\n                                        ref={function}\n                                        aria-labelledby={undefined}\n                                        autoFocus={false}\n                                        value=\"\"\n                                        onChange={function}\n                                        onFocus={function}\n                                        onBlur={function}\n                                        onKeyDown={function}\n                                        type=\"text\"\n                                        data-slot=\"input\"\n                                        role=\"combobox\"\n                                        aria-expanded={false}\n                                        aria-controls=\"ziyadah-surah-list\"\n                                        aria-activedescendant={undefined}\n                                        placeholder=\"Ketik nama surah…\"\n                                        required={true}\n                                        className=\"h-9 w-full min-w-0 rounded-xl border border-input bg-background px-...\"\n-                                       style={{caret-color:\"transparent\"}}\n                                      >\n                              <div className=\"space-y-2\">\n                                <label>\n                                <Input id=\"ziyadah-da...\" type=\"text\" value=\"\" onChange={function onChange} ...>\n                                  <Input type=\"text\" data-slot=\"input\" className=\"h-9 w-full...\" id=\"ziyadah-da...\" ...>\n                                    <FieldControl ref={null} type=\"text\" data-slot=\"input\" className=\"h-9 w-full...\" ...>\n                                      <input\n                                        id=\"ziyadah-dari-ayat\"\n                                        disabled={false}\n                                        name={undefined}\n                                        ref={function}\n                                        aria-labelledby={undefined}\n                                        autoFocus={false}\n                                        value=\"\"\n                                        onChange={function}\n                                        onFocus={function}\n                                        onBlur={function}\n                                        onKeyDown={function}\n                                        type=\"text\"\n                                        data-slot=\"input\"\n                                        placeholder=\"Ayat awal\"\n                                        required={true}\n                                        className=\"h-9 w-full min-w-0 rounded-xl border border-input bg-background px-...\"\n-                                       style={{caret-color:\"transparent\"}}\n                                      >\n                              <div className=\"space-y-2\">\n                                <label>\n                                <Input id=\"ziyadah-sa...\" type=\"text\" value=\"\" onChange={function onChange} ...>\n                                  <Input type=\"text\" data-slot=\"input\" className=\"h-9 w-full...\" id=\"ziyadah-sa...\" ...>\n                                    <FieldControl ref={null} type=\"text\" data-slot=\"input\" className=\"h-9 w-full...\" ...>\n                                      <input\n                                        id=\"ziyadah-sampai-ayat\"\n                                        disabled={false}\n                                        name={undefined}\n                                        ref={function}\n                                        aria-labelledby={undefined}\n                                        autoFocus={false}\n                                        value=\"\"\n                                        onChange={function}\n                                        onFocus={function}\n                                        onBlur={function}\n                                        onKeyDown={function}\n                                        type=\"text\"\n                                        data-slot=\"input\"\n                                        placeholder=\"Ayat akhir\"\n                                        required={true}\n                                        className=\"h-9 w-full min-w-0 rounded-xl border border-input bg-background px-...\"\n-                                       style={{caret-color:\"transparent\"}}\n                                      >\n                            <div className=\"space-y-2\">\n                              <label>\n                              <Input id=\"ziyadah-juz\" value=\"\" readOnly={true} placeholder={\"Juz otom...\"} ...>\n                                <Input type={undefined} data-slot=\"input\" className=\"h-9 w-full...\" id=\"ziyadah-juz\" ...>\n                                  <FieldControl ref={null} type={undefined} data-slot=\"input\" className=\"h-9 w-full...\" ...>\n                                    <input\n                                      id=\"ziyadah-juz\"\n                                      disabled={false}\n                                      name={undefined}\n                                      ref={function}\n                                      aria-labelledby={undefined}\n                                      autoFocus={false}\n                                      value=\"\"\n                                      onChange={function}\n                                      onFocus={function}\n                                      onBlur={function}\n                                      onKeyDown={function}\n                                      type={undefined}\n                                      data-slot=\"input\"\n                                      readOnly={true}\n                                      placeholder={\"Juz otomatis dari surah & ayat\"}\n                                      className=\"h-9 w-full min-w-0 rounded-xl border border-input px-3 py-1 text-base...\"\n-                                     style={{caret-color:\"transparent\"}}\n                                    >\n                            <div>\n                            <GradeSelector>\n                            <div className=\"space-y-2\">\n                              <label>\n                              <Textarea id=\"ziyadah-ca...\" value=\"\" onChange={function onChange} ...>\n                                <textarea\n                                  data-slot=\"textarea\"\n                                  className=\"flex field-sizing-content min-h-16 w-full resize-none rounded-xl border b...\"\n                                  id=\"ziyadah-catatan\"\n                                  value=\"\"\n                                  onChange={function onChange}\n                                  placeholder=\"Catatan tambahan…\"\n                                  rows={3}\n-                                 style={{caret-color:\"transparent\"}}\n                                >\n                            ...\n                      ...\n"
+    ],
+    "screenshot": "/Users/anasubaid19/Vibe Code/sijil-mutabaah/dogfood-output/screenshots/ziyadah-mobile-light.png"
+  },
+  {
+    "area": "murajaah",
+    "viewport": "mobile",
+    "mode": "light",
+    "status": 200,
+    "keyboard": {
+      "pass": true,
+      "tag": "Lewati ke konten"
+    },
+    "visual": {
+      "overflowX": false,
+      "dark": false
+    },
+    "errors": [],
+    "screenshot": "/Users/anasubaid19/Vibe Code/sijil-mutabaah/dogfood-output/screenshots/murajaah-mobile-light.png"
+  },
+  {
+    "area": "presensi",
+    "viewport": "mobile",
+    "mode": "light",
+    "status": 200,
+    "keyboard": {
+      "pass": true,
+      "tag": "Lewati ke konten"
+    },
+    "visual": {
+      "overflowX": false,
+      "dark": false
+    },
+    "errors": [],
+    "screenshot": "/Users/anasubaid19/Vibe Code/sijil-mutabaah/dogfood-output/screenshots/presensi-mobile-light.png"
+  },
+  {
+    "area": "laporan",
+    "viewport": "mobile",
+    "mode": "light",
+    "status": 200,
+    "keyboard": {
+      "pass": true,
+      "tag": "Lewati ke konten"
+    },
+    "visual": {
+      "overflowX": false,
+      "dark": false
+    },
+    "errors": [],
+    "screenshot": "/Users/anasubaid19/Vibe Code/sijil-mutabaah/dogfood-output/screenshots/laporan-mobile-light.png"
+  },
+  {
+    "area": "manajemen-data",
+    "viewport": "mobile",
+    "mode": "light",
+    "status": 200,
+    "keyboard": {
+      "pass": true,
+      "tag": "Lewati ke konten"
+    },
+    "visual": {
+      "overflowX": false,
+      "dark": false
+    },
+    "errors": [],
+    "screenshot": "/Users/anasubaid19/Vibe Code/sijil-mutabaah/dogfood-output/screenshots/manajemen-data-mobile-light.png"
+  },
+  {
+    "area": "pengaturan",
+    "viewport": "mobile",
+    "mode": "light",
+    "status": 200,
+    "keyboard": {
+      "pass": true,
+      "tag": "Lewati ke konten"
+    },
+    "visual": {
+      "overflowX": false,
+      "dark": false
+    },
+    "errors": [],
+    "screenshot": "/Users/anasubaid19/Vibe Code/sijil-mutabaah/dogfood-output/screenshots/pengaturan-mobile-light.png"
+  },
+  {
+    "area": "kitab",
+    "viewport": "mobile",
+    "mode": "light",
+    "status": 200,
+    "keyboard": {
+      "pass": true,
+      "tag": "Lewati ke konten"
+    },
+    "visual": {
+      "overflowX": false,
+      "dark": false
+    },
+    "errors": [],
+    "screenshot": "/Users/anasubaid19/Vibe Code/sijil-mutabaah/dogfood-output/screenshots/kitab-mobile-light.png"
+  },
+  {
+    "area": "login",
+    "viewport": "mobile",
+    "mode": "dark",
+    "status": 200,
+    "keyboard": {
+      "pass": true,
+      "tag": "Ustadz / Musyrif"
+    },
+    "visual": {
+      "overflowX": false,
+      "dark": true
+    },
+    "errors": [],
+    "screenshot": "/Users/anasubaid19/Vibe Code/sijil-mutabaah/dogfood-output/screenshots/login-mobile-dark.png"
+  },
+  {
+    "area": "dashboard",
+    "viewport": "mobile",
+    "mode": "dark",
+    "status": 200,
+    "keyboard": {
+      "pass": true,
+      "tag": "Lewati ke konten"
+    },
+    "visual": {
+      "overflowX": false,
+      "dark": true
+    },
+    "errors": [],
+    "screenshot": "/Users/anasubaid19/Vibe Code/sijil-mutabaah/dogfood-output/screenshots/dashboard-mobile-dark.png"
+  },
+  {
+    "area": "ziyadah",
+    "viewport": "mobile",
+    "mode": "dark",
+    "status": 200,
+    "keyboard": {
+      "pass": true,
+      "tag": "Lewati ke konten"
+    },
+    "visual": {
+      "overflowX": false,
+      "dark": true
+    },
+    "errors": [
+      "A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\n%s%s https://react.dev/link/hydration-mismatch \n\n  ...\n    <MatchView router={{...}} matchId=\"/_authed/z...\" resetKey={0} matchState={{routeId:\"/...\", ...}}>\n      <SafeFragment>\n        <SafeFragment fallback={null}>\n          <SafeFragment getResetKey={function getResetKey} errorComponent={function ErrorComponent} ...>\n            <SafeFragment fallback={function fallback}>\n              <MatchInnerImpl matchId=\"/_authed/z...\">\n                <Lazy>\n                  <ZiyadahPage>\n                    <div className=\"mx-auto ma...\">\n                      <div>\n                      ...\n                        <div className={undefined} style={{...}}>\n                          <FormBody siswaList={[...]} selectedSiswa=\"\" setSelectedSiswa={function bound dispatchSetState} ...>\n                            <form onSubmit={function handleSubmit} className=\"w-full max...\">\n                              ...\n                                <Input id=\"ziyadah-ta...\" type=\"date\" value=\"2026-08-13\" onChange={function onChange} ...>\n                                  <Input type=\"date\" data-slot=\"input\" className=\"h-9 w-full...\" id=\"ziyadah-ta...\" ...>\n                                    <FieldControl ref={null} type=\"date\" data-slot=\"input\" className=\"h-9 w-full...\" ...>\n                                      <input\n                                        id=\"ziyadah-tanggal\"\n                                        disabled={false}\n                                        name={undefined}\n                                        ref={function}\n                                        aria-labelledby={undefined}\n                                        autoFocus={false}\n                                        value=\"2026-08-13\"\n                                        onChange={function}\n                                        onFocus={function}\n                                        onBlur={function}\n                                        onKeyDown={function}\n                                        type=\"date\"\n                                        data-slot=\"input\"\n                                        required={true}\n                                        className=\"h-9 w-full min-w-0 rounded-xl border border-input bg-background px-...\"\n-                                       style={{caret-color:\"transparent\"}}\n                                      >\n                              <div className=\"grid gap-3...\">\n                                <div className=\"relative s...\">\n                                  <label>\n                                  <Input id=\"ziyadah-surah\" type=\"text\" role=\"combobox\" aria-expanded={false} ...>\n                                    <Input type=\"text\" data-slot=\"input\" className=\"h-9 w-full...\" id=\"ziyadah-surah\" ...>\n                                      <FieldControl ref={null} type=\"text\" data-slot=\"input\" className=\"h-9 w-full...\" ...>\n                                        <input\n                                          id=\"ziyadah-surah\"\n                                          disabled={false}\n                                          name={undefined}\n                                          ref={function}\n                                          aria-labelledby={undefined}\n                                          autoFocus={false}\n                                          value=\"\"\n                                          onChange={function}\n                                          onFocus={function}\n                                          onBlur={function}\n                                          onKeyDown={function}\n                                          type=\"text\"\n                                          data-slot=\"input\"\n                                          role=\"combobox\"\n                                          aria-expanded={false}\n                                          aria-controls=\"ziyadah-surah-list\"\n                                          aria-activedescendant={undefined}\n                                          placeholder=\"Ketik nama surah…\"\n                                          required={true}\n                                          className=\"h-9 w-full min-w-0 rounded-xl border border-input bg-background p...\"\n-                                         style={{caret-color:\"transparent\"}}\n                                        >\n                                <div className=\"space-y-2\">\n                                  <label>\n                                  <Input id=\"ziyadah-da...\" type=\"text\" value=\"\" onChange={function onChange} ...>\n                                    <Input type=\"text\" data-slot=\"input\" className=\"h-9 w-full...\" id=\"ziyadah-da...\" ...>\n                                      <FieldControl ref={null} type=\"text\" data-slot=\"input\" className=\"h-9 w-full...\" ...>\n                                        <input\n                                          id=\"ziyadah-dari-ayat\"\n                                          disabled={false}\n                                          name={undefined}\n                                          ref={function}\n                                          aria-labelledby={undefined}\n                                          autoFocus={false}\n                                          value=\"\"\n                                          onChange={function}\n                                          onFocus={function}\n                                          onBlur={function}\n                                          onKeyDown={function}\n                                          type=\"text\"\n                                          data-slot=\"input\"\n                                          placeholder=\"Ayat awal\"\n                                          required={true}\n                                          className=\"h-9 w-full min-w-0 rounded-xl border border-input bg-background p...\"\n-                                         style={{caret-color:\"transparent\"}}\n                                        >\n                                <div className=\"space-y-2\">\n                                  <label>\n                                  <Input id=\"ziyadah-sa...\" type=\"text\" value=\"\" onChange={function onChange} ...>\n                                    <Input type=\"text\" data-slot=\"input\" className=\"h-9 w-full...\" id=\"ziyadah-sa...\" ...>\n                                      <FieldControl ref={null} type=\"text\" data-slot=\"input\" className=\"h-9 w-full...\" ...>\n                                        <input\n                                          id=\"ziyadah-sampai-ayat\"\n                                          disabled={false}\n                                          name={undefined}\n                                          ref={function}\n                                          aria-labelledby={undefined}\n                                          autoFocus={false}\n                                          value=\"\"\n                                          onChange={function}\n                                          onFocus={function}\n                                          onBlur={function}\n                                          onKeyDown={function}\n                                          type=\"text\"\n                                          data-slot=\"input\"\n                                          placeholder=\"Ayat akhir\"\n                                          required={true}\n                                          className=\"h-9 w-full min-w-0 rounded-xl border border-input bg-background p...\"\n-                                         style={{caret-color:\"transparent\"}}\n                                        >\n                              <div className=\"space-y-2\">\n                                <label>\n                                <Input id=\"ziyadah-juz\" value=\"\" readOnly={true} placeholder={\"Juz otom...\"} ...>\n                                  <Input type={undefined} data-slot=\"input\" className=\"h-9 w-full...\" id=\"ziyadah-juz\" ...>\n                                    <FieldControl ref={null} type={undefined} data-slot=\"input\" className=\"h-9 w-full...\" ...>\n                                      <input\n                                        id=\"ziyadah-juz\"\n                                        disabled={false}\n                                        name={undefined}\n                                        ref={function}\n                                        aria-labelledby={undefined}\n                                        autoFocus={false}\n                                        value=\"\"\n                                        onChange={function}\n                                        onFocus={function}\n                                        onBlur={function}\n                                        onKeyDown={function}\n                                        type={undefined}\n                                        data-slot=\"input\"\n                                        readOnly={true}\n                                        placeholder={\"Juz otomatis dari surah & ayat\"}\n                                        className=\"h-9 w-full min-w-0 rounded-xl border border-input px-3 py-1 text-ba...\"\n-                                       style={{caret-color:\"transparent\"}}\n                                      >\n                              <div>\n                              <GradeSelector>\n                              <div className=\"space-y-2\">\n                                <label>\n                                <Textarea id=\"ziyadah-ca...\" value=\"\" onChange={function onChange} ...>\n                                  <textarea\n                                    data-slot=\"textarea\"\n                                    className=\"flex field-sizing-content min-h-16 w-full resize-none rounded-xl border...\"\n                                    id=\"ziyadah-catatan\"\n                                    value=\"\"\n                                    onChange={function onChange}\n                                    placeholder=\"Catatan tambahan…\"\n                                    rows={3}\n-                                   style={{caret-color:\"transparent\"}}\n                                  >\n                              ...\n                      <div className=\"lg:hidden\">\n                        <FormBody siswaList={[...]} selectedSiswa=\"\" setSelectedSiswa={function bound dispatchSetState} ...>\n                          <form onSubmit={function handleSubmit} className=\"w-full max...\">\n                            ...\n                              <Input id=\"ziyadah-ta...\" type=\"date\" value=\"2026-08-13\" onChange={function onChange} ...>\n                                <Input type=\"date\" data-slot=\"input\" className=\"h-9 w-full...\" id=\"ziyadah-ta...\" ...>\n                                  <FieldControl ref={null} type=\"date\" data-slot=\"input\" className=\"h-9 w-full...\" ...>\n                                    <input\n                                      id=\"ziyadah-tanggal\"\n                                      disabled={false}\n                                      name={undefined}\n                                      ref={function}\n                                      aria-labelledby={undefined}\n                                      autoFocus={false}\n                                      value=\"2026-08-13\"\n                                      onChange={function}\n                                      onFocus={function}\n                                      onBlur={function}\n                                      onKeyDown={function}\n                                      type=\"date\"\n                                      data-slot=\"input\"\n                                      required={true}\n                                      className=\"h-9 w-full min-w-0 rounded-xl border border-input bg-background px-3 ...\"\n-                                     style={{caret-color:\"transparent\"}}\n                                    >\n                            <div className=\"grid gap-3...\">\n                              <div className=\"relative s...\">\n                                <label>\n                                <Input id=\"ziyadah-surah\" type=\"text\" role=\"combobox\" aria-expanded={false} ...>\n                                  <Input type=\"text\" data-slot=\"input\" className=\"h-9 w-full...\" id=\"ziyadah-surah\" ...>\n                                    <FieldControl ref={null} type=\"text\" data-slot=\"input\" className=\"h-9 w-full...\" ...>\n                                      <input\n                                        id=\"ziyadah-surah\"\n                                        disabled={false}\n                                        name={undefined}\n                                        ref={function}\n                                        aria-labelledby={undefined}\n                                        autoFocus={false}\n                                        value=\"\"\n                                        onChange={function}\n                                        onFocus={function}\n                                        onBlur={function}\n                                        onKeyDown={function}\n                                        type=\"text\"\n                                        data-slot=\"input\"\n                                        role=\"combobox\"\n                                        aria-expanded={false}\n                                        aria-controls=\"ziyadah-surah-list\"\n                                        aria-activedescendant={undefined}\n                                        placeholder=\"Ketik nama surah…\"\n                                        required={true}\n                                        className=\"h-9 w-full min-w-0 rounded-xl border border-input bg-background px-...\"\n-                                       style={{caret-color:\"transparent\"}}\n                                      >\n                              <div className=\"space-y-2\">\n                                <label>\n                                <Input id=\"ziyadah-da...\" type=\"text\" value=\"\" onChange={function onChange} ...>\n                                  <Input type=\"text\" data-slot=\"input\" className=\"h-9 w-full...\" id=\"ziyadah-da...\" ...>\n                                    <FieldControl ref={null} type=\"text\" data-slot=\"input\" className=\"h-9 w-full...\" ...>\n                                      <input\n                                        id=\"ziyadah-dari-ayat\"\n                                        disabled={false}\n                                        name={undefined}\n                                        ref={function}\n                                        aria-labelledby={undefined}\n                                        autoFocus={false}\n                                        value=\"\"\n                                        onChange={function}\n                                        onFocus={function}\n                                        onBlur={function}\n                                        onKeyDown={function}\n                                        type=\"text\"\n                                        data-slot=\"input\"\n                                        placeholder=\"Ayat awal\"\n                                        required={true}\n                                        className=\"h-9 w-full min-w-0 rounded-xl border border-input bg-background px-...\"\n-                                       style={{caret-color:\"transparent\"}}\n                                      >\n                              <div className=\"space-y-2\">\n                                <label>\n                                <Input id=\"ziyadah-sa...\" type=\"text\" value=\"\" onChange={function onChange} ...>\n                                  <Input type=\"text\" data-slot=\"input\" className=\"h-9 w-full...\" id=\"ziyadah-sa...\" ...>\n                                    <FieldControl ref={null} type=\"text\" data-slot=\"input\" className=\"h-9 w-full...\" ...>\n                                      <input\n                                        id=\"ziyadah-sampai-ayat\"\n                                        disabled={false}\n                                        name={undefined}\n                                        ref={function}\n                                        aria-labelledby={undefined}\n                                        autoFocus={false}\n                                        value=\"\"\n                                        onChange={function}\n                                        onFocus={function}\n                                        onBlur={function}\n                                        onKeyDown={function}\n                                        type=\"text\"\n                                        data-slot=\"input\"\n                                        placeholder=\"Ayat akhir\"\n                                        required={true}\n                                        className=\"h-9 w-full min-w-0 rounded-xl border border-input bg-background px-...\"\n-                                       style={{caret-color:\"transparent\"}}\n                                      >\n                            <div className=\"space-y-2\">\n                              <label>\n                              <Input id=\"ziyadah-juz\" value=\"\" readOnly={true} placeholder={\"Juz otom...\"} ...>\n                                <Input type={undefined} data-slot=\"input\" className=\"h-9 w-full...\" id=\"ziyadah-juz\" ...>\n                                  <FieldControl ref={null} type={undefined} data-slot=\"input\" className=\"h-9 w-full...\" ...>\n                                    <input\n                                      id=\"ziyadah-juz\"\n                                      disabled={false}\n                                      name={undefined}\n                                      ref={function}\n                                      aria-labelledby={undefined}\n                                      autoFocus={false}\n                                      value=\"\"\n                                      onChange={function}\n                                      onFocus={function}\n                                      onBlur={function}\n                                      onKeyDown={function}\n                                      type={undefined}\n                                      data-slot=\"input\"\n                                      readOnly={true}\n                                      placeholder={\"Juz otomatis dari surah & ayat\"}\n                                      className=\"h-9 w-full min-w-0 rounded-xl border border-input px-3 py-1 text-base...\"\n-                                     style={{caret-color:\"transparent\"}}\n                                    >\n                            <div>\n                            <GradeSelector>\n                            <div className=\"space-y-2\">\n                              <label>\n                              <Textarea id=\"ziyadah-ca...\" value=\"\" onChange={function onChange} ...>\n                                <textarea\n                                  data-slot=\"textarea\"\n                                  className=\"flex field-sizing-content min-h-16 w-full resize-none rounded-xl border b...\"\n                                  id=\"ziyadah-catatan\"\n                                  value=\"\"\n                                  onChange={function onChange}\n                                  placeholder=\"Catatan tambahan…\"\n                                  rows={3}\n-                                 style={{caret-color:\"transparent\"}}\n                                >\n                            ...\n                      ...\n"
+    ],
+    "screenshot": "/Users/anasubaid19/Vibe Code/sijil-mutabaah/dogfood-output/screenshots/ziyadah-mobile-dark.png"
+  },
+  {
+    "area": "murajaah",
+    "viewport": "mobile",
+    "mode": "dark",
+    "status": 200,
+    "keyboard": {
+      "pass": true,
+      "tag": "Lewati ke konten"
+    },
+    "visual": {
+      "overflowX": false,
+      "dark": true
+    },
+    "errors": [],
+    "screenshot": "/Users/anasubaid19/Vibe Code/sijil-mutabaah/dogfood-output/screenshots/murajaah-mobile-dark.png"
+  },
+  {
+    "area": "presensi",
+    "viewport": "mobile",
+    "mode": "dark",
+    "status": 200,
+    "keyboard": {
+      "pass": true,
+      "tag": "Lewati ke konten"
+    },
+    "visual": {
+      "overflowX": false,
+      "dark": true
+    },
+    "errors": [],
+    "screenshot": "/Users/anasubaid19/Vibe Code/sijil-mutabaah/dogfood-output/screenshots/presensi-mobile-dark.png"
+  },
+  {
+    "area": "laporan",
+    "viewport": "mobile",
+    "mode": "dark",
+    "status": 200,
+    "keyboard": {
+      "pass": true,
+      "tag": "Lewati ke konten"
+    },
+    "visual": {
+      "overflowX": false,
+      "dark": true
+    },
+    "errors": [],
+    "screenshot": "/Users/anasubaid19/Vibe Code/sijil-mutabaah/dogfood-output/screenshots/laporan-mobile-dark.png"
+  },
+  {
+    "area": "manajemen-data",
+    "viewport": "mobile",
+    "mode": "dark",
+    "status": 200,
+    "keyboard": {
+      "pass": true,
+      "tag": "Lewati ke konten"
+    },
+    "visual": {
+      "overflowX": false,
+      "dark": true
+    },
+    "errors": [],
+    "screenshot": "/Users/anasubaid19/Vibe Code/sijil-mutabaah/dogfood-output/screenshots/manajemen-data-mobile-dark.png"
+  },
+  {
+    "area": "pengaturan",
+    "viewport": "mobile",
+    "mode": "dark",
+    "status": 200,
+    "keyboard": {
+      "pass": true,
+      "tag": "Lewati ke konten"
+    },
+    "visual": {
+      "overflowX": false,
+      "dark": true
+    },
+    "errors": [],
+    "screenshot": "/Users/anasubaid19/Vibe Code/sijil-mutabaah/dogfood-output/screenshots/pengaturan-mobile-dark.png"
+  },
+  {
+    "area": "kitab",
+    "viewport": "mobile",
+    "mode": "dark",
+    "status": 200,
+    "keyboard": {
+      "pass": true,
+      "tag": "Lewati ke konten"
+    },
+    "visual": {
+      "overflowX": false,
+      "dark": true
+    },
+    "errors": [],
+    "screenshot": "/Users/anasubaid19/Vibe Code/sijil-mutabaah/dogfood-output/screenshots/kitab-mobile-dark.png"
+  },
+  {
+    "area": "admin",
+    "viewport": "desktop",
+    "mode": "light",
+    "status": 200,
+    "keyboard": {
+      "pass": true,
+      "tag": "Lewati ke konten"
+    },
+    "visual": {
+      "overflowX": false,
+      "dark": false
+    },
+    "errors": [],
+    "screenshot": "/Users/anasubaid19/Vibe Code/sijil-mutabaah/dogfood-output/screenshots/admin-desktop-light.png"
+  },
+  {
+    "area": "admin",
+    "viewport": "desktop",
+    "mode": "dark",
+    "status": 200,
+    "keyboard": {
+      "pass": true,
+      "tag": "Lewati ke konten"
+    },
+    "visual": {
+      "overflowX": false,
+      "dark": true
+    },
+    "errors": [],
+    "screenshot": "/Users/anasubaid19/Vibe Code/sijil-mutabaah/dogfood-output/screenshots/admin-desktop-dark.png"
+  },
+  {
+    "area": "admin",
+    "viewport": "tablet",
+    "mode": "light",
+    "status": 200,
+    "keyboard": {
+      "pass": true,
+      "tag": "INPUT"
+    },
+    "visual": {
+      "overflowX": true,
+      "dark": false
+    },
+    "errors": [],
+    "screenshot": "/Users/anasubaid19/Vibe Code/sijil-mutabaah/dogfood-output/screenshots/admin-tablet-light.png"
+  },
+  {
+    "area": "admin",
+    "viewport": "tablet",
+    "mode": "dark",
+    "status": 200,
+    "keyboard": {
+      "pass": true,
+      "tag": "Lewati ke konten"
+    },
+    "visual": {
+      "overflowX": true,
+      "dark": true
+    },
+    "errors": [],
+    "screenshot": "/Users/anasubaid19/Vibe Code/sijil-mutabaah/dogfood-output/screenshots/admin-tablet-dark.png"
+  },
+  {
+    "area": "admin",
+    "viewport": "mobile",
+    "mode": "light",
+    "status": 200,
+    "keyboard": {
+      "pass": true,
+      "tag": "INPUT"
+    },
+    "visual": {
+      "overflowX": false,
+      "dark": false
+    },
+    "errors": [],
+    "screenshot": "/Users/anasubaid19/Vibe Code/sijil-mutabaah/dogfood-output/screenshots/admin-mobile-light.png"
+  },
+  {
+    "area": "admin",
+    "viewport": "mobile",
+    "mode": "dark",
+    "status": 200,
+    "keyboard": {
+      "pass": true,
+      "tag": "Lewati ke konten"
+    },
+    "visual": {
+      "overflowX": false,
+      "dark": true
+    },
+    "errors": [],
+    "screenshot": "/Users/anasubaid19/Vibe Code/sijil-mutabaah/dogfood-output/screenshots/admin-mobile-dark.png"
+  }
+]
