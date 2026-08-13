@@ -4,7 +4,7 @@ import {
 	Clock,
 	Group01Icon,
 } from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
+import { HugeiconsIcon, type IconSvgElement } from "@hugeicons/react";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/start-server-core";
@@ -35,6 +35,8 @@ interface Stats {
 		halaqahName: string | null;
 	}[];
 }
+
+type IconSvgObject = IconSvgElement;
 
 const checkSession = createServerFn({ method: "GET" }).handler(async () => {
 	const session = await auth.api.getSession({
@@ -279,7 +281,7 @@ function StatCard({
 	value,
 	color,
 }: {
-	icon: React.ComponentType<{ strokeWidth: number }>;
+	icon: IconSvgObject;
 	label: string;
 	value: number | string;
 	color: string;

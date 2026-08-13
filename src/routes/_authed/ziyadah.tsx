@@ -708,8 +708,8 @@ function ZiyadahPage() {
 		setMushafMobileOpen(false);
 	}
 
-	function savePanelSize(sizes: number[]) {
-		const [, right] = sizes;
+	function savePanelSize(sizes: Record<string, number>) {
+		const right = sizes.mushaf;
 		if (right !== undefined) {
 			setPanelSize(right);
 			localStorage.setItem("sijil_ziyadah_panel", String(Math.round(right)));
@@ -774,18 +774,18 @@ function ZiyadahPage() {
 
 			<div className="hidden lg:block">
 				<ResizablePanelGroup
-					direction="horizontal"
+					orientation="horizontal"
 					className="gap-3"
 					style={{ height: "auto", overflow: "visible" }}
-					onLayout={savePanelSize}
+					onLayoutChanged={savePanelSize}
 				>
-					<ResizablePanel defaultSize={100 - panelSize} minSize={30}>
+					<ResizablePanel id="form" defaultSize={100 - panelSize} minSize="30%">
 						<FormBody {...formProps} />
 					</ResizablePanel>
 					{mushafOpen && (
 						<>
 							<ResizableHandle withHandle />
-							<ResizablePanel defaultSize={panelSize} minSize={25}>
+							<ResizablePanel id="mushaf" defaultSize={panelSize} minSize="25%">
 								<div className="sticky top-4">
 									<MushafPanel
 										open={mushafOpen}

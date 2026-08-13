@@ -208,12 +208,13 @@ export const Route = createFileRoute("/api/export-pdf")({
 								.slice()
 								.reverse()
 								.map((r) => {
-									const isLintas = r.lintas && r.surahAkhir;
+									const endSurah = r.lintas ? r.surahAkhir : null;
+									const isLintas = endSurah != null;
 									const halaman = isLintas
 										? calcLintasHalaman(
 												r.surah,
 												r.ayatAwal,
-												r.surahAkhir,
+											endSurah,
 												r.ayatAkhir,
 											)
 										: calcHalaman(r.surah, r.ayatAwal, r.ayatAkhir);
@@ -222,11 +223,11 @@ export const Route = createFileRoute("/api/export-pdf")({
 										juzLabel(
 											r.surah,
 											r.ayatAwal,
-											isLintas ? r.surahAkhir! : r.surah,
+										isLintas ? endSurah : r.surah,
 											r.ayatAkhir,
 										) || "-";
 									const sName = isLintas
-										? surahRangeName(r.surah, r.surahAkhir)
+										? surahRangeName(r.surah, endSurah)
 										: surahName(r.surah);
 									return [
 										r.tanggal,
@@ -329,12 +330,13 @@ export const Route = createFileRoute("/api/export-pdf")({
 									"Catatan",
 								],
 								rows: recs.map((r) => {
-									const isLintas = r.lintas && r.surahAkhir;
+									const endSurah = r.lintas ? r.surahAkhir : null;
+									const isLintas = endSurah != null;
 									const halaman = isLintas
 										? calcLintasHalaman(
 												r.surah,
 												r.ayatAwal,
-												r.surahAkhir,
+											endSurah,
 												r.ayatAkhir,
 											)
 										: calcHalaman(r.surah, r.ayatAwal, r.ayatAkhir);
@@ -343,11 +345,11 @@ export const Route = createFileRoute("/api/export-pdf")({
 										juzLabel(
 											r.surah,
 											r.ayatAwal,
-											isLintas ? r.surahAkhir! : r.surah,
+										isLintas ? endSurah : r.surah,
 											r.ayatAkhir,
 										) || "-";
 									const sName = isLintas
-										? surahRangeName(r.surah, r.surahAkhir)
+										? surahRangeName(r.surah, endSurah)
 										: surahName(r.surah);
 									return [
 										r.tanggal,

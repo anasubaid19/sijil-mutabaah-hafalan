@@ -8,6 +8,16 @@ import { auth } from "@/lib/auth/auth";
 import { db } from "@/lib/db";
 import { presensi, siswa, userProfile } from "@/lib/db/schema";
 
+type ReportContentBlock =
+	| { type: "h2" | "h3" | "callout"; text: string }
+	| { type: "divider" | "pagebreak" }
+	| {
+			type: "table";
+			style: "summary" | "detail";
+			headers: string[];
+			rows: string[][];
+		};
+
 export const Route = createFileRoute("/api/export-presensi")({
 	server: {
 		handlers: {
@@ -151,7 +161,7 @@ export const Route = createFileRoute("/api/export-presensi")({
 					"Desember",
 				];
 
-				const content = [
+				const content: ReportContentBlock[] = [
 					{ type: "h2" as const, text: "Laporan Presensi" },
 					{
 						type: "callout" as const,

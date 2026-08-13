@@ -58,6 +58,7 @@ interface Setoran {
 	ayatAwal: number;
 	ayatAkhir: number;
 	status: string;
+	juz?: string | null;
 	catatan?: string;
 	isMutqin?: boolean;
 }

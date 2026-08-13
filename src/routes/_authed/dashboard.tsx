@@ -5,7 +5,7 @@ import {
 	Clock,
 	Group,
 } from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
+import { HugeiconsIcon, type IconSvgElement } from "@hugeicons/react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
 import {
@@ -63,6 +63,8 @@ interface Presensi {
 	tanggal: string;
 	status: string;
 }
+
+type IconSvgObject = IconSvgElement;
 
 const PRESENSI_STATUSES = ["Hadir", "Izin", "Sakit", "Alpha"] as const;
 type PresensiStatus = (typeof PRESENSI_STATUSES)[number];
@@ -876,7 +878,7 @@ function StatCard({
 	color,
 	sub,
 }: {
-	icon: React.ComponentType<{ strokeWidth: number }>;
+	icon: IconSvgObject;
 	label: string;
 	value: number | string;
 	color: string;
