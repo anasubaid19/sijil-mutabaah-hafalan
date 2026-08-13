@@ -20,13 +20,7 @@ function ServiceWorkerRegistration() {
 
 export const Route = createRootRoute({
 	component: () => (
-		<ThemeProvider
-			attribute="class"
-			defaultTheme="system"
-			enableSystem
-			disableTransitionOnChange
-		>
-			<html lang="id" suppressHydrationWarning>
+		<html lang="id" suppressHydrationWarning>
 				<head>
 					<title>Sijil Mutaba'ah — Tahsin & Hifz Tracker</title>
 					<meta
@@ -83,13 +77,19 @@ export const Route = createRootRoute({
 
 					<HeadContent />
 				</head>
-				<body>
+			<body>
+				<ThemeProvider
+					attribute="class"
+					defaultTheme="system"
+					enableSystem
+					disableTransitionOnChange
+				>
 					<ServiceWorkerRegistration />
 					<Outlet />
 					<Toaster position="top-center" />
-					<Scripts />
-				</body>
-			</html>
-		</ThemeProvider>
+				</ThemeProvider>
+				<Scripts />
+			</body>
+		</html>
 	),
 });
