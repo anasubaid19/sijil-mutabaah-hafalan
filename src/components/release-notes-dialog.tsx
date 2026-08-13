@@ -32,7 +32,11 @@ export function ReleaseNotesDialog() {
 
 	return (
 		<Dialog open={open} onOpenChange={(o) => (o ? void 0 : acknowledge())}>
-			<DialogContent showCloseButton={false}>
+			<DialogContent
+				showCloseButton={false}
+				overlayClassName="z-[10000]"
+				className="z-[10001]"
+			>
 				<DialogHeader>
 					<DialogTitle>{LATEST_RELEASE.title}</DialogTitle>
 					<DialogDescription
