@@ -105,7 +105,7 @@ export function AppSidebar() {
 											isActive={isActive(item.to)}
 											render={<Link to={item.to} data-nav-id={item.navId} />}
 											tooltip={item.label}
-											className="data-active:bg-foreground data-active:text-background"
+											className="relative data-active:bg-primary/10 data-active:text-primary data-active:before:absolute data-active:before:inset-y-1.5 data-active:before:start-0 data-active:before:w-0.5 data-active:before:rounded-full data-active:before:bg-primary"
 										>
 											<HugeiconsIcon icon={item.icon} strokeWidth={1.8} />
 											<span>{item.label}</span>
@@ -128,7 +128,7 @@ export function AppSidebar() {
 											isActive={isActive(item.to)}
 											render={<Link to={item.to} data-nav-id={item.navId} />}
 											tooltip={item.label}
-											className="data-active:bg-foreground data-active:text-background"
+											className="relative data-active:bg-primary/10 data-active:text-primary data-active:before:absolute data-active:before:inset-y-1.5 data-active:before:start-0 data-active:before:w-0.5 data-active:before:rounded-full data-active:before:bg-primary"
 										>
 											<HugeiconsIcon icon={item.icon} strokeWidth={1.8} />
 											<span>{item.label}</span>
@@ -141,7 +141,7 @@ export function AppSidebar() {
 											isActive={isActive("/admin")}
 											render={<Link to="/admin" data-nav-id="nav-admin" />}
 											tooltip="Admin"
-											className="data-active:bg-foreground data-active:text-background"
+											className="relative data-active:bg-primary/10 data-active:text-primary data-active:before:absolute data-active:before:inset-y-1.5 data-active:before:start-0 data-active:before:w-0.5 data-active:before:rounded-full data-active:before:bg-primary"
 										>
 											<HugeiconsIcon icon={UserGroupIcon} strokeWidth={1.8} />
 											<span>Admin</span>
