@@ -347,7 +347,7 @@ function PresensiPage() {
 											aria-label={`Tandai ${s.nama}: ${st}`}
 										onClick={() => handlePresensiChange(s.id, st)}
 										disabled={rowFeedback[s.id] === "saving"}
-										className={`min-h-9 min-w-9 rounded-lg px-2 py-1 text-xs font-semibold transition-[background-color,color,box-shadow] pointer-coarse:min-h-11 pointer-coarse:min-w-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary disabled:cursor-wait disabled:opacity-60 ${
+										className={`min-h-9 min-w-9 rounded-lg px-2 py-1 text-xs font-semibold transition-[background-color,color,box-shadow] duration-fast pointer-coarse:min-h-11 pointer-coarse:min-w-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary disabled:cursor-wait disabled:opacity-60 ${
 												current === st ? CHIP_ACTIVE[st] : CHIP_COLORS[st]
 											}`}
 										>
@@ -361,7 +361,7 @@ function PresensiPage() {
 									rowFeedback[s.id] === "error"
 										? "text-destructive"
 										: "text-emerald-700 dark:text-emerald-400"
-								}`}
+								} ${rowFeedback[s.id] ? "animate-in fade-in duration-fast" : ""}`}
 							>
 								{rowFeedback[s.id] === "saving"
 									? "Menyimpan…"

@@ -14,6 +14,7 @@ Reconciled by `improve-animations` against commit `bac7a3c`.
 | 3 | [006 — Correct and Shorten Chart Animation](006-correct-chart-animation.md) | MEDIUM | DONE | None |
 | 4 | [007 — Preserve Reduced-Motion Feedback](007-preserve-reduced-motion-feedback.md) | MEDIUM | DONE | 006 recommended first for chart behavior |
 | 5 | [008 — Cancel Stale Tutorial Motion](008-cancel-stale-tutorial-motion.md) | MEDIUM | DONE | None |
+| 6 | [009 — Refined Workflow State Feedback](009-refined-workflow-state-feedback.md) | MEDIUM | DONE | UI refinement |
 
 ### Recommended execution: 004 -> 005 -> 006 -> 007 -> 008
 
@@ -42,3 +43,4 @@ After executing the TODO plans:
 - [x] Charts animate on series at 200ms and respect reduced motion (006)
 - [x] Reduced motion keeps comprehension feedback but drops movement (007)
 - [x] Tutorial step changes cannot apply stale async state (008)
+- [x] Refined grade, attendance, and success states use restrained feedback (009)

@@ -44,7 +44,7 @@ export function GradeSelector({ id, value, onChange }: GradeSelectorProps) {
 											type="button"
 											aria-pressed={selected}
 											onClick={() => onChange(grade)}
-											className={`inline-flex min-h-10 items-center justify-center gap-1.5 rounded-xl border px-3 py-2 text-sm font-semibold transition-[border-color,background-color,color,box-shadow] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background active:bg-primary/15 ${
+											className={`inline-flex min-h-10 items-center justify-center gap-1.5 rounded-xl border px-3 py-2 text-sm font-semibold transition-[border-color,background-color,color,box-shadow] duration-fast focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background active:bg-primary/15 ${
 												selected
 													? "border-primary bg-primary/10 text-primary shadow-xs"
 													: "border-input bg-background text-muted-foreground hover:border-primary/40 hover:bg-primary/5 hover:text-foreground"
