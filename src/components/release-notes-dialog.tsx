@@ -35,7 +35,10 @@ export function ReleaseNotesDialog() {
 			<DialogContent showCloseButton={false}>
 				<DialogHeader>
 					<DialogTitle>{LATEST_RELEASE.title}</DialogTitle>
-					<DialogDescription className="text-foreground">
+					<DialogDescription
+						render={<div />}
+						className="text-foreground"
+					>
 						<ul className="mt-2 list-disc space-y-1.5 ps-5">
 							{LATEST_RELEASE.items.map((item) => (
 								<li key={item}>{item}</li>
