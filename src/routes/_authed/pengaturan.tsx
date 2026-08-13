@@ -986,7 +986,7 @@ function PengaturanPage() {
 				</Accordion>
 			) : (
 				<Tabs defaultValue="sekolah">
-					<TabsList className="h-auto w-full">
+					<TabsList className="h-auto w-full max-w-full justify-start overflow-x-auto">
 						<TabsTrigger value="sekolah">Profil Sekolah</TabsTrigger>
 						<TabsTrigger value="akun">Akun</TabsTrigger>
 						<TabsTrigger value="backup">Cadangan & Pulihkan</TabsTrigger>

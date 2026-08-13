@@ -578,7 +578,7 @@ function LaporanPage() {
 			</div>
 
 			{/* Filter by Siswa */}
-			<div className="flex gap-2 overflow-x-auto pb-2 print:hidden">
+			<div className="flex w-full min-w-0 max-w-full gap-2 overflow-x-auto pb-2 print:hidden">
 				<button
 					onClick={() => setSelectedSiswa(null)}
 					className={`whitespace-nowrap rounded-xl px-4 py-2 text-sm font-semibold transition-colors ${

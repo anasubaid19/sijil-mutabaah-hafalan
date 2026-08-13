@@ -175,9 +175,9 @@ function AdminPage() {
 					</div>
 
 					{stats.users.length > 0 && (
-						<div className="rounded-2xl border bg-card p-5 shadow-xs">
+						<div className="min-w-0 rounded-2xl border bg-card p-5 shadow-xs">
 							<h2 className="mb-4 text-base font-semibold">Daftar Pengguna</h2>
-							<div className="overflow-x-auto">
+							<div className="w-full min-w-0 max-w-full overflow-x-auto">
 								<table className="w-full text-sm">
 									<thead>
 										<tr className="border-b bg-muted/50 text-[0.65rem] font-semibold uppercase text-muted-foreground">
