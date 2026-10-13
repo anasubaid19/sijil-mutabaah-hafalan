@@ -23,6 +23,8 @@ export const Route = createFileRoute("/api/admin-config")({
 					return Response.json({
 						botToken: byKey["TELEGRAM_BOT_TOKEN"] ?? "",
 						chatId: byKey["TELEGRAM_CHAT_ID"] ?? "",
+						migrationBannerEnabled: byKey["MIGRATION_BANNER_ENABLED"] === "1",
+						migrationBannerMessage: byKey["MIGRATION_BANNER_MESSAGE"] ?? "",
 					});
 				} catch (e) {
 					console.error("GET /api/admin-config error:", e);

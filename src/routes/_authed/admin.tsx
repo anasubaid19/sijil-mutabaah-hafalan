@@ -18,6 +18,9 @@ import {
 	DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
 import { auth } from "@/lib/auth/auth";
 
 interface Stats {
@@ -64,6 +67,10 @@ function AdminPage() {
 	const [configLoading, setConfigLoading] = useState(false);
 	const [hasConfig, setHasConfig] = useState(true);
 
+	const [bannerEnabled, setBannerEnabled] = useState(false);
+	const [bannerMessage, setBannerMessage] = useState("");
+	const [bannerSaving, setBannerSaving] = useState(false);
+
 	useEffect(() => {
 		async function load() {
 			try {
@@ -76,6 +83,8 @@ function AdminPage() {
 					const cfg = await configRes.json();
 					setBotToken(cfg.botToken || "");
 					setChatId(cfg.chatId || "");
+					setBannerEnabled(Boolean(cfg.migrationBannerEnabled));
+					setBannerMessage(cfg.migrationBannerMessage || "");
 					if (!cfg.botToken || !cfg.chatId) {
 						setHasConfig(false);
 						setConfigOpen(true);
@@ -114,6 +123,35 @@ function AdminPage() {
 			toast.error("Gagal menyimpan konfigurasi");
 		} finally {
 			setConfigLoading(false);
+		}
+	}
+
+	async function saveBanner() {
+		setBannerSaving(true);
+		try {
+			await Promise.all([
+				fetch("/api/admin-config", {
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify({
+						key: "MIGRATION_BANNER_ENABLED",
+						value: bannerEnabled ? "1" : "0",
+					}),
+				}),
+				fetch("/api/admin-config", {
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify({
+						key: "MIGRATION_BANNER_MESSAGE",
+						value: bannerMessage,
+					}),
+				}),
+			]);
+			toast.success("Banner migrasi tersimpan!");
+		} catch {
+			toast.error("Gagal menyimpan banner");
+		} finally {
+			setBannerSaving(false);
 		}
 	}
 
@@ -226,6 +264,41 @@ function AdminPage() {
 					)}
 				</>
 			)}
+
+			{/* Migration banner config */}
+			<div className="rounded-2xl border bg-card p-5 shadow-xs">
+				<div className="flex items-start justify-between gap-4">
+					<div>
+						<h2 className="text-base font-semibold">Banner Migrasi Server</h2>
+						<p className="mt-1 text-sm text-muted-foreground">
+							Tampilkan pemberitahuan kepada semua pengguna setelah login.
+						</p>
+					</div>
+					<Switch
+						checked={bannerEnabled}
+						onCheckedChange={setBannerEnabled}
+						aria-label="Aktifkan banner migrasi"
+					/>
+				</div>
+				<div className="mt-4 space-y-2">
+					<Label htmlFor="banner-message">Pesan banner</Label>
+					<Textarea
+						id="banner-message"
+						value={bannerMessage}
+						onChange={(e) => setBannerMessage(e.target.value)}
+						placeholder="Aplikasi akan dipindahkan ke server baru..."
+					/>
+				</div>
+				<div className="mt-3 flex justify-end">
+					<Button
+						size="sm"
+						onClick={saveBanner}
+						disabled={bannerSaving}
+					>
+						{bannerSaving ? "Menyimpan..." : "Simpan"}
+					</Button>
+				</div>
+			</div>
 
 			{/* Telegram config dialog */}
 			<Dialog open={configOpen} onOpenChange={setConfigOpen}>

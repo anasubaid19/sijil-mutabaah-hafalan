@@ -25,6 +25,7 @@ import { Route as AuthedPresensiRouteImport } from './routes/_authed/presensi'
 import { Route as AuthedZiyadahRouteImport } from './routes/_authed/ziyadah'
 import { Route as ApiAdminConfigRouteImport } from './routes/api/admin-config'
 import { Route as ApiAdminStatsRouteImport } from './routes/api/admin-stats'
+import { Route as ApiAppBannerRouteImport } from './routes/api/app-banner'
 import { Route as ApiBugReportRouteImport } from './routes/api/bug-report'
 import { Route as ApiExportPdfRouteImport } from './routes/api/export-pdf'
 import { Route as ApiExportPresensiRouteImport } from './routes/api/export-presensi'
@@ -118,6 +119,11 @@ const ApiAdminStatsRoute = ApiAdminStatsRouteImport.update({
   path: '/api/admin-stats',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiAppBannerRoute = ApiAppBannerRouteImport.update({
+  id: '/api/app-banner',
+  path: '/api/app-banner',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiBugReportRoute = ApiBugReportRouteImport.update({
   id: '/api/bug-report',
   path: '/api/bug-report',
@@ -200,6 +206,7 @@ export interface FileRoutesByFullPath {
   '/ziyadah': typeof AuthedZiyadahRoute
   '/api/admin-config': typeof ApiAdminConfigRoute
   '/api/admin-stats': typeof ApiAdminStatsRoute
+  '/api/app-banner': typeof ApiAppBannerRoute
   '/api/bug-report': typeof ApiBugReportRoute
   '/api/export-pdf': typeof ApiExportPdfRoute
   '/api/export-presensi': typeof ApiExportPresensiRoute
@@ -230,6 +237,7 @@ export interface FileRoutesByTo {
   '/ziyadah': typeof AuthedZiyadahRoute
   '/api/admin-config': typeof ApiAdminConfigRoute
   '/api/admin-stats': typeof ApiAdminStatsRoute
+  '/api/app-banner': typeof ApiAppBannerRoute
   '/api/bug-report': typeof ApiBugReportRoute
   '/api/export-pdf': typeof ApiExportPdfRoute
   '/api/export-presensi': typeof ApiExportPresensiRoute
@@ -262,6 +270,7 @@ export interface FileRoutesById {
   '/_authed/ziyadah': typeof AuthedZiyadahRoute
   '/api/admin-config': typeof ApiAdminConfigRoute
   '/api/admin-stats': typeof ApiAdminStatsRoute
+  '/api/app-banner': typeof ApiAppBannerRoute
   '/api/bug-report': typeof ApiBugReportRoute
   '/api/export-pdf': typeof ApiExportPdfRoute
   '/api/export-presensi': typeof ApiExportPresensiRoute
@@ -294,6 +303,7 @@ export interface FileRouteTypes {
     | '/ziyadah'
     | '/api/admin-config'
     | '/api/admin-stats'
+    | '/api/app-banner'
     | '/api/bug-report'
     | '/api/export-pdf'
     | '/api/export-presensi'
@@ -324,6 +334,7 @@ export interface FileRouteTypes {
     | '/ziyadah'
     | '/api/admin-config'
     | '/api/admin-stats'
+    | '/api/app-banner'
     | '/api/bug-report'
     | '/api/export-pdf'
     | '/api/export-presensi'
@@ -355,6 +366,7 @@ export interface FileRouteTypes {
     | '/_authed/ziyadah'
     | '/api/admin-config'
     | '/api/admin-stats'
+    | '/api/app-banner'
     | '/api/bug-report'
     | '/api/export-pdf'
     | '/api/export-presensi'
@@ -378,6 +390,7 @@ export interface RootRouteChildren {
   RegisterRoute: typeof RegisterRoute
   ApiAdminConfigRoute: typeof ApiAdminConfigRoute
   ApiAdminStatsRoute: typeof ApiAdminStatsRoute
+  ApiAppBannerRoute: typeof ApiAppBannerRoute
   ApiBugReportRoute: typeof ApiBugReportRoute
   ApiExportPdfRoute: typeof ApiExportPdfRoute
   ApiExportPresensiRoute: typeof ApiExportPresensiRoute
@@ -505,6 +518,13 @@ declare module '@tanstack/react-router' {
       path: '/api/admin-stats'
       fullPath: '/api/admin-stats'
       preLoaderRoute: typeof ApiAdminStatsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/app-banner': {
+      id: '/api/app-banner'
+      path: '/api/app-banner'
+      fullPath: '/api/app-banner'
+      preLoaderRoute: typeof ApiAppBannerRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/bug-report': {
@@ -636,6 +656,7 @@ const rootRouteChildren: RootRouteChildren = {
   RegisterRoute: RegisterRoute,
   ApiAdminConfigRoute: ApiAdminConfigRoute,
   ApiAdminStatsRoute: ApiAdminStatsRoute,
+  ApiAppBannerRoute: ApiAppBannerRoute,
   ApiBugReportRoute: ApiBugReportRoute,
   ApiExportPdfRoute: ApiExportPdfRoute,
   ApiExportPresensiRoute: ApiExportPresensiRoute,

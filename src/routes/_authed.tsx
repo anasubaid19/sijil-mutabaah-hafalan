@@ -10,6 +10,7 @@ import { useCallback, useEffect, useState } from "react";
 import { BottomNav } from "@/components/layout/bottom-nav";
 import { Header } from "@/components/layout/header";
 import { AppSidebar } from "@/components/layout/sidebar";
+import { MigrationBanner } from "@/components/migration-banner";
 import { ReleaseNotesDialog } from "@/components/release-notes-dialog";
 import { TutorialOverlay } from "@/components/tutorial-overlay";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
@@ -67,6 +68,7 @@ function AuthedLayout() {
 			<AppSidebar />
 			<SidebarInset>
 				<Header title="Sijil Mutaba'ah" />
+				<MigrationBanner />
 				<main
 					id="main-content"
 					tabIndex={-1}
