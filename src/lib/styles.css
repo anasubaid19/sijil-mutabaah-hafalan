@@ -221,7 +221,20 @@
 		@apply border-border outline-ring/50;
 	}
 	body {
-		@apply bg-background text-foreground;
+		@apply bg-background text-foreground antialiased;
+	}
+
+	p {
+		text-wrap: pretty;
+	}
+
+	img {
+		outline: 1px solid oklch(0 0 0 / 0.1);
+		outline-offset: -1px;
+	}
+
+	.dark img {
+		outline-color: oklch(1 0 0 / 0.1);
 	}
 	button:not(:disabled),
 	[role="button"]:not(:disabled) {

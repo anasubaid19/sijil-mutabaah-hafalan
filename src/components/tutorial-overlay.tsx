@@ -482,10 +482,11 @@ export function TutorialOverlay({ onFinish }: { onFinish: () => void }) {
 						top: target.top - 8,
 						width: target.width + 16,
 						height: target.height + 16,
-						borderRadius: 16,
-						boxShadow: "0 0 0 9999px rgba(0, 0, 0, 0.45)",
-						transition: "all 300ms ease-out",
-						zIndex: 2,
+					borderRadius: 16,
+					boxShadow: "0 0 0 9999px rgba(0, 0, 0, 0.45)",
+					transition:
+						"left 300ms ease-out, top 300ms ease-out, width 300ms ease-out, height 300ms ease-out, box-shadow 300ms ease-out",
+					zIndex: 2,
 					}}
 				/>
 			)}
@@ -503,8 +504,9 @@ export function TutorialOverlay({ onFinish }: { onFinish: () => void }) {
 						border: "3px solid color-mix(in oklch, var(--primary) 50%, transparent)",
 						boxShadow:
 							"0 0 14px 3px color-mix(in oklch, var(--primary) 25%, transparent), inset 0 0 14px 3px color-mix(in oklch, var(--primary) 10%, transparent)",
-						transition: "all 300ms ease-out",
-						zIndex: 3,
+					transition:
+						"left 300ms ease-out, top 300ms ease-out, width 300ms ease-out, height 300ms ease-out, box-shadow 300ms ease-out",
+					zIndex: 3,
 					}}
 				/>
 			)}
@@ -513,7 +515,7 @@ export function TutorialOverlay({ onFinish }: { onFinish: () => void }) {
 			{placement && current && (
 				<div
 					ref={cardRef}
-					className={`absolute z-[4] max-w-[300px] w-[calc(100vw-24px)] rounded-2xl border bg-card p-5 shadow-xl transition-all duration-300 ease-out ${
+					className={`absolute z-[4] max-w-[300px] w-[calc(100vw-24px)] rounded-2xl border bg-card p-5 shadow-xl transition-[opacity,translate] duration-300 ease-out ${
 						anim === "in"
 							? "opacity-100 translate-y-0"
 							: "opacity-0 translate-y-2"

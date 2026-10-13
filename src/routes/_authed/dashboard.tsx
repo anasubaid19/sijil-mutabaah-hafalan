@@ -404,7 +404,7 @@ function DashboardPage() {
 					<div className="flex-1">
 						<div className="h-2 overflow-hidden rounded-full bg-muted">
 							<div
-								className="h-full rounded-full bg-emerald-500 transition-all"
+								className="h-full rounded-full bg-emerald-500 transition-[width]"
 								style={{
 									width: `${siswaList.length > 0 ? Math.round((hadirCount / siswaList.length) * 100) : 0}%`,
 								}}
@@ -774,7 +774,7 @@ function DashboardPage() {
 										{!item.noTarget && (
 											<div className="h-2 overflow-hidden rounded-full bg-muted">
 												<div
-													className="h-full rounded-full bg-primary transition-all"
+													className="h-full rounded-full bg-primary transition-[width]"
 													style={{ width: `${item.pct}%` }}
 												/>
 											</div>

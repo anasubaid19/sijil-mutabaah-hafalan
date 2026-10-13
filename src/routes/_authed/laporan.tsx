@@ -500,7 +500,7 @@ function LaporanPage() {
 									</div>
 									<div className="mt-1 h-2 overflow-hidden rounded-full bg-muted">
 										<div
-											className="h-full rounded-full bg-primary transition-all"
+											className="h-full rounded-full bg-primary transition-[width]"
 											style={{ width: `${Math.min(p.pct, 100)}%` }}
 										/>
 									</div>
