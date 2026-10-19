@@ -3,6 +3,7 @@ import { and, eq, gte, inArray, lte } from "drizzle-orm";
 import { auth } from "@/lib/auth/auth";
 import { db } from "@/lib/db";
 import { presensi, setoran, siswa } from "@/lib/db/schema";
+import { isMigrationMode, migrationBlockedResponse } from "@/lib/migration";
 import { SURAH_DATA, juzLabel } from "@/lib/surah-data";
 
 export const Route = createFileRoute("/api/setoran")({
@@ -54,6 +55,7 @@ export const Route = createFileRoute("/api/setoran")({
 			},
 
 			POST: async ({ request }) => {
+				if (await isMigrationMode()) return migrationBlockedResponse();
 				try {
 					const session = await auth.api.getSession({
 						headers: request.headers,
@@ -160,6 +162,7 @@ export const Route = createFileRoute("/api/setoran")({
 			},
 
 			PUT: async ({ request }) => {
+				if (await isMigrationMode()) return migrationBlockedResponse();
 				try {
 					const session = await auth.api.getSession({
 						headers: request.headers,
@@ -255,6 +258,7 @@ export const Route = createFileRoute("/api/setoran")({
 			},
 
 			DELETE: async ({ request }) => {
+				if (await isMigrationMode()) return migrationBlockedResponse();
 				try {
 					const session = await auth.api.getSession({
 						headers: request.headers,

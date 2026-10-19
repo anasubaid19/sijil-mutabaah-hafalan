@@ -3,6 +3,7 @@ import { eq } from "drizzle-orm";
 import { auth } from "@/lib/auth/auth";
 import { db } from "@/lib/db";
 import { userProfile } from "@/lib/db/schema";
+import { isMigrationMode, migrationBlockedResponse } from "@/lib/migration";
 
 export const Route = createFileRoute("/api/user-profile")({
 	server: {
@@ -30,6 +31,7 @@ export const Route = createFileRoute("/api/user-profile")({
 			},
 
 			POST: async ({ request }) => {
+				if (await isMigrationMode()) return migrationBlockedResponse();
 				try {
 					const session = await auth.api.getSession({
 						headers: request.headers,
@@ -67,6 +69,7 @@ export const Route = createFileRoute("/api/user-profile")({
 			},
 
 			PUT: async ({ request }) => {
+				if (await isMigrationMode()) return migrationBlockedResponse();
 				try {
 					const session = await auth.api.getSession({
 						headers: request.headers,

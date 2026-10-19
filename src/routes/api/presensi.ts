@@ -3,6 +3,7 @@ import { and, eq, gte, inArray, lte } from "drizzle-orm";
 import { auth } from "@/lib/auth/auth";
 import { db } from "@/lib/db";
 import { presensi, siswa } from "@/lib/db/schema";
+import { isMigrationMode, migrationBlockedResponse } from "@/lib/migration";
 
 export const Route = createFileRoute("/api/presensi")({
 	server: {
@@ -54,6 +55,7 @@ export const Route = createFileRoute("/api/presensi")({
 			},
 
 			POST: async ({ request }) => {
+				if (await isMigrationMode()) return migrationBlockedResponse();
 				try {
 					const session = await auth.api.getSession({
 						headers: request.headers,
@@ -94,6 +96,7 @@ export const Route = createFileRoute("/api/presensi")({
 			},
 
 			PUT: async ({ request }) => {
+				if (await isMigrationMode()) return migrationBlockedResponse();
 				try {
 					const session = await auth.api.getSession({
 						headers: request.headers,
@@ -141,6 +144,7 @@ export const Route = createFileRoute("/api/presensi")({
 			},
 
 			DELETE: async ({ request }) => {
+				if (await isMigrationMode()) return migrationBlockedResponse();
 				try {
 					const session = await auth.api.getSession({
 						headers: request.headers,

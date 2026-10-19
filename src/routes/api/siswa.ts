@@ -4,6 +4,7 @@ import { and, eq } from "drizzle-orm";
 import { auth } from "@/lib/auth/auth";
 import { db } from "@/lib/db";
 import { siswa } from "@/lib/db/schema";
+import { isMigrationMode, migrationBlockedResponse } from "@/lib/migration";
 
 function generateStudentId(): string {
 	const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
@@ -39,6 +40,7 @@ export const Route = createFileRoute("/api/siswa")({
 			},
 
 			POST: async ({ request }) => {
+				if (await isMigrationMode()) return migrationBlockedResponse();
 				try {
 					const session = await auth.api.getSession({
 						headers: request.headers,
@@ -75,6 +77,7 @@ export const Route = createFileRoute("/api/siswa")({
 			},
 
 			PUT: async ({ request }) => {
+				if (await isMigrationMode()) return migrationBlockedResponse();
 				try {
 					const session = await auth.api.getSession({
 						headers: request.headers,
@@ -125,6 +128,7 @@ export const Route = createFileRoute("/api/siswa")({
 			},
 
 			DELETE: async ({ request }) => {
+				if (await isMigrationMode()) return migrationBlockedResponse();
 				try {
 					const session = await auth.api.getSession({
 						headers: request.headers,

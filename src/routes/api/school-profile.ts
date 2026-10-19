@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { auth } from "@/lib/auth/auth";
 import { db } from "@/lib/db";
 import { appConfig } from "@/lib/db/schema";
+import { isMigrationMode, migrationBlockedResponse } from "@/lib/migration";
 
 export const Route = createFileRoute("/api/school-profile")({
 	server: {
@@ -32,6 +33,7 @@ export const Route = createFileRoute("/api/school-profile")({
 			},
 
 			POST: async ({ request }) => {
+				if (await isMigrationMode()) return migrationBlockedResponse();
 				const session = await auth.api.getSession({
 					headers: request.headers,
 				});
