@@ -6,7 +6,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { eq, inArray } from "drizzle-orm";
 import { auth } from "@/lib/auth/auth";
 import { db } from "@/lib/db";
-import { appConfig, setoran, siswa, userProfile } from "@/lib/db/schema";
+import { setoran, siswa, userProfile } from "@/lib/db/schema";
 import { juzLabel, SURAH_DATA } from "@/lib/surah-data";
 
 // ponytail: page calculation uses proportional mapping from SURAH_DATA
@@ -115,13 +115,10 @@ export const Route = createFileRoute("/api/export-pdf")({
 				const halaqahName = profile?.halaqahName || "Halaqah Tahsin";
 				const guruName = profile?.nama || session.user.name || "Ustadz";
 
-				// Get school profile from appConfig
-				const configRows = await db.select().from(appConfig);
-				const configByKey: Record<string, string> = {};
-				for (const r of configRows) configByKey[r.key] = r.value ?? "";
-				const schoolLogo = configByKey.SCHOOL_LOGO ?? "";
-				const schoolFoundationName = configByKey.SCHOOL_FOUNDATION_NAME ?? "";
-				const schoolName = configByKey.SCHOOL_NAME ?? "";
+				// School profile is stored per user (on their profile row)
+				const schoolLogo = profile?.schoolLogo ?? "";
+				const schoolFoundationName = profile?.schoolFoundationName ?? "";
+				const schoolName = profile?.schoolName ?? "";
 
 				const now = new Date();
 				const dateStr = now.toLocaleDateString("id-ID", {

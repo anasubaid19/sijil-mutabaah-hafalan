@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { eq } from "drizzle-orm";
 import { auth } from "@/lib/auth/auth";
 import { db } from "@/lib/db";
-import { appConfig } from "@/lib/db/schema";
+import { userProfile } from "@/lib/db/schema";
 import { isMigrationMode, migrationBlockedResponse } from "@/lib/migration";
 
 export const Route = createFileRoute("/api/school-profile")({
@@ -15,13 +16,18 @@ export const Route = createFileRoute("/api/school-profile")({
 					return Response.json({ error: "Unauthorized" }, { status: 401 });
 
 				try {
-					const rows = await db.select().from(appConfig);
-					const result: Record<string, string> = {};
-					for (const r of rows) result[r.key] = r.value ?? "";
+					const [row] = await db
+						.select({
+							schoolLogo: userProfile.schoolLogo,
+							schoolFoundationName: userProfile.schoolFoundationName,
+							schoolName: userProfile.schoolName,
+						})
+						.from(userProfile)
+						.where(eq(userProfile.id, session.user.id));
 					return Response.json({
-						logo: result.SCHOOL_LOGO ?? "",
-						foundationName: result.SCHOOL_FOUNDATION_NAME ?? "",
-						schoolName: result.SCHOOL_NAME ?? "",
+						logo: row?.schoolLogo ?? "",
+						foundationName: row?.schoolFoundationName ?? "",
+						schoolName: row?.schoolName ?? "",
 					});
 				} catch (e) {
 					console.error("GET /api/school-profile error:", e);
@@ -47,42 +53,36 @@ export const Route = createFileRoute("/api/school-profile")({
 						schoolName?: string;
 					};
 
-					const upserts = [];
+					// School profile lives on the user's own profile row, so one
+					// musyrif's institution never leaks into another's reports.
+					const patch: {
+						schoolLogo?: string | null;
+						schoolFoundationName?: string | null;
+						schoolName?: string | null;
+						updatedAt: Date;
+					} = { updatedAt: new Date() };
 					if (body.logo !== undefined)
-						upserts.push(
-							db
-								.insert(appConfig)
-								.values({ key: "SCHOOL_LOGO", value: body.logo })
-								.onConflictDoUpdate({
-									target: appConfig.key,
-									set: { value: body.logo },
-								}),
-						);
+						patch.schoolLogo = body.logo.trim() ? body.logo : null;
 					if (body.foundationName !== undefined)
-						upserts.push(
-							db
-								.insert(appConfig)
-								.values({
-									key: "SCHOOL_FOUNDATION_NAME",
-									value: body.foundationName,
-								})
-								.onConflictDoUpdate({
-									target: appConfig.key,
-									set: { value: body.foundationName },
-								}),
-						);
+						patch.schoolFoundationName = body.foundationName.trim()
+							? body.foundationName
+							: null;
 					if (body.schoolName !== undefined)
-						upserts.push(
-							db
-								.insert(appConfig)
-								.values({ key: "SCHOOL_NAME", value: body.schoolName })
-								.onConflictDoUpdate({
-									target: appConfig.key,
-									set: { value: body.schoolName },
-								}),
-						);
+						patch.schoolName = body.schoolName.trim() ? body.schoolName : null;
 
-					await Promise.all(upserts);
+					await db
+						.insert(userProfile)
+						.values({
+							id: session.user.id,
+							nama: session.user.name || "Musyrif",
+							role: "musyrif",
+							...patch,
+						})
+						.onConflictDoUpdate({
+							target: userProfile.id,
+							set: patch,
+						});
+
 					return Response.json({ ok: true });
 				} catch (e) {
 					console.error("POST /api/school-profile error:", e);

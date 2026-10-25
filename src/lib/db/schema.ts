@@ -68,6 +68,9 @@ export const userProfile = pgTable("user_profile", {
 	nama: varchar("nama", { length: 100 }).notNull(),
 	role: varchar("role", { length: 20 }).notNull().default("musyrif"),
 	halaqahName: varchar("halaqah_name", { length: 100 }),
+	schoolLogo: text("school_logo"),
+	schoolFoundationName: varchar("school_foundation_name", { length: 200 }),
+	schoolName: varchar("school_name", { length: 200 }),
 	createdAt: timestamp("created_at").defaultNow().notNull(),
 	updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
