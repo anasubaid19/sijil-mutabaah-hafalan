@@ -48,18 +48,18 @@ const GRADES = ["Jayyid", "Jayyid Jiddan", "Mumtaz", "Mutqin"] as const;
 
 // ponytail: covers both vocabularies (grade + Lancar) since data can hold either
 const STATUS_COLORS: Record<string, string> = {
-	Jayyid: "bg-red-500/15 text-red-700 dark:text-red-400 border-red-500/30",
+	Jayyid: "bg-system-red/15 text-system-red border-system-red/30",
 	"Jayyid Jiddan":
-		"bg-amber-500/15 text-amber-700 dark:text-amber-400 border-amber-500/30",
+		"bg-system-orange/15 text-system-orange border-system-orange/30",
 	Mumtaz:
-		"bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/30",
+		"bg-system-green/15 text-system-green border-system-green/30",
 	Mutqin: "bg-primary/15 text-primary border-primary/30",
 	Lancar:
-		"bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/30",
+		"bg-system-green/15 text-system-green border-system-green/30",
 	"Mulai Lancar":
-		"bg-amber-500/15 text-amber-800 dark:text-amber-400 border-amber-500/30",
+		"bg-system-orange/15 text-system-orange border-system-orange/30",
 	"Tidak Lancar":
-		"bg-red-500/15 text-red-700 dark:text-red-400 border-red-500/30",
+		"bg-system-red/15 text-system-red border-system-red/30",
 };
 
 export const Route = createFileRoute("/parent")({
@@ -144,22 +144,22 @@ function ParentDashboard() {
 		.join(" · ");
 
 	const cardClass =
-		"rounded-2xl border bg-card shadow-xs transition duration-fast hover:shadow-md";
+		"rounded-2xl bg-card shadow-[var(--shadow-surface)] transition-shadow duration-[var(--duration-fast)] hover:shadow-[var(--shadow-raised)]";
 
 	if (loading) {
 		return (
-			<div className="flex min-h-screen items-center justify-center bg-muted dark:bg-background">
+			<div className="flex min-h-screen items-center justify-center bg-background">
 				<div className="text-sm text-muted-foreground">Memuat...</div>
 			</div>
 		);
 	}
 
 	return (
-		<div className="min-h-screen bg-muted dark:bg-background">
+		<div className="min-h-screen bg-background">
 			<div className="mx-auto w-full max-w-[1200px] px-4 pb-10 sm:px-6 lg:px-8">
 				<div className="animate-in fade-in duration-500">
 					{/* Header */}
-					<header className="flex items-center justify-between gap-3 pt-6">
+					<header className="material-bar sticky top-0 z-30 -mx-4 flex items-center justify-between gap-3 border-b border-border/60 px-4 py-3 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
 						<div className="flex items-center gap-3">
 							<img
 								src="/logo-sijil-v3.svg"
@@ -167,7 +167,7 @@ function ParentDashboard() {
 								className="size-9 rounded-xl"
 							/>
 							<div>
-								<h1 className="text-base font-bold">Sijil Mutaba'ah</h1>
+								<h1 className="text-[1.0625rem] font-semibold tracking-[-0.02em]">Sijil Mutaba'ah</h1>
 								<p className="text-xs text-muted-foreground">
 									Portal Orang Tua
 								</p>
@@ -199,16 +199,16 @@ function ParentDashboard() {
 									Perkembangan Hafalan
 								</p>
 								<div className="mt-1 flex items-center justify-between gap-3">
-									<h2 className="text-2xl font-bold tracking-tight">
+									<h2 className="text-[1.75rem] font-bold tracking-[-0.03em]">
 										{siswa.nama}
 									</h2>
-									<p className="text-3xl font-bold">{progressPercent}%</p>
+									<p className="text-[1.75rem] font-bold tabular-nums">{progressPercent}%</p>
 								</div>
-								<p className="mt-1 text-lg font-bold">
+								<p className="mt-1 text-[1.0625rem] font-semibold">
 									Hafalan {prog?.current ?? 0} / {prog?.target ?? 0}{" "}
 									{prog ? prog.unit.toLowerCase() : "juz"}
 								</p>
-								<div className="mt-4 h-2 w-full overflow-hidden rounded-full bg-muted">
+								<div className="mt-4 h-2.5 w-full overflow-hidden rounded-full bg-secondary">
 									<div
 										className="h-full rounded-full bg-primary transition-[width]"
 										style={{ width: `${progressPercent}%` }}
@@ -223,7 +223,7 @@ function ParentDashboard() {
 
 							{/* Hafalan Terakhir */}
 							<div className={`${cardClass} p-5`}>
-								<h3 className="text-sm font-semibold">Hafalan Terakhir</h3>
+								<h3 className="text-headline">Hafalan Terakhir</h3>
 								{lastSetoran ? (
 									<div className="mt-3 flex items-center justify-between gap-3">
 										<div className="flex items-center gap-3">
@@ -247,7 +247,7 @@ function ParentDashboard() {
 											</div>
 										</div>
 										<span
-											className={`rounded-full border px-2.5 py-1 text-xs font-semibold ${
+											className={`rounded-full border border-border/60 px-2.5 py-1 text-xs font-semibold ${
 												STATUS_COLORS[lastSetoran.status] ||
 												"bg-muted text-muted-foreground"
 											}`}
@@ -284,7 +284,7 @@ function ParentDashboard() {
 									<p
 										className={`mt-2 ${
 											setoranList.length > 0
-												? "text-2xl font-bold"
+												? "text-[1.75rem] font-bold tabular-nums"
 												: "text-sm text-muted-foreground"
 										}`}
 									>
@@ -301,7 +301,7 @@ function ParentDashboard() {
 									<p
 										className={`mt-2 ${
 											totalPresensi > 0
-												? "text-2xl font-bold"
+												? "text-[1.75rem] font-bold tabular-nums"
 												: "text-sm text-muted-foreground"
 										}`}
 									>
@@ -318,7 +318,7 @@ function ParentDashboard() {
 									<p
 										className={`mt-2 ${
 											lastGrade
-												? "text-2xl font-bold"
+												? "text-[1.75rem] font-bold tabular-nums"
 												: "text-sm text-muted-foreground"
 										}`}
 									>
@@ -329,7 +329,7 @@ function ParentDashboard() {
 
 							{/* Riwayat Setoran */}
 							<div className={`${cardClass} p-5`}>
-								<h3 className="text-sm font-semibold">Riwayat Setoran</h3>
+								<h3 className="text-headline">Riwayat Setoran</h3>
 								{recent.length > 0 ? (
 									<>
 										<div className="mt-3 space-y-2">
@@ -361,7 +361,7 @@ function ParentDashboard() {
 																</div>
 															</div>
 															<span
-																className={`rounded-full border px-2.5 py-1 text-xs font-semibold ${
+																className={`rounded-full border border-border/60 px-2.5 py-1 text-xs font-semibold ${
 																	STATUS_COLORS[s.status] ||
 																	"bg-muted text-muted-foreground"
 																}`}
@@ -404,7 +404,7 @@ function ParentDashboard() {
 						</main>
 					) : (
 						<main className="mt-6">
-							<div className="rounded-2xl border bg-card p-8 text-center shadow-xs">
+							<div className="rounded-2xl bg-card p-8 text-center shadow-[var(--shadow-surface)]">
 								<p className="text-sm text-muted-foreground">
 									Data siswa tidak ditemukan.
 								</p>
@@ -413,7 +413,7 @@ function ParentDashboard() {
 					)}
 
 					{/* Footer */}
-					<footer className="mt-8 border-t pt-6 text-center">
+					<footer className="mt-8 border-t border-border/60 pt-6 text-center">
 						<p className="text-xs text-muted-foreground">
 							{lastUpdated
 								? `Data terakhir diperbarui: ${formatDate(lastUpdated)}`

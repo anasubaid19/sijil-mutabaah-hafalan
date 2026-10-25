@@ -70,9 +70,9 @@ interface Setoran {
 }
 
 const STATUS_COLORS: Record<string, string> = {
-	Lancar: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400",
-	"Mulai Lancar": "bg-amber-500/15 text-amber-700 dark:text-amber-400",
-	"Tidak Lancar": "bg-red-500/15 text-red-700 dark:text-red-400",
+	Lancar: "bg-system-green/15 text-system-green",
+	"Mulai Lancar": "bg-system-orange/15 text-system-orange",
+	"Tidak Lancar": "bg-system-red/15 text-system-red",
 };
 
 const PIE_COLORS = ["var(--chart-1)", "var(--chart-3)", "var(--destructive)"];
@@ -287,8 +287,8 @@ function LaporanPage() {
 
 	const statusColor =
 		attentionReasons.length > 0
-			? "border-amber-500/30 bg-amber-500/10 text-amber-800 dark:text-amber-300"
-			: "border-emerald-500/30 bg-emerald-500/10 text-emerald-800 dark:text-emerald-300";
+			? "border-system-orange/30 bg-system-orange/10 text-system-orange"
+			: "border-system-green/30 bg-system-green/10 text-system-green";
 
 	function exportCSV() {
 		if (filteredSetoran.length === 0) {
@@ -328,45 +328,53 @@ function LaporanPage() {
 
 	return (
 		<div className="mx-auto max-w-6xl space-y-6 pb-20 md:pb-6 print:space-y-4 print:pb-0">
-			<div className="flex items-center justify-between print:hidden">
+			<div className="flex flex-wrap items-center justify-between gap-2 print:hidden">
 				<div>
-					<h2 className="text-base font-semibold">
-						Laporan — Progres & Wawasan
-					</h2>
-					<p className="mt-1 text-sm text-muted-foreground">
+					<h1 className="text-large-title">
+						Laporan
+					</h1>
+					<p className="mt-0.5 text-[0.9375rem] leading-snug text-muted-foreground">
 						{monthlySetoran.length} setoran bulan ini
 					</p>
 				</div>
-				<div className="flex items-center gap-2">
-					<button
-						type="button"
-						onClick={() => setView("grid")}
-						className={`rounded-xl px-3 py-1.5 text-sm font-semibold transition-colors ${
-							view === "grid"
-								? "bg-primary text-primary-foreground"
-								: "bg-muted text-muted-foreground"
-						}`}
+				<div className="ml-auto flex items-center gap-2">
+					<div
+						className="flex rounded-[0.625rem] bg-secondary/80 p-[3px]"
+						role="group"
+						aria-label="Tampilan laporan"
 					>
-						Kisi
-					</button>
-					<button
-						type="button"
-						onClick={() => setView("list")}
-						className={`rounded-xl px-3 py-1.5 text-sm font-semibold transition-colors ${
-							view === "list"
-								? "bg-primary text-primary-foreground"
-								: "bg-muted text-muted-foreground"
-						}`}
-					>
-						Daftar
-					</button>
+						<button
+							type="button"
+							onClick={() => setView("grid")}
+							aria-pressed={view === "grid"}
+							className={`rounded-[0.5rem] px-3.5 py-1.5 text-[0.8125rem] font-semibold transition-colors duration-[var(--duration-fast)] ${
+								view === "grid"
+									? "bg-[var(--segment)] text-foreground shadow-[0_1px_3px_rgb(0_0_0/0.12)]"
+									: "text-muted-foreground hover:text-foreground"
+							}`}
+						>
+							Kisi
+						</button>
+						<button
+							type="button"
+							onClick={() => setView("list")}
+							aria-pressed={view === "list"}
+							className={`rounded-[0.5rem] px-3.5 py-1.5 text-[0.8125rem] font-semibold transition-colors duration-[var(--duration-fast)] ${
+								view === "list"
+									? "bg-[var(--segment)] text-foreground shadow-[0_1px_3px_rgb(0_0_0/0.12)]"
+									: "text-muted-foreground hover:text-foreground"
+							}`}
+						>
+							Daftar
+						</button>
+					</div>
 					<DropdownMenu>
 						<DropdownMenuTrigger
 							render={
 								<Button
 									variant="outline"
 									size="sm"
-									className="ml-2 print:hidden"
+									className="print:hidden"
 								/>
 							}
 						>
@@ -385,7 +393,7 @@ function LaporanPage() {
 									type="month"
 									value={exportPeriode}
 									onChange={(e) => setExportPeriode(e.target.value)}
-									className="mt-1 flex h-8 w-full rounded-md border border-input bg-transparent px-2 text-xs shadow-xs transition-colors"
+									className="mt-1 flex h-9 w-full rounded-lg border border-transparent bg-secondary px-2.5 text-xs outline-none focus-visible:border-primary focus-visible:ring-4 focus-visible:ring-primary/20"
 								/>
 							</div>
 							<DropdownMenuItem onClick={exportPDF}>Rekap PDF</DropdownMenuItem>
@@ -399,22 +407,22 @@ function LaporanPage() {
 			</div>
 
 			{/* Student Search + Sort */}
-			<div className="flex items-center gap-3 print:hidden">
+			<div className="flex flex-col gap-2 print:hidden sm:flex-row sm:items-center sm:gap-3">
 				<Input
 					placeholder="Cari siswa..."
 					value={studentSearch}
 					onChange={(e) => setStudentSearch(e.target.value)}
-					className="max-w-[240px]"
+					className="w-full sm:max-w-[240px]"
 				/>
-				<div className="flex rounded-lg border bg-muted/50 p-0.5">
+				<div className="flex w-full rounded-[0.625rem] bg-secondary/80 p-[3px] sm:w-auto">
 					{(["progres", "nama", "setoran"] as const).map((key) => (
 						<button
 							key={key}
 							type="button"
 							onClick={() => setStudentSort(key)}
-							className={`rounded-md px-3 py-1 text-xs font-medium transition-colors ${
+							className={`flex-1 rounded-[0.5rem] px-3.5 py-1.5 text-[0.8125rem] font-semibold transition-colors duration-[var(--duration-fast)] sm:flex-none ${
 								studentSort === key
-									? "bg-background text-foreground shadow-sm"
+									? "bg-[var(--segment)] text-foreground shadow-[0_1px_3px_rgb(0_0_0/0.12)]"
 									: "text-muted-foreground hover:text-foreground"
 							}`}
 						>
@@ -429,7 +437,7 @@ function LaporanPage() {
 			</div>
 
 			{/* Student Cards */}
-			<div className="grid gap-3 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 print:hidden">
+			<div className="grid gap-3 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 print:hidden">
 				{siswaList
 					.filter((s) =>
 						s.nama.toLowerCase().includes(studentSearch.toLowerCase()),
@@ -523,7 +531,7 @@ function LaporanPage() {
 				)}
 
 			{/* Monthly Insight Card */}
-			<div className="rounded-2xl border bg-card p-5 shadow-xs">
+			<div className="rounded-2xl bg-card p-5 shadow-[var(--shadow-surface)]">
 				<div className="flex items-start justify-between">
 					<div>
 						<h3 className="text-lg font-bold">
@@ -607,7 +615,7 @@ function LaporanPage() {
 			{/* Charts Row */}
 			<div className="grid gap-4 md:grid-cols-2">
 				{/* Pie Chart */}
-				<div className="rounded-2xl border bg-card p-5 shadow-xs">
+				<div className="rounded-2xl bg-card p-5 shadow-[var(--shadow-surface)]">
 					<h3 className="mb-4 text-base font-semibold">Status Bulan Ini</h3>
 					{pieData.length > 0 ? (
 						<ResponsiveContainer width="100%" height={200}>
@@ -649,7 +657,7 @@ function LaporanPage() {
 				</div>
 
 				{/* Weekly Trend */}
-				<div className="rounded-2xl border bg-card p-5 shadow-xs">
+				<div className="rounded-2xl bg-card p-5 shadow-[var(--shadow-surface)]">
 					<h3 className="mb-4 text-base font-semibold">Tren Mingguan</h3>
 					{weeklyTrend.length > 0 ? (
 						<ResponsiveContainer width="100%" height={200}>
@@ -681,7 +689,7 @@ function LaporanPage() {
 			</div>
 
 			{/* Setoran List */}
-			<div className="rounded-2xl border bg-card p-5 shadow-xs">
+			<div className="rounded-2xl bg-card p-5 shadow-[var(--shadow-surface)]">
 				<h3 className="mb-4 text-base font-semibold">
 					Riwayat Setoran ({filteredSetoran.length})
 				</h3>

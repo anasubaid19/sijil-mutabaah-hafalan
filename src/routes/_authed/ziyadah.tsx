@@ -4,6 +4,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { GradeSelector } from "@/components/grade-selector";
+import { PageHeader } from "@/components/layout/page-header";
 import { MushafPanel } from "@/components/mushaf-panel";
 import { showSubmissionSuccess } from "@/components/submission-success-toast";
 import { Button } from "@/components/ui/button";
@@ -96,7 +97,7 @@ function FormBody(props: FormBodyProps) {
 	return (
 		<form
 			onSubmit={props.handleSubmit}
-			className="w-full max-w-3xl space-y-4 rounded-2xl border bg-card p-4 shadow-xs"
+			className="w-full max-w-3xl space-y-4 rounded-2xl bg-card p-4 shadow-[var(--shadow-surface)]"
 		>
 			<div className="grid gap-3 sm:grid-cols-2">
 				<div className="space-y-2">
@@ -106,7 +107,7 @@ function FormBody(props: FormBodyProps) {
 						value={props.selectedSiswa}
 						onChange={(e) => props.setSelectedSiswa(e.target.value)}
 						required
-					className="flex h-9 w-full rounded-xl border border-input bg-background px-3 py-1 text-base shadow-xs transition-[border-color,box-shadow] hover:border-foreground/25 focus-visible:border-primary focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-primary/20 md:text-sm"
+					className="h-11 w-full rounded-xl border border-transparent bg-secondary px-3.5 text-[1rem] text-foreground outline-none transition-[border-color,box-shadow,background-color] focus-visible:border-primary focus-visible:ring-4 focus-visible:ring-primary/20"
 					>
 					<option value="">Pilih siswa…</option>
 						{props.siswaList.map((s) => (
@@ -173,7 +174,7 @@ function FormBody(props: FormBodyProps) {
 						<div
 							role="listbox"
 							id="ziyadah-surah-list"
-							className="absolute z-10 mt-1 w-full rounded-xl border bg-card shadow-lg"
+							className="absolute z-10 mt-1 w-full rounded-xl bg-popover shadow-[var(--shadow-overlay)]"
 						>
 							{props.acA.map((s, idx) => (
 								<button
@@ -310,7 +311,7 @@ function FormBody(props: FormBodyProps) {
 								<div
 									role="listbox"
 									id="ziyadah-lintas-end-list"
-									className="absolute z-10 mt-1 w-full rounded-xl border bg-card shadow-lg"
+									className="absolute z-10 mt-1 w-full rounded-xl bg-popover shadow-[var(--shadow-overlay)]"
 								>
 									{props.lintasAcEnd.map((s, idx) => (
 										<button
@@ -412,7 +413,7 @@ function FormBody(props: FormBodyProps) {
 				/>
 			</div>
 
-			<div className="sticky bottom-16 z-10 -mx-1 -mb-1 flex flex-col gap-2 border-t bg-card/95 px-1 pb-1 pt-3 backdrop-blur-sm sm:static sm:mx-0 sm:mb-0 sm:flex-row sm:justify-end sm:border-0 sm:bg-transparent sm:px-0 sm:pb-0 sm:backdrop-blur-none">
+			<div className="sticky bottom-[calc(49px+env(safe-area-inset-bottom))] z-10 -mx-1 -mb-1 flex flex-col gap-2 border-t bg-card/95 px-1 pb-1 pt-3 backdrop-blur-sm sm:static sm:mx-0 sm:mb-0 sm:flex-row sm:justify-end sm:border-0 sm:bg-transparent sm:px-0 sm:pb-0 sm:backdrop-blur-none">
 				<Button
 					type="button"
 					variant="ghost"
@@ -781,14 +782,10 @@ function ZiyadahPage() {
 	};
 		return (
 		<div className="mx-auto max-w-6xl space-y-4 pb-20 md:pb-6">
-			<div>
-				<h2 className="text-base font-semibold">
-					Ziyadah — Tambah Hafalan Baru
-				</h2>
-				<p className="mt-1 text-sm text-muted-foreground">
-					Catat setoran ziyadah untuk siswa
-				</p>
-			</div>
+			<PageHeader
+				title="Ziyadah"
+				subtitle="Tambah hafalan baru untuk siswa"
+			/>
 
 			{desktopLayout ? (
 			<div>

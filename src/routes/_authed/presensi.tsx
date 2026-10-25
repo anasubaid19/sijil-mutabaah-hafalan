@@ -4,6 +4,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { PageHeader } from "@/components/layout/page-header";
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -34,17 +35,17 @@ type PresensiStatus = (typeof PRESENSI_STATUSES)[number];
 
 const CHIP_COLORS: Record<PresensiStatus, string> = {
 	Hadir:
-		"bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 ring-emerald-500/30",
-	Izin: "bg-blue-500/15 text-blue-700 dark:text-blue-400 ring-blue-500/30",
-	Sakit: "bg-amber-500/15 text-amber-700 dark:text-amber-400 ring-amber-500/30",
-	Alpha: "bg-red-500/15 text-red-700 dark:text-red-400 ring-red-500/30",
+		"bg-system-green/15 text-system-green ring-system-green/30",
+	Izin: "bg-system-blue/15 text-system-blue ring-system-blue/30",
+	Sakit: "bg-system-orange/15 text-system-orange ring-system-orange/30",
+	Alpha: "bg-system-red/15 text-system-red ring-system-red/30",
 };
 
 const CHIP_ACTIVE: Record<PresensiStatus, string> = {
-	Hadir: "ring-2 ring-emerald-500 bg-emerald-500/25",
-	Izin: "ring-2 ring-blue-500 bg-blue-500/25",
-	Sakit: "ring-2 ring-amber-500 bg-amber-500/25",
-	Alpha: "ring-2 ring-red-500 bg-red-500/25",
+	Hadir: "ring-2 ring-system-green bg-system-green/25",
+	Izin: "ring-2 ring-system-blue bg-system-blue/25",
+	Sakit: "ring-2 ring-system-orange bg-system-orange/25",
+	Alpha: "ring-2 ring-system-red bg-system-red/25",
 };
 
 export const Route = createFileRoute("/_authed/presensi")({
@@ -232,18 +233,15 @@ function PresensiPage() {
 
 	return (
 		<div className="mx-auto max-w-6xl space-y-5 pb-20 md:pb-6">
-			<div>
-				<h2 className="text-base font-semibold">Presensi</h2>
-				<p className="mt-1 text-sm text-muted-foreground">
-					{hadirCount}/{siswaList.length} Hadir —{" "}
-					{new Date(`${today}T00:00:00`).toLocaleDateString("id-ID", {
-						weekday: "long",
-						day: "numeric",
-						month: "long",
-						year: "numeric",
-					})}
-				</p>
-			</div>
+			<PageHeader
+				title="Presensi"
+				subtitle={`${hadirCount}/${siswaList.length} Hadir — ${new Date(`${today}T00:00:00`).toLocaleDateString("id-ID", {
+					weekday: "long",
+					day: "numeric",
+					month: "long",
+					year: "numeric",
+				})}`}
+			/>
 
 			{/* Controls */}
 			<div className="flex flex-wrap items-center gap-2">
@@ -263,13 +261,13 @@ function PresensiPage() {
 				>
 					Atur Ulang
 				</Button>
-				<div className="ml-auto flex items-center gap-2">
+				<div className="flex w-full items-center gap-2 sm:ml-auto sm:w-auto">
 					<Input
 						aria-label="Cari siswa"
 						placeholder="Cari siswa…"
 						value={search}
 						onChange={(e) => setSearch(e.target.value)}
-						className="w-40"
+						className="w-full sm:w-44"
 					/>
 				</div>
 			</div>
@@ -310,34 +308,34 @@ function PresensiPage() {
 			{/* Legend */}
 			<div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[0.7rem] text-muted-foreground">
 				<span className="inline-flex items-center gap-1">
-					<span className="inline-block size-2 rounded-sm bg-emerald-500" />H =
+					<span className="inline-block size-2 rounded-sm bg-system-green" />H =
 					Hadir
 				</span>
 				<span className="inline-flex items-center gap-1">
-					<span className="inline-block size-2 rounded-sm bg-blue-500" />I =
+					<span className="inline-block size-2 rounded-sm bg-system-blue" />I =
 					Izin
 				</span>
 				<span className="inline-flex items-center gap-1">
-					<span className="inline-block size-2 rounded-sm bg-amber-500" />S =
+					<span className="inline-block size-2 rounded-sm bg-system-orange" />S =
 					Sakit
 				</span>
 				<span className="inline-flex items-center gap-1">
-					<span className="inline-block size-2 rounded-sm bg-red-500" />A =
+					<span className="inline-block size-2 rounded-sm bg-system-red" />A =
 					Alpha
 				</span>
 			</div>
 
 			{/* Student List */}
 			{filtered.length > 0 ? (
-				<div className="space-y-2">
+				<div className="ios-list">
 					{filtered.map((s) => {
 						const current = presensiMap.get(s.id)?.status;
 						return (
 							<div
 								key={s.id}
-							className="grid items-center gap-2 rounded-xl border border-transparent bg-muted/40 px-3 py-2 transition-[border-color,background-color] hover:border-border hover:bg-muted/60 sm:grid-cols-[minmax(0,1fr)_auto_5.5rem]"
+							className="grid items-center gap-2 border-b border-border px-4 py-2.5 transition-colors last:border-b-0 active:bg-muted/60 sm:grid-cols-[minmax(0,1fr)_auto_5.5rem]"
 						>
-							<span className="min-w-0 truncate text-sm font-medium">{s.nama}</span>
+							<span className="min-w-0 truncate text-[1.0625rem] font-medium tracking-[-0.01em]">{s.nama}</span>
 							<div className="flex gap-1 justify-self-start sm:justify-self-end">
 									{PRESENSI_STATUSES.map((st) => (
 										<button
@@ -360,7 +358,7 @@ function PresensiPage() {
 								className={`text-xs font-medium sm:text-right ${
 									rowFeedback[s.id] === "error"
 										? "text-destructive"
-										: "text-emerald-700 dark:text-emerald-400"
+										: "text-system-green"
 								} ${rowFeedback[s.id] ? "animate-in fade-in duration-fast" : ""}`}
 							>
 								{rowFeedback[s.id] === "saving"

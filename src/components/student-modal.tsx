@@ -39,9 +39,9 @@ interface StudentModalProps {
 }
 
 const STATUS_COLORS: Record<string, string> = {
-	Lancar: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400",
-	"Mulai Lancar": "bg-amber-500/15 text-amber-700 dark:text-amber-400",
-	"Tidak Lancar": "bg-red-500/15 text-red-700 dark:text-red-400",
+	Lancar: "bg-system-green/15 text-system-green",
+	"Mulai Lancar": "bg-system-orange/15 text-system-orange",
+	"Tidak Lancar": "bg-system-red/15 text-system-red",
 };
 
 const AVATAR_COLORS: Record<string, string[]> = {
@@ -161,7 +161,7 @@ export function StudentModal({
 							type="month"
 							value={exportPeriode}
 							onChange={(e) => setExportPeriode(e.target.value)}
-							className="flex h-8 w-full rounded-md border border-input bg-transparent px-2 text-xs shadow-xs transition-colors"
+							className="flex h-9 w-full rounded-lg border border-transparent bg-secondary px-2.5 text-xs outline-none focus-visible:border-primary focus-visible:ring-4 focus-visible:ring-primary/20"
 						/>
 						<button
 							type="button"

@@ -11,6 +11,7 @@ import { getRequest } from "@tanstack/start-server-core";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { PageHeader } from "@/components/layout/page-header";
 import {
 	Dialog,
 	DialogContent,
@@ -165,23 +166,21 @@ function AdminPage() {
 
 	return (
 		<div className="mx-auto max-w-6xl space-y-6 pb-20 md:pb-6">
-			<div className="flex items-center justify-between">
-				<div>
-					<h2 className="text-base font-semibold">Dasbor Admin</h2>
-					<p className="mt-1 text-sm text-muted-foreground">
-						Ringkasan data aplikasi
-					</p>
-				</div>
-				{!hasConfig && (
-					<Button
-						variant="outline"
-						size="sm"
-						onClick={() => setConfigOpen(true)}
-					>
-						Konfigurasi Telegram
-					</Button>
-				)}
-			</div>
+			<PageHeader
+				title="Dasbor Admin"
+				subtitle="Ringkasan data aplikasi"
+				actions={
+					!hasConfig && (
+						<Button
+							variant="outline"
+							size="sm"
+							onClick={() => setConfigOpen(true)}
+						>
+							Konfigurasi Telegram
+						</Button>
+					)
+				}
+			/>
 
 			{stats && (
 				<>
@@ -196,24 +195,24 @@ function AdminPage() {
 							icon={BookOpen}
 							label="Total Musyrif"
 							value={stats.totalMusyrif}
-							color="text-blue-600 dark:text-blue-400"
+							color="text-system-blue"
 						/>
 						<StatCard
 							icon={CalendarCheck}
 							label="Total Siswa"
 							value={stats.totalSiswa}
-							color="text-emerald-600 dark:text-emerald-400"
+							color="text-system-green"
 						/>
 						<StatCard
 							icon={Clock}
 							label="Total Setoran"
 							value={stats.totalSetoran}
-							color="text-amber-600 dark:text-amber-400"
+							color="text-system-orange"
 						/>
 					</div>
 
 					{stats.users.length > 0 && (
-						<div className="min-w-0 rounded-2xl border bg-card p-5 shadow-xs">
+						<div className="min-w-0 rounded-2xl bg-card p-5 shadow-[var(--shadow-surface)]">
 							<h2 className="mb-4 text-base font-semibold">Daftar Pengguna</h2>
 							<div className="w-full min-w-0 max-w-full overflow-x-auto">
 								<table className="w-full text-sm">
@@ -266,7 +265,7 @@ function AdminPage() {
 			)}
 
 			{/* Migration banner config */}
-			<div className="rounded-2xl border bg-card p-5 shadow-xs">
+			<div className="rounded-2xl bg-card p-5 shadow-[var(--shadow-surface)]">
 				<div className="flex items-start justify-between gap-4">
 					<div>
 						<h2 className="text-base font-semibold">Banner Migrasi Server</h2>
@@ -360,7 +359,7 @@ function StatCard({
 	color: string;
 }) {
 	return (
-		<div className="flex min-h-24 items-center gap-3 rounded-2xl border bg-card p-4 shadow-xs transition-[border-color,box-shadow] duration-150 hover:border-primary/20 hover:shadow-sm">
+		<div className="flex min-h-24 items-center gap-3 rounded-2xl bg-card p-4 shadow-[var(--shadow-surface)] transition-[border-color,box-shadow] duration-150 hover:border-primary/20 hover:shadow-sm">
 			<div
 				className={`flex size-10 items-center justify-center rounded-xl bg-muted ${color}`}
 			>

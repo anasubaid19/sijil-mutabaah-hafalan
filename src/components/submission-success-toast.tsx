@@ -22,7 +22,7 @@ export function showSubmissionSuccess({
 				<div className="flex items-start gap-3">
 					<HugeiconsIcon
 						icon={CheckmarkCircle02Icon}
-						className="mt-0.5 size-5 shrink-0 text-emerald-600 dark:text-emerald-400"
+						className="mt-0.5 size-5 shrink-0 text-system-green"
 						aria-hidden
 					/>
 					<div className="min-w-0">

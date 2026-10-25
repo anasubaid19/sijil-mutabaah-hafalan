@@ -20,6 +20,7 @@ import {
 	YAxis,
 } from "recharts";
 import { MushafPanel } from "@/components/mushaf-panel";
+import { PageHeader } from "@/components/layout/page-header";
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -71,23 +72,23 @@ type PresensiStatus = (typeof PRESENSI_STATUSES)[number];
 
 const CHIP_COLORS: Record<PresensiStatus, string> = {
 	Hadir:
-		"bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 ring-emerald-500/30",
-	Izin: "bg-blue-500/15 text-blue-700 dark:text-blue-400 ring-blue-500/30",
-	Sakit: "bg-amber-500/15 text-amber-800 dark:text-amber-400 ring-amber-500/30",
-	Alpha: "bg-red-500/15 text-red-700 dark:text-red-400 ring-red-500/30",
+		"bg-system-green/15 text-system-green ring-system-green/30",
+	Izin: "bg-system-blue/15 text-system-blue ring-system-blue/30",
+	Sakit: "bg-system-orange/15 text-system-orange ring-system-orange/30",
+	Alpha: "bg-system-red/15 text-system-red ring-system-red/30",
 };
 
 const CHIP_ACTIVE: Record<PresensiStatus, string> = {
-	Hadir: "ring-2 ring-emerald-500 bg-emerald-500/25",
-	Izin: "ring-2 ring-blue-500 bg-blue-500/25",
-	Sakit: "ring-2 ring-amber-500 bg-amber-500/25",
-	Alpha: "ring-2 ring-red-500 bg-red-500/25",
+	Hadir: "ring-2 ring-system-green bg-system-green/25",
+	Izin: "ring-2 ring-system-blue bg-system-blue/25",
+	Sakit: "ring-2 ring-system-orange bg-system-orange/25",
+	Alpha: "ring-2 ring-system-red bg-system-red/25",
 };
 
 const STATUS_COLORS: Record<string, string> = {
-	Lancar: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400",
-	"Mulai Lancar": "bg-amber-500/15 text-amber-800 dark:text-amber-400",
-	"Tidak Lancar": "bg-red-500/15 text-red-700 dark:text-red-400",
+	Lancar: "bg-system-green/15 text-system-green",
+	"Mulai Lancar": "bg-system-orange/15 text-system-orange",
+	"Tidak Lancar": "bg-system-red/15 text-system-red",
 };
 
 export const Route = createFileRoute("/_authed/dashboard")({
@@ -277,17 +278,25 @@ function DashboardPage() {
 
 	return (
 		<div className="mx-auto max-w-6xl space-y-5 pb-20 md:pb-6">
-			{/* Quick Actions */}
-			<div className="flex items-center gap-2">
-				<Button
-					variant="outline"
-					size="sm"
-					onClick={() => setMushafOpen(!mushafOpen)}
-				>
-					<HugeiconsIcon icon={BookOpen01Icon} className="w-4 h-4 mr-1.5" />
-					{mushafOpen ? "Tutup Mushaf" : "Buka Mushaf"}
-				</Button>
-			</div>
+			<PageHeader
+				title="Beranda"
+				subtitle={new Date(`${today}T00:00:00`).toLocaleDateString("id-ID", {
+					weekday: "long",
+					day: "numeric",
+					month: "long",
+					year: "numeric",
+				})}
+				actions={
+					<Button
+						variant="outline"
+						size="sm"
+						onClick={() => setMushafOpen(!mushafOpen)}
+					>
+						<HugeiconsIcon icon={BookOpen01Icon} className="mr-1.5 size-4" />
+						{mushafOpen ? "Tutup Mushaf" : "Buka Mushaf"}
+					</Button>
+				}
+			/>
 
 			{/* Mushaf Panel (read-only) */}
 			<MushafPanel
@@ -303,14 +312,14 @@ function DashboardPage() {
 					icon={Group}
 					label="Kehadiran"
 					value={`${hadirCount}/${siswaList.length}`}
-					color="text-emerald-600 dark:text-emerald-400"
+					color="text-system-green"
 					sub={`${siswaList.length > 0 ? Math.round((hadirCount / siswaList.length) * 100) : 0}% tingkat kehadiran`}
 				/>
 				<StatCard
 					icon={CalendarCheck}
 					label="Hadir Hari Ini"
 					value={hadirCount}
-					color="text-blue-600 dark:text-blue-400"
+					color="text-system-blue"
 					sub={`dari ${siswaList.length} siswa`}
 					action="presensi"
 				/>
@@ -326,14 +335,14 @@ function DashboardPage() {
 					icon={Clock}
 					label="Belum Setor"
 					value={belumSetor}
-					color="text-amber-600 dark:text-amber-400"
+					color="text-system-orange"
 					sub="perlu tindak lanjut"
 					action="belum-setor"
 				/>
 			</div>
 
 			{view && (
-				<section className="rounded-2xl border bg-card p-4 shadow-xs" aria-live="polite">
+				<section className="rounded-2xl bg-card p-4 shadow-[var(--shadow-surface)]" aria-live="polite">
 					<div className="mb-3 flex items-center justify-between gap-3">
 						<div>
 							<h2 className="text-base font-semibold">
@@ -380,16 +389,22 @@ function DashboardPage() {
 			)}
 
 			{/* Presensi */}
-			<div className="rounded-2xl border bg-card p-5 shadow-xs">
-				<div className="mb-3 flex items-center justify-between">
+			<div className="rounded-2xl bg-card p-5 shadow-[var(--shadow-surface)]">
+				<div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
 					<h2 className="text-base font-semibold">Presensi Hari Ini</h2>
 					<div className="flex gap-2">
-						<Button variant="outline" size="sm" onClick={markAllPresent}>
+						<Button
+							variant="outline"
+							size="sm"
+							className="flex-1 sm:flex-none"
+							onClick={markAllPresent}
+						>
 							Semua Hadir
 						</Button>
 						<Button
 							variant="outline"
 							size="sm"
+							className="flex-1 sm:flex-none"
 							onClick={() => setResetOpen(true)}
 						>
 							Atur Ulang
@@ -404,7 +419,7 @@ function DashboardPage() {
 					<div className="flex-1">
 						<div className="h-2 overflow-hidden rounded-full bg-muted">
 							<div
-								className="h-full rounded-full bg-emerald-500 transition-[width]"
+								className="h-full rounded-full bg-system-green transition-[width]"
 								style={{
 									width: `${siswaList.length > 0 ? Math.round((hadirCount / siswaList.length) * 100) : 0}%`,
 								}}
@@ -417,19 +432,19 @@ function DashboardPage() {
 				</div>
 				<div className="mb-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
 					<span className="inline-flex items-center gap-1">
-						<span className="inline-block size-2 rounded-sm bg-emerald-500" />H
+						<span className="inline-block size-2 rounded-sm bg-system-green" />H
 						= Hadir
 					</span>
 					<span className="inline-flex items-center gap-1">
-						<span className="inline-block size-2 rounded-sm bg-blue-500" />I =
+						<span className="inline-block size-2 rounded-sm bg-system-blue" />I =
 						Izin
 					</span>
 					<span className="inline-flex items-center gap-1">
-						<span className="inline-block size-2 rounded-sm bg-amber-500" />S =
+						<span className="inline-block size-2 rounded-sm bg-system-orange" />S =
 						Sakit
 					</span>
 					<span className="inline-flex items-center gap-1">
-						<span className="inline-block size-2 rounded-sm bg-red-500" />A =
+						<span className="inline-block size-2 rounded-sm bg-system-red" />A =
 						Alpha
 					</span>
 				</div>
@@ -489,7 +504,7 @@ function DashboardPage() {
 			</div>
 
 			{/* Weekly/Monthly: Bar / Line */}
-			<div className="rounded-2xl border bg-card p-5 shadow-xs">
+			<div className="rounded-2xl bg-card p-5 shadow-[var(--shadow-surface)]">
 				{isMobile ? (
 					/* Mobile: vertical stack */
 					<div className="space-y-3">
@@ -657,7 +672,7 @@ function DashboardPage() {
 
 			{/* Recent Activity */}
 			{recentSetoran.length > 0 && (
-				<div className="rounded-2xl border bg-card p-5 shadow-xs">
+				<div className="rounded-2xl bg-card p-5 shadow-[var(--shadow-surface)]">
 					<h2 className="mb-4 text-base font-semibold">Aktivitas Terakhir</h2>
 					<div className="space-y-2">
 						{recentSetoran.map((r) => {
@@ -699,7 +714,7 @@ function DashboardPage() {
 
 			{/* Attention Needed */}
 			{attentionNeeded.length > 0 && (
-				<div className="rounded-2xl border bg-card p-5 shadow-xs">
+				<div className="rounded-2xl bg-card p-5 shadow-[var(--shadow-surface)]">
 					<h2 className="mb-4 text-base font-semibold">Perlu Perhatian</h2>
 					<div className="space-y-3">
 						{attentionNeeded.map((s) => {
@@ -739,7 +754,7 @@ function DashboardPage() {
 			)}
 
 			{/* Siswa Progress */}
-			<div className="rounded-2xl border bg-card p-5 shadow-xs">
+			<div className="rounded-2xl bg-card p-5 shadow-[var(--shadow-surface)]">
 				<h2 className="mb-4 text-base font-semibold">Progres Siswa</h2>
 				{siswaList.length > 0 ? (
 					<>
@@ -949,14 +964,20 @@ function StatCard({
 	const content = (
 		<>
 			<div
-				className={`flex size-9 items-center justify-center rounded-xl bg-muted ${color}`}
+				className={`flex size-10 items-center justify-center rounded-[0.75rem] bg-muted ${color}`}
 			>
-				<HugeiconsIcon icon={icon} strokeWidth={1.8} />
+				<HugeiconsIcon icon={icon} strokeWidth={1.8} className="size-5" />
 			</div>
-			<div>
-				<p className="text-xs text-muted-foreground">{label}</p>
-				<p className="text-xl font-bold tracking-tight tabular-nums">{value}</p>
-				{sub && <p className="mt-0.5 text-xs text-muted-foreground">{sub}</p>}
+			<div className="min-w-0">
+				<p className="text-[0.8125rem] text-muted-foreground">{label}</p>
+				<p className="text-[1.5rem] font-bold leading-tight tracking-[-0.02em] tabular-nums">
+					{value}
+				</p>
+				{sub && (
+					<p className="mt-0.5 text-[0.75rem] leading-snug text-muted-foreground">
+						{sub}
+					</p>
+				)}
 			</div>
 		</>
 	);

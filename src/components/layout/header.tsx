@@ -23,27 +23,31 @@ export function Header({ title }: HeaderProps) {
 	}
 
 	return (
-		<header className="sticky top-0 z-40 flex h-12 md:h-14 items-center justify-between bg-background px-3 md:px-6 after:absolute after:bottom-0 after:-left-(--sidebar-width) after:right-0 after:h-px after:bg-border">
-			<div className="flex items-center gap-2 md:gap-3">
+		<header className="material-bar sticky top-0 z-40 flex min-h-11 items-center justify-between gap-2 border-b border-border/60 px-3 pt-[env(safe-area-inset-top)] md:min-h-12 md:px-5">
+			<div className="flex min-w-0 items-center gap-2 md:gap-2.5">
 				{/* Desktop: sidebar toggle */}
 				<Button
 					variant="ghost"
 					size="icon-sm"
-					className="hidden md:flex"
+					className="hidden md:inline-flex"
 					onClick={toggleSidebar}
 					aria-label="Sembunyikan atau tampilkan menu samping"
 				>
-					<HugeiconsIcon icon={PanelLeftOpen} strokeWidth={2} aria-hidden />
+					<HugeiconsIcon icon={PanelLeftOpen} strokeWidth={1.9} aria-hidden />
 				</Button>
-				{/* Logo — visible only on mobile (sidebar hidden) */}
-				<img
-					src="/logo-sijil-v3.svg"
-					alt="Sijil"
-					className="size-7 rounded-lg md:hidden"
-				/>
-				<h1 className="text-base font-semibold">{title}</h1>
+				{/* Brand — mobile only; desktop keeps the title in the sidebar */}
+				<div className="flex min-w-0 items-center gap-2 md:hidden">
+					<img
+						src="/logo-sijil-v3.svg"
+						alt=""
+						className="size-7 shrink-0 rounded-[0.5rem]"
+					/>
+					<span className="truncate text-[1.0625rem] font-semibold tracking-[-0.02em]">
+						{title}
+					</span>
+				</div>
 			</div>
-			<div className="flex items-center gap-1 md:gap-2">
+			<div className="flex shrink-0 items-center gap-0.5 md:gap-1">
 				<ToggleTheme />
 				<Button
 					variant="ghost"
@@ -51,7 +55,7 @@ export function Header({ title }: HeaderProps) {
 					onClick={() => setReportOpen(true)}
 					aria-label="Laporkan Masalah"
 				>
-					<HugeiconsIcon icon={Bug} strokeWidth={1.8} aria-hidden />
+					<HugeiconsIcon icon={Bug} strokeWidth={1.9} aria-hidden />
 				</Button>
 				<Button
 					variant="ghost"
@@ -59,7 +63,7 @@ export function Header({ title }: HeaderProps) {
 					onClick={handleLogout}
 					aria-label="Keluar"
 				>
-					<HugeiconsIcon icon={LogOut} strokeWidth={1.8} aria-hidden />
+					<HugeiconsIcon icon={LogOut} strokeWidth={1.9} aria-hidden />
 				</Button>
 			</div>
 			<ReportDialog open={reportOpen} onOpenChange={setReportOpen} />

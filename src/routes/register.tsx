@@ -40,28 +40,28 @@ function RegisterPage() {
 
 	return (
 		<div className="flex min-h-screen items-center justify-center p-4">
-			<div className="w-full max-w-sm space-y-6 rounded-2xl border bg-card p-8 shadow-xs">
-				<div className="flex flex-col items-center gap-2">
+			<div className="w-full max-w-sm space-y-6 rounded-[1.5rem] bg-card p-7 shadow-[var(--shadow-raised)] sm:p-8">
+				<div className="flex flex-col items-center gap-2.5">
 					<img
 						src="/logo-sijil-v3.svg"
 						alt="Sijil"
-						className="size-12 rounded-2xl"
+						className="size-14 rounded-[1rem] shadow-[var(--shadow-surface)]"
 					/>
-					<h1 className="text-xl font-bold tracking-tight">Daftar Akun Baru</h1>
-					<p className="text-center text-sm text-muted-foreground">
+					<h1 className="text-title">Daftar Akun Baru</h1>
+					<p className="text-center text-[0.9375rem] text-muted-foreground">
 						Buat akun untuk mulai melacak hafalan
 					</p>
 				</div>
 
 				<form onSubmit={handleSubmit} className="space-y-4">
 					{error && (
-						<div className="rounded-xl bg-destructive/10 px-4 py-3 text-sm text-destructive">
+						<div className="rounded-xl bg-destructive/10 px-4 py-3 text-[0.9375rem] text-destructive">
 							{error}
 						</div>
 					)}
 
 					<div className="space-y-2">
-						<label htmlFor="nama" className="text-sm font-medium">
+						<label htmlFor="nama" className="text-[0.9375rem] font-medium">
 							Nama Lengkap
 						</label>
 						<Input
@@ -75,7 +75,7 @@ function RegisterPage() {
 					</div>
 
 					<div className="space-y-2">
-						<label htmlFor="username" className="text-sm font-medium">
+						<label htmlFor="username" className="text-[0.9375rem] font-medium">
 							Username
 						</label>
 						<Input
@@ -90,7 +90,7 @@ function RegisterPage() {
 					</div>
 
 					<div className="space-y-2">
-						<label htmlFor="password" className="text-sm font-medium">
+						<label htmlFor="password" className="text-[0.9375rem] font-medium">
 							Password
 						</label>
 						<Input
@@ -109,7 +109,7 @@ function RegisterPage() {
 					</Button>
 				</form>
 
-				<p className="text-center text-sm text-muted-foreground">
+				<p className="text-center text-[0.9375rem] text-muted-foreground">
 					Sudah punya akun?{" "}
 					<Link
 						to="/login"

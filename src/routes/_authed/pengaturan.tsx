@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { type Siswa, StudentDialog } from "@/components/student-dialog";
 import { StudentList } from "@/components/student-list";
+import { PageHeader } from "@/components/layout/page-header";
 import {
 	Accordion,
 	AccordionContent,
@@ -85,7 +86,7 @@ function ProfileSection({
 }: ProfileSectionProps) {
 	return (
 		<>
-			<section className="space-y-4 rounded-2xl border bg-card p-5 shadow-xs">
+			<section className="space-y-4 rounded-2xl bg-card p-5 shadow-[var(--shadow-surface)]">
 				<SectionTitle
 					title="Informasi Halaqah"
 					description="Nama halaqah atau grup Anda."
@@ -113,8 +114,8 @@ function ProfileSection({
 							Simpan
 						</Button>
 						{dirty && (
-							<span className="flex items-center gap-1.5 text-xs text-amber-600">
-								<span className="size-1.5 rounded-full bg-amber-500" />
+							<span className="flex items-center gap-1.5 text-xs text-system-orange">
+								<span className="size-1.5 rounded-full bg-system-orange" />
 								Belum disimpan
 							</span>
 						)}
@@ -122,7 +123,7 @@ function ProfileSection({
 				</form>
 			</section>
 
-			<section className="space-y-4 rounded-2xl border bg-card p-5 shadow-xs">
+			<section className="space-y-4 rounded-2xl bg-card p-5 shadow-[var(--shadow-surface)]">
 				<SectionTitle
 					title="Profil Musyrif/Ustadz"
 					description="Identitas pengelola halaqah."
@@ -151,8 +152,8 @@ function ProfileSection({
 							Simpan Profil
 						</Button>
 						{dirty && (
-							<span className="flex items-center gap-1.5 text-xs text-amber-600">
-								<span className="size-1.5 rounded-full bg-amber-500" />
+							<span className="flex items-center gap-1.5 text-xs text-system-orange">
+								<span className="size-1.5 rounded-full bg-system-orange" />
 								Belum disimpan
 							</span>
 						)}
@@ -196,7 +197,7 @@ function PdfHeaderPreview({
 	}
 	return (
 		<div className="overflow-hidden rounded-lg border bg-background shadow-sm">
-			<div className="flex items-center gap-3 border-b border-gray-200 bg-gray-100 px-4 py-3">
+			<div className="flex items-center gap-3 border-b border-border bg-muted px-4 py-3">
 				{logo && (
 					<img
 						src={logo}
@@ -206,27 +207,27 @@ function PdfHeaderPreview({
 				)}
 				<div className="min-w-0 flex-1">
 					{foundation && (
-						<p className="truncate text-[13px] leading-tight font-bold text-gray-800">
+						<p className="truncate text-[13px] leading-tight font-bold text-foreground">
 							{foundation}
 						</p>
 					)}
 					{school && (
-						<p className="truncate text-[11px] leading-tight text-gray-600">
+						<p className="truncate text-[11px] leading-tight text-muted-foreground">
 							{school}
 						</p>
 					)}
-					<p className="mt-0.5 text-[9px] tracking-wide text-gray-400">
+					<p className="mt-0.5 text-[9px] tracking-wide text-muted-foreground">
 						Laporan Hafalan Al-Qur'an
 					</p>
 				</div>
-				<p className="hidden shrink-0 text-[8px] text-gray-400 sm:block">
+				<p className="hidden shrink-0 text-[8px] text-muted-foreground sm:block">
 					{new Date().toLocaleDateString("id-ID")}
 				</p>
 			</div>
 			<div className="space-y-1.5 px-4 py-3">
-				<div className="h-1.5 w-2/3 rounded bg-gray-100" />
-				<div className="h-1.5 w-full rounded bg-gray-100" />
-				<div className="h-1.5 w-3/4 rounded bg-gray-100" />
+				<div className="h-1.5 w-2/3 rounded bg-muted" />
+				<div className="h-1.5 w-full rounded bg-muted" />
+				<div className="h-1.5 w-3/4 rounded bg-muted" />
 			</div>
 		</div>
 	);
@@ -246,7 +247,7 @@ function SchoolSection({
 	schoolSaving,
 }: SchoolSectionProps) {
 	return (
-		<section className="space-y-4 rounded-2xl border bg-card p-5 shadow-xs">
+		<section className="space-y-4 rounded-2xl bg-card p-5 shadow-[var(--shadow-surface)]">
 			<SectionTitle
 				title="Profil Sekolah"
 				description="Identitas institusi untuk header PDF laporan."
@@ -268,7 +269,7 @@ function SchoolSection({
 								className="h-16 w-16 rounded-lg border object-contain"
 							/>
 							<div className="flex gap-2">
-								<label className="cursor-pointer rounded-md border border-input bg-background px-3 py-1.5 text-xs font-medium hover:bg-accent">
+								<label className="cursor-pointer rounded-lg bg-secondary px-3 py-1.5 text-xs font-medium transition-colors hover:bg-secondary/70 active:bg-secondary/50">
 									Ganti
 									<input
 										type="file"
@@ -338,8 +339,8 @@ function SchoolSection({
 						{schoolSaving ? "Menyimpan..." : "Simpan"}
 					</Button>
 					{dirty && (
-						<span className="flex items-center gap-1.5 text-xs text-amber-600">
-							<span className="size-1.5 rounded-full bg-amber-500" />
+						<span className="flex items-center gap-1.5 text-xs text-system-orange">
+							<span className="size-1.5 rounded-full bg-system-orange" />
 							Belum disimpan
 						</span>
 					)}
@@ -371,7 +372,7 @@ function AccountSection({
 	changePassword,
 }: AccountSectionProps) {
 	return (
-		<section className="space-y-4 rounded-2xl border bg-card p-5 shadow-xs">
+		<section className="space-y-4 rounded-2xl bg-card p-5 shadow-[var(--shadow-surface)]">
 			<SectionTitle
 				title="Ganti Password"
 				description="Perbarui password akun Anda secara berkala."
@@ -453,7 +454,7 @@ function BackupSection({
 	lastBackup,
 }: BackupSectionProps) {
 	return (
-		<section className="space-y-4 rounded-2xl border bg-card p-5 shadow-xs">
+		<section className="space-y-4 rounded-2xl bg-card p-5 shadow-[var(--shadow-surface)]">
 			<SectionTitle
 				title="Cadangan & Pulihkan"
 				description="Ekspor profil dan daftar siswa, atau impor dari file cadangan."
@@ -467,7 +468,7 @@ function BackupSection({
 				>
 					Ekspor JSON
 				</Button>
-				<label className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-md border border-input bg-background px-4 py-2 text-sm font-medium shadow-xs hover:bg-accent hover:text-accent-foreground">
+				<label className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl bg-secondary px-4 py-2.5 text-sm font-medium transition-colors hover:bg-secondary/70 active:bg-secondary/50">
 					Impor JSON
 					<input
 						type="file"
@@ -495,7 +496,7 @@ function BackupSection({
 function TutorialSection({ compact }: { compact?: boolean }) {
 	const navigate = useNavigate();
 	return (
-		<section className="space-y-4 rounded-2xl border bg-card p-5 shadow-xs">
+		<section className="space-y-4 rounded-2xl bg-card p-5 shadow-[var(--shadow-surface)]">
 			<SectionTitle
 				title="Tutorial"
 				description="Lihat kembali panduan penggunaan aplikasi."
@@ -897,7 +898,7 @@ function PengaturanPage() {
 	const manajemenDataContent = () => (
 		<div className="space-y-4">
 			<ProfileSection {...profileSectionProps} compact />
-			<section className="space-y-4 rounded-2xl border bg-card p-5 shadow-xs">
+			<section className="space-y-4 rounded-2xl bg-card p-5 shadow-[var(--shadow-surface)]">
 				<div className="flex items-center justify-between gap-2">
 					<SectionTitle
 						title="Kelola Siswa"
@@ -940,12 +941,10 @@ function PengaturanPage() {
 
 	return (
 		<div className="mx-auto max-w-2xl space-y-6 pb-20 md:pb-6">
-			<div>
-				<h2 className="text-lg font-semibold">Pengaturan</h2>
-				<p className="text-sm text-muted-foreground">
-					Kelola konfigurasi aplikasi, akun, dan data.
-				</p>
-			</div>
+			<PageHeader
+				title="Pengaturan"
+				subtitle="Kelola konfigurasi aplikasi, akun, dan data."
+			/>
 
 			{isMobile ? (
 				<Accordion
@@ -980,7 +979,9 @@ function PengaturanPage() {
 						<AccordionContent>{tutorialContent(true)}</AccordionContent>
 					</AccordionItem>
 					<AccordionItem value="zonabahaya">
-						<AccordionTrigger>Zona Bahaya</AccordionTrigger>
+						<AccordionTrigger className="text-destructive">
+							Zona Bahaya
+						</AccordionTrigger>
 						<AccordionContent>{zonabahayaContent(true)}</AccordionContent>
 					</AccordionItem>
 				</Accordion>

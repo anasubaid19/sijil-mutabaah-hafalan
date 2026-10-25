@@ -515,7 +515,7 @@ export function TutorialOverlay({ onFinish }: { onFinish: () => void }) {
 			{placement && current && (
 				<div
 					ref={cardRef}
-					className={`absolute z-[4] max-w-[300px] w-[calc(100vw-24px)] rounded-2xl border bg-card p-5 shadow-xl transition-[opacity,translate] duration-300 ease-out ${
+					className={`absolute z-[4] max-w-[300px] w-[calc(100vw-24px)] rounded-2xl bg-card p-5 shadow-[var(--shadow-overlay)] transition-[opacity,translate] duration-[var(--duration-normal)] ease-[var(--ease-out)] ${
 						anim === "in"
 							? "opacity-100 translate-y-0"
 							: "opacity-0 translate-y-2"

@@ -1,9 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { ArrowRight } from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { KitabPdfDialog } from "@/components/kitab-pdf-dialog";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardTitle } from "@/components/ui/card";
+import { PageHeader } from "@/components/layout/page-header";
 import { KITAB_LIST, type Kitab } from "@/lib/kitab";
 
 export const Route = createFileRoute("/_authed/kitab")({
@@ -23,36 +24,42 @@ function KitabPage() {
 
 	return (
 		<div className="mx-auto max-w-3xl space-y-6 pb-20 md:pb-6">
-			<div>
-				<h2 className="text-base font-semibold">Kitab</h2>
-				<p className="mt-1 text-sm text-muted-foreground">
-					Baca kitab-kitab yang dikaji di halaqah.
-				</p>
-			</div>
+			<PageHeader
+				title="Kitab"
+				subtitle="Baca kitab-kitab yang dikaji di halaqah."
+			/>
 
-			<div className="grid gap-4 sm:grid-cols-2">
+			<div className="ios-list">
 				{KITAB_LIST.map((k) => (
-					<Card key={k.id}>
-						<CardContent className="flex flex-col gap-3">
-							<div>
-								<CardTitle>
-									<span className="text-lg font-medium">{k.nama}</span>
-								</CardTitle>
-								{k.penulis && (
-									<p className="mt-1 text-xs text-muted-foreground">
-										{k.penulis}
-									</p>
-								)}
-							</div>
-							<Button
-								variant={k.file ? "default" : "outline"}
-								className="w-full"
-								onClick={() => openKitab(k)}
-							>
-								{k.file ? "Baca" : "Sedang dalam pengembangan"}
-							</Button>
-						</CardContent>
-					</Card>
+					<button
+						key={k.id}
+						type="button"
+						onClick={() => openKitab(k)}
+						className="ios-row tap-row w-full text-left"
+					>
+						<div className="min-w-0 flex-1">
+							<p className="truncate text-[1.0625rem] font-medium tracking-[-0.01em]">
+								{k.nama}
+							</p>
+							{k.penulis && (
+								<p className="mt-0.5 truncate text-[0.8125rem] text-muted-foreground">
+									{k.penulis}
+								</p>
+							)}
+						</div>
+						{k.file ? (
+							<HugeiconsIcon
+								icon={ArrowRight}
+								strokeWidth={2}
+								className="size-4 shrink-0 text-muted-foreground/60"
+								aria-hidden
+							/>
+						) : (
+							<span className="shrink-0 text-[0.8125rem] text-muted-foreground">
+								Segera
+							</span>
+						)}
+					</button>
 				))}
 			</div>
 

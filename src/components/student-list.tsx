@@ -88,7 +88,7 @@ export function StudentList({
 								<button
 									type="button"
 									onClick={() => onDelete(s.id)}
-									className="pointer-coarse:min-h-11 rounded-lg px-3 py-1 text-xs font-semibold text-red-600 hover:bg-red-500/10"
+									className="pointer-coarse:min-h-11 rounded-lg px-3 py-1 text-xs font-semibold text-system-red hover:bg-system-red/10"
 								>
 									Hapus
 								</button>

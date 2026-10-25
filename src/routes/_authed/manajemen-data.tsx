@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { type Siswa, StudentDialog } from "@/components/student-dialog";
 import { StudentList } from "@/components/student-list";
+import { PageHeader } from "@/components/layout/page-header";
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -127,8 +128,12 @@ function ManajemenDataPage() {
 
 	return (
 		<div className="mx-auto max-w-6xl space-y-6 pb-20 md:pb-6">
+			<PageHeader
+				title="Manajemen Data"
+				subtitle="Kelola data inti halaqah dan siswa di sini."
+			/>
 			{isMobile ? (
-				<div className="rounded-2xl border bg-card p-8 text-center shadow-xs">
+				<div className="rounded-2xl bg-card p-8 text-center shadow-[var(--shadow-surface)]">
 					<p className="text-sm text-muted-foreground">
 						Gunakan{" "}
 						<span className="font-semibold text-foreground">Pengaturan</span>{" "}
@@ -143,15 +148,8 @@ function ManajemenDataPage() {
 				</div>
 			) : (
 				<>
-					<div>
-						<h2 className="text-lg font-semibold">Manajemen Data</h2>
-						<p className="text-sm text-muted-foreground">
-							Kelola data inti halaqah dan siswa di sini.
-						</p>
-					</div>
-
 					{/* Informasi Halaqah */}
-					<section className="space-y-4 rounded-2xl border bg-card p-5 shadow-xs">
+					<section className="space-y-4 rounded-2xl bg-card p-5 shadow-[var(--shadow-surface)]">
 						<div>
 							<h3 className="text-lg font-semibold">Informasi Halaqah</h3>
 							<p className="text-xs text-muted-foreground">
@@ -176,8 +174,8 @@ function ManajemenDataPage() {
 									Simpan
 								</Button>
 								{profileDirty && (
-									<span className="flex items-center gap-1.5 text-xs text-amber-600">
-										<span className="size-1.5 rounded-full bg-amber-500" />
+									<span className="flex items-center gap-1.5 text-xs text-system-orange">
+										<span className="size-1.5 rounded-full bg-system-orange" />
 										Belum disimpan
 									</span>
 								)}
@@ -186,7 +184,7 @@ function ManajemenDataPage() {
 					</section>
 
 					{/* Profil Musyrif */}
-					<section className="space-y-4 rounded-2xl border bg-card p-5 shadow-xs">
+					<section className="space-y-4 rounded-2xl bg-card p-5 shadow-[var(--shadow-surface)]">
 						<div>
 							<h3 className="text-lg font-semibold">Profil Musyrif/Ustadz</h3>
 							<p className="text-xs text-muted-foreground">
@@ -212,8 +210,8 @@ function ManajemenDataPage() {
 									Simpan Profil
 								</Button>
 								{profileDirty && (
-									<span className="flex items-center gap-1.5 text-xs text-amber-600">
-										<span className="size-1.5 rounded-full bg-amber-500" />
+									<span className="flex items-center gap-1.5 text-xs text-system-orange">
+										<span className="size-1.5 rounded-full bg-system-orange" />
 										Belum disimpan
 									</span>
 								)}
@@ -222,7 +220,7 @@ function ManajemenDataPage() {
 					</section>
 
 					{/* Kelola Siswa */}
-					<section className="space-y-4 rounded-2xl border bg-card p-5 shadow-xs">
+					<section className="space-y-4 rounded-2xl bg-card p-5 shadow-[var(--shadow-surface)]">
 						<div className="flex items-center justify-between gap-2">
 							<div>
 								<h3 className="text-lg font-semibold">Kelola Siswa</h3>

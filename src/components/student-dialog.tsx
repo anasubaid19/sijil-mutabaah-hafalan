@@ -33,7 +33,7 @@ interface StudentDialogProps {
 }
 
 const selectClass =
-	"pointer-coarse:min-h-11 flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-xs transition-colors md:text-sm";
+	"flex h-11 w-full rounded-xl border border-transparent bg-secondary px-3.5 text-[1rem] text-foreground outline-none transition-[border-color,box-shadow,background-color] focus-visible:border-primary focus-visible:ring-4 focus-visible:ring-primary/20";
 
 export function StudentDialog({
 	open,

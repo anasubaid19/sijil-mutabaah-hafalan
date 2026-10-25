@@ -520,8 +520,8 @@ export function MushafPanel({
 
 			{/* Floating indicator when selection exists but user is on a different page */}
 			{mode === "input" && startKey && !endKey && (
-				<div className="px-3 py-2 border-t bg-blue-50 dark:bg-blue-950/30 flex items-center justify-between">
-					<span className="text-sm text-blue-700 dark:text-blue-300">
+				<div className="px-3 py-2 border-t bg-system-blue dark:bg-system-blue/30 flex items-center justify-between">
+					<span className="text-sm text-system-blue">
 						Ayat dipilih: {(() => {
 							const p = parseAyahKey(startKey);
 							return p ? `${surahNumberToName(p.surah)} ${p.ayat}` : startKey;

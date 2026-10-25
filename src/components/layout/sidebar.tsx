@@ -73,19 +73,19 @@ export function AppSidebar() {
 	const isAdmin = data?.user?.username === "anasubaid19";
 	return (
 		<div className="hidden md:block">
-			<Sidebar>
+			<Sidebar className="border-r border-sidebar-border">
 				<SidebarHeader>
-					<div className="flex items-center gap-2.5 px-2 py-1.5">
+					<div className="flex items-center gap-2.5 px-2 py-2">
 						<img
 							src="/logo-sijil-v3.svg"
-							alt="Sijil"
-							className="size-8 rounded-xl"
+							alt=""
+							className="size-8 rounded-[0.625rem]"
 						/>
-						<div className="flex flex-col">
-							<span className="text-sm font-semibold leading-tight">
+						<div className="flex min-w-0 flex-col">
+							<span className="truncate text-[0.9375rem] font-semibold leading-tight tracking-[-0.015em]">
 								Sijil Mutaba'ah
 							</span>
-							<span className="text-xs leading-tight text-muted-foreground">
+							<span className="truncate text-[0.75rem] leading-tight text-muted-foreground">
 								Tahsin & Hifz Tracker
 							</span>
 						</div>
@@ -94,7 +94,7 @@ export function AppSidebar() {
 
 				<SidebarContent>
 					<SidebarGroup>
-						<SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider">
+						<SidebarGroupLabel className="px-2.5 text-[0.6875rem] font-semibold uppercase tracking-[0.04em] text-muted-foreground">
 							Navigasi
 						</SidebarGroupLabel>
 						<SidebarGroupContent>
@@ -105,7 +105,7 @@ export function AppSidebar() {
 											isActive={isActive(item.to)}
 											render={<Link to={item.to} data-nav-id={item.navId} />}
 											tooltip={item.label}
-											className="relative data-active:bg-primary/10 data-active:text-primary data-active:before:absolute data-active:before:inset-y-1.5 data-active:before:start-0 data-active:before:w-0.5 data-active:before:rounded-full data-active:before:bg-primary"
+											className="relative"
 										>
 											<HugeiconsIcon icon={item.icon} strokeWidth={1.8} />
 											<span>{item.label}</span>
@@ -117,7 +117,7 @@ export function AppSidebar() {
 					</SidebarGroup>
 
 					<SidebarGroup>
-						<SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider">
+						<SidebarGroupLabel className="px-2.5 text-[0.6875rem] font-semibold uppercase tracking-[0.04em] text-muted-foreground">
 							Lainnya
 						</SidebarGroupLabel>
 						<SidebarGroupContent>
@@ -128,7 +128,7 @@ export function AppSidebar() {
 											isActive={isActive(item.to)}
 											render={<Link to={item.to} data-nav-id={item.navId} />}
 											tooltip={item.label}
-											className="relative data-active:bg-primary/10 data-active:text-primary data-active:before:absolute data-active:before:inset-y-1.5 data-active:before:start-0 data-active:before:w-0.5 data-active:before:rounded-full data-active:before:bg-primary"
+											className="relative"
 										>
 											<HugeiconsIcon icon={item.icon} strokeWidth={1.8} />
 											<span>{item.label}</span>
@@ -141,7 +141,7 @@ export function AppSidebar() {
 											isActive={isActive("/admin")}
 											render={<Link to="/admin" data-nav-id="nav-admin" />}
 											tooltip="Admin"
-											className="relative data-active:bg-primary/10 data-active:text-primary data-active:before:absolute data-active:before:inset-y-1.5 data-active:before:start-0 data-active:before:w-0.5 data-active:before:rounded-full data-active:before:bg-primary"
+											className="relative"
 										>
 											<HugeiconsIcon icon={UserGroupIcon} strokeWidth={1.8} />
 											<span>Admin</span>

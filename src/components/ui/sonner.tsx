@@ -55,6 +55,15 @@ const Toaster = ({ ...props }: ToasterProps) => {
 					/>
 				),
 			}}
+			toastOptions={{
+				classNames: {
+					toast:
+						"rounded-2xl border-border/60 bg-popover/90 text-popover-foreground shadow-[var(--shadow-overlay)] backdrop-blur-xl",
+					description: "text-muted-foreground",
+					actionButton: "rounded-lg bg-primary text-primary-foreground",
+					cancelButton: "rounded-lg bg-secondary text-secondary-foreground",
+				},
+			}}
 			style={
 				{
 					"--normal-bg": "var(--popover)",

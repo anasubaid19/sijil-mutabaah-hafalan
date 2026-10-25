@@ -57,10 +57,10 @@ export function BottomNav() {
 	return (
 		<>
 			<nav
-				className="fixed inset-x-0 bottom-0 z-50 pb-[env(safe-area-inset-bottom)] md:hidden"
+				className="material-bar fixed inset-x-0 bottom-0 z-50 border-t border-border/60 pb-[env(safe-area-inset-bottom)] md:hidden"
 				data-bottom-nav
 			>
-				<div className="mx-3 mb-2 flex items-center justify-around rounded-2xl border bg-background/95 shadow-lg backdrop-blur-sm">
+				<div className="flex items-stretch justify-around px-1">
 					{MAIN_TABS.map((item) => {
 						const active = isActive(item.to);
 						return (
@@ -68,26 +68,17 @@ export function BottomNav() {
 								key={item.to}
 								to={item.to}
 								data-nav-id={item.navId}
-								className={`flex flex-1 flex-col items-center gap-0.5 py-2 min-h-[48px] transition-colors duration-200 ${
+								aria-current={active ? "page" : undefined}
+								className={`flex min-h-[49px] flex-1 flex-col items-center justify-center gap-0.5 pt-1 pb-1 transition-colors duration-[var(--duration-fast)] ${
 									active ? "text-primary" : "text-muted-foreground"
 								}`}
 							>
-								<div
-									className={`flex items-center justify-center rounded-full transition-colors duration-200 ${
-										active ? "bg-primary/10 p-1.5" : "p-1.5"
-									}`}
-								>
-									<HugeiconsIcon
-										icon={item.icon}
-										className="size-5"
-										strokeWidth={active ? 2 : 1.8}
-									/>
-								</div>
-								<span
-									className={`text-xs font-semibold uppercase tracking-wider transition-colors duration-200 ${
-										active ? "text-primary" : ""
-									}`}
-								>
+								<HugeiconsIcon
+									icon={item.icon}
+									className="size-[25px]"
+									strokeWidth={active ? 2.1 : 1.7}
+								/>
+								<span className="text-[0.625rem] font-medium tracking-[0.01em]">
 									{item.label}
 								</span>
 							</Link>
@@ -97,22 +88,16 @@ export function BottomNav() {
 						type="button"
 						onClick={() => setOpen(true)}
 						data-nav-id="nav-lainnya"
-						className={`flex flex-1 flex-col items-center gap-0.5 py-2 min-h-[48px] transition-colors duration-200 ${
+						className={`flex min-h-[49px] flex-1 flex-col items-center justify-center gap-0.5 pt-1 pb-1 transition-colors duration-[var(--duration-fast)] ${
 							lainnyaActive ? "text-primary" : "text-muted-foreground"
 						}`}
 					>
-						<div
-							className={`flex items-center justify-center rounded-full transition-colors duration-200 p-1.5 ${
-								lainnyaActive ? "bg-primary/10" : ""
-							}`}
-						>
-							<HugeiconsIcon
-								icon={MoreHorizontalCircle01Icon}
-								className="size-5"
-								strokeWidth={1.8}
-							/>
-						</div>
-						<span className="text-xs font-semibold uppercase tracking-wider transition-colors duration-200">
+						<HugeiconsIcon
+							icon={MoreHorizontalCircle01Icon}
+							className="size-[25px]"
+							strokeWidth={lainnyaActive ? 2.1 : 1.7}
+						/>
+						<span className="text-[0.625rem] font-medium tracking-[0.01em]">
 							Lainnya
 						</span>
 					</button>
@@ -120,55 +105,37 @@ export function BottomNav() {
 			</nav>
 
 			<Sheet open={open} onOpenChange={setOpen}>
-				<SheetContent
-					side="bottom"
-					showCloseButton={false}
-					className="rounded-t-2xl"
-				>
-					<div className="mx-auto mt-2 mb-4 h-1.5 w-12 rounded-full bg-muted" />
-					<SheetHeader>
-						<SheetTitle>Lainnya</SheetTitle>
+				<SheetContent side="bottom" showCloseButton={false}>
+					<div className="mx-auto mt-2 mb-1 h-1 w-9 rounded-full bg-muted-foreground/30" />
+					<SheetHeader className="pb-2">
+						<SheetTitle className="text-[1.375rem] font-bold tracking-[-0.024em]">
+							Lainnya
+						</SheetTitle>
 					</SheetHeader>
-					<div className="space-y-1 pb-6">
-						{SECONDARY_ITEMS.map((item) => {
-							const active = isActive(item.to);
-							return (
-								<Link
-									key={item.to}
-									to={item.to}
-									onClick={() => setOpen(false)}
-									className={`flex items-center gap-3 rounded-xl px-4 py-3 transition-colors ${
-										active
-											? "bg-primary/10 text-primary font-medium"
-											: "hover:bg-muted"
-									}`}
-								>
-									<HugeiconsIcon
-										icon={item.icon}
-										className="size-5"
-										strokeWidth={1.8}
-									/>
-									<span className="text-sm font-medium">{item.label}</span>
-								</Link>
-							);
-						})}
-						{isAdmin && (
-							<Link
-								to="/admin"
-								onClick={() => setOpen(false)}
-								className={`flex items-center gap-3 rounded-xl px-4 py-3 transition-colors ${
-									isActive("/admin")
-										? "bg-primary/10 text-primary font-medium"
-										: "hover:bg-muted"
-								}`}
-							>
-								<HugeiconsIcon
-									icon={UserGroupIcon}
-									className="size-5"
-									strokeWidth={1.8}
-								/>
-								<span className="text-sm font-medium">Admin</span>
-							</Link>
+					<div className="ios-list mx-4 mb-6 mt-1">
+						{[...SECONDARY_ITEMS, ...(isAdmin ? [{ to: "/admin", label: "Admin", icon: UserGroupIcon }] : [])].map(
+							(item) => {
+								const active = isActive(item.to);
+								return (
+									<Link
+										key={item.to}
+										to={item.to}
+										onClick={() => setOpen(false)}
+										className={`ios-row min-h-12 ${
+											active ? "text-primary" : "text-foreground"
+										}`}
+									>
+										<HugeiconsIcon
+											icon={item.icon}
+											className="size-[22px]"
+											strokeWidth={1.9}
+										/>
+										<span className="flex-1 text-[1.0625rem] font-medium">
+											{item.label}
+										</span>
+									</Link>
+								);
+							},
 						)}
 					</div>
 				</SheetContent>

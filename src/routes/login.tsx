@@ -71,22 +71,22 @@ function LoginPage() {
 
 	return (
 		<div className="flex min-h-screen items-center justify-center p-4">
-			<div className="w-full max-w-md space-y-6 rounded-2xl border bg-card p-8 shadow-xs">
-				<div className="flex flex-col items-center gap-2">
+			<div className="w-full max-w-md space-y-6 rounded-[1.5rem] bg-card p-7 shadow-[var(--shadow-raised)] sm:p-8">
+				<div className="flex flex-col items-center gap-2.5">
 					<img
 						src="/logo-sijil-v3.svg"
 						alt="Sijil"
-						className="size-12 rounded-2xl"
+						className="size-14 rounded-[1rem] shadow-[var(--shadow-surface)]"
 					/>
-					<h1 className="text-xl font-bold tracking-tight">Sijil Mutaba'ah</h1>
-					<p className="text-center text-sm text-muted-foreground">
+					<h1 className="text-title">Sijil Mutaba'ah</h1>
+					<p className="text-center text-[0.9375rem] text-muted-foreground">
 						Masuk untuk melacak hafalan
 					</p>
 				</div>
 
 				{/* Tab Switcher */}
 				<div
-					className="flex rounded-xl bg-muted p-1"
+					className="flex rounded-[0.625rem] bg-secondary/80 p-[3px]"
 					role="group"
 					aria-label="Jenis akun"
 				>
@@ -97,9 +97,9 @@ function LoginPage() {
 							setTab("ustadz");
 							setError("");
 						}}
-						className={`flex-1 rounded-lg py-2 text-sm font-medium transition-colors ${
+						className={`flex-1 rounded-[0.5rem] py-2 text-[0.8125rem] font-semibold transition-colors duration-[var(--duration-fast)] ${
 							tab === "ustadz"
-								? "bg-background text-foreground shadow-xs"
+								? "bg-card text-foreground shadow-[0_1px_3px_rgb(0_0_0/0.12)]"
 								: "text-muted-foreground hover:text-foreground"
 						}`}
 					>
@@ -112,9 +112,9 @@ function LoginPage() {
 							setTab("orangtua");
 							setError("");
 						}}
-						className={`flex-1 rounded-lg py-2 text-sm font-medium transition-colors ${
+						className={`flex-1 rounded-[0.5rem] py-2 text-[0.8125rem] font-semibold transition-colors duration-[var(--duration-fast)] ${
 							tab === "orangtua"
-								? "bg-background text-foreground shadow-xs"
+								? "bg-card text-foreground shadow-[0_1px_3px_rgb(0_0_0/0.12)]"
 								: "text-muted-foreground hover:text-foreground"
 						}`}
 					>
@@ -129,14 +129,14 @@ function LoginPage() {
 							<div
 								id="login-error"
 								role="alert"
-								className="rounded-xl bg-destructive/10 px-4 py-3 text-sm text-destructive"
+								className="rounded-xl bg-destructive/10 px-4 py-3 text-[0.9375rem] text-destructive"
 							>
 								{error}
 							</div>
 						)}
 
 						<div className="space-y-2">
-							<label htmlFor="username" className="text-sm font-medium">
+							<label htmlFor="username" className="text-[0.9375rem] font-medium">
 								Username
 							</label>
 							<Input
@@ -152,7 +152,7 @@ function LoginPage() {
 						</div>
 
 						<div className="space-y-2">
-							<label htmlFor="password" className="text-sm font-medium">
+							<label htmlFor="password" className="text-[0.9375rem] font-medium">
 								Password
 							</label>
 							<Input
@@ -180,14 +180,14 @@ function LoginPage() {
 							<div
 								id="login-error"
 								role="alert"
-								className="rounded-xl bg-destructive/10 px-4 py-3 text-sm text-destructive"
+								className="rounded-xl bg-destructive/10 px-4 py-3 text-[0.9375rem] text-destructive"
 							>
 								{error}
 							</div>
 						)}
 
 						<div className="space-y-2">
-							<label htmlFor="studentId" className="text-sm font-medium">
+							<label htmlFor="studentId" className="text-[0.9375rem] font-medium">
 								ID Siswa
 							</label>
 							<Input
@@ -209,7 +209,7 @@ function LoginPage() {
 				)}
 
 				{tab === "ustadz" && (
-					<p className="text-center text-sm text-muted-foreground">
+					<p className="text-center text-[0.9375rem] text-muted-foreground">
 						Belum punya akun?{" "}
 						<Link
 							to="/register"

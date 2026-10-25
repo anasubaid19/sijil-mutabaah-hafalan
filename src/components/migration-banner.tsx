@@ -26,7 +26,7 @@ export function MigrationBanner() {
 	return (
 		<div
 			role="status"
-			className="flex items-start gap-3 border-b border-amber-500/30 bg-amber-500/10 px-3 py-3 text-amber-900 md:px-6 dark:text-amber-200"
+			className="flex items-start gap-3 border-b border-system-orange/30 bg-system-orange/10 px-3 py-3 text-system-orange md:px-6"
 		>
 			<HugeiconsIcon
 				icon={Alert02Icon}
