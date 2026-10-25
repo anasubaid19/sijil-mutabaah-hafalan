@@ -11,7 +11,7 @@ import { BottomNav } from "@/components/layout/bottom-nav";
 import { Header } from "@/components/layout/header";
 import { AppSidebar } from "@/components/layout/sidebar";
 import { MigrationBanner } from "@/components/migration-banner";
-import { ReleaseNotesDialog } from "@/components/release-notes-dialog";
+import { ReleaseNotesBanner } from "@/components/release-notes-banner";
 import { TutorialOverlay } from "@/components/tutorial-overlay";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { auth } from "@/lib/auth/auth";
@@ -69,6 +69,7 @@ function AuthedLayout() {
 			<SidebarInset>
 				<Header title="Sijil Mutaba'ah" />
 				<MigrationBanner />
+				<ReleaseNotesBanner />
 				<main
 					id="main-content"
 					tabIndex={-1}
@@ -78,7 +79,6 @@ function AuthedLayout() {
 				</main>
 			</SidebarInset>
 			<BottomNav />
-			<ReleaseNotesDialog />
 			{showTutorial && (
 				<div id="sijil-tutorial-root">
 					<TutorialOverlay onFinish={handleFinish} />
